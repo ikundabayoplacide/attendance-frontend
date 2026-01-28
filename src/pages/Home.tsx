@@ -34,6 +34,7 @@ function Home() {
         backgroundRepeat: 'no-repeat',
       }}
     >
+
       {/* MAIN CARD */}
       <div className='w-full sm:w-11/12 md:w-10/12 lg:w-8/12 h-auto sm:h-5/6 mb-16 mx-2 sm:mx-4 rounded-xl sm:rounded-3xl shadow-2xl border border-gray-100 relative bg-white/90 backdrop-blur-md'>
 
@@ -159,6 +160,9 @@ function Home() {
           '
         />
       </div>
+      
+
+
     </div>
   )
 }

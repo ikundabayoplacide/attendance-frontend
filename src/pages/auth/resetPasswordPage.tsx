@@ -43,7 +43,7 @@ function ResetPassword() {
       <div className="w-full max-w-6xl h-auto bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative">
         {/* Window controls */}
         <div className="flex items-center gap-2 p-4 border-b border-gray-200">
-          <span className="ml-4 text-gray-600 text-sm">EVS Reset Password</span>
+          <span className="ml-4 text-[#1A3263] text-sm flex font-bold"><img src={evsLogo} alt="EVS Logo" className="w-5 h-5 mr-2" />EVS Reset Password</span>
         </div>
 
         {/* Content */}
