@@ -27,7 +27,7 @@ function Home() {
       className='w-full min-h-screen flex justify-center items-center relative'
       style={{
         border: '10px solid transparent',
-        borderImage: `url(${borderImage}) 10 repeat`,
+        borderImage: `url(${borderImage}) 10 10 10 10 repeat`,
         backgroundImage: `url(${homeImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -36,7 +36,7 @@ function Home() {
     >
 
       {/* MAIN CARD */}
-      <div className='w-full sm:w-11/12 md:w-10/12 lg:w-8/12 h-auto sm:h-5/6 mb-16 mx-2 sm:mx-4 rounded-xl sm:rounded-3xl shadow-2xl border border-gray-100 relative bg-white/90 backdrop-blur-md'>
+      <div className='w-full sm:w-11/12 md:w-10/12 lg:w-9/12 h-5/6 mb-16 mx-2 sm:mx-4 rounded-xl sm:rounded-3xl shadow-2xl border border-gray-100 relative bg-white/90 backdrop-blur-md'>
 
         <div className='h-full flex flex-col'>
 
@@ -54,7 +54,7 @@ function Home() {
 
             {/* Nav */}
             <nav className='hidden md:block'>
-              <ul className='flex gap-6 text-white'>
+              <ul className='flex gap-6 text-white font-bold'>
                 <li className='hover:text-gray-300 cursor-pointer'>Home</li>
                 <li className='hover:text-gray-300 cursor-pointer'>About</li>
                 <li className='hover:text-gray-300 cursor-pointer'>Services</li>
@@ -137,7 +137,7 @@ function Home() {
             <div className='w-full lg:w-1/2 flex justify-center items-start h-64 sm:h-auto'>
               <Lottie
                 animationData={chatbotAnimation}
-                className='w-full h-full -mt-10 sm:-mt-20'
+                className='w-full h-full -mt-8 sm:-mt-20'
                 loop
                 autoplay
               />
@@ -149,10 +149,9 @@ function Home() {
           src={computerSite}
           alt='Computer Site'
           className='
-            w-20 h-20
-            sm:w-32 sm:h-24
+            sm:w-32 sm:h-19
             absolute
-            -bottom-22
+            -bottom-18
             left-1/2
             transform -translate-x-1/2
             z-30

@@ -114,8 +114,8 @@ function Register() {
             {/* Content */}
             <div className="relative z-10 text-center text-white px-8">
               <div className="mb-6 flex justify-center">
-                <div className="w-20 h-20 lg:w-28 lg:h-28 rounded-full bg-white flex items-center justify-center shadow-xl">
-                  <img src={evsLogo} alt="EVS Logo" className="w-12 h-12 lg:w-18 lg:h-18" />
+              <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
+                  <img src={evsLogo} alt="EVS Logo" className="w-24 h-24 lg:w-34 lg:h-34" />
                 </div>
               </div>
               <h2 className="text-2xl lg:text-4xl font-bold mb-3 tracking-wide">JOIN US</h2>
