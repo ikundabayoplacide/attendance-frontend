@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaHome } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
@@ -15,7 +15,7 @@ function Register() {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    phoneNumber:'',
+    phoneNumber: '',
     password: '',
     province: '',
     district: '',
@@ -67,8 +67,12 @@ function Register() {
       {/* Main register container */}
       <div className="w-full max-w-6xl h-auto bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative">
         {/* Window controls */}
-        <div className="flex items-center gap-2 p-4 border-b border-gray-200">
-          <span className="ml-4 text-[#1A3263] text-sm flex font-bold"><img src={evsLogo} alt="EVS Logo" className="w-5 h-5 mr-2" />EVS Register</span>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <span className="ml-4 text-[#1A3263] text-sm flex font-bold">
+            <img src={evsLogo} alt="EVS Logo" className="w-5 h-5 mr-2" />EVS Register</span>
+          <Link to="/">
+            <FaHome className="text-blue-800 hover:text-gray-600 cursor-pointer ml-auto mr-10 w-6 h-6" />
+          </Link>
         </div>
 
         {/* Content */}
@@ -114,7 +118,7 @@ function Register() {
             {/* Content */}
             <div className="relative z-10 text-center text-white px-8">
               <div className="mb-6 flex justify-center">
-              <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
+                <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
                   <img src={evsLogo} alt="EVS Logo" className="w-24 h-24 lg:w-34 lg:h-34" />
                 </div>
               </div>
@@ -192,7 +196,7 @@ function Register() {
                             <span className="text-sm text-black">{selectedCountry}</span>
                             <FaChevronDown className={`text-xs transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
                           </button>
-                          
+
                           {isCountryOpen && (
                             <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
                               {countries.map((country) => (
@@ -248,7 +252,7 @@ function Register() {
                     </div>
 
                     <Button
-                  
+
                       className="w-full bg-[#1A3263] hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
                     >
                       Next
@@ -333,14 +337,14 @@ function Register() {
 
                     <div className="flex gap-3 mb-6">
                       <Button
-                        
+
                         onClick={() => setCurrentStep(1)}
                         className="flex-1 border-1 border-[#1A3263] hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200"
                       >
                         Back
                       </Button>
                       <Button
-                      
+
                         className="flex-1 bg-[#1A3263] hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
                       >
                         Next
@@ -395,7 +399,7 @@ function Register() {
 
                     <div className="flex gap-3 mb-6">
                       <Button
-                        
+
                         onClick={() => setCurrentStep(2)}
                         className="flex-1 bg-gray-200 border-1 border-[#1A3263] hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200"
                       >
@@ -453,7 +457,7 @@ function Register() {
                 </p>
               </form>
 
-           
+
             </div>
           </div>
         </div>

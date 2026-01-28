@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { FaChevronDown } from 'react-icons/fa'
+import { FaChevronDown, FaHome } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
 import borderImage from '../../assets/images/kf.png'
 
 function ResetPassword() {
-  const [resetType, setResetType] = useState('email') 
+  const [resetType, setResetType] = useState('email')
   const [resetValue, setResetValue] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('+250')
   const [isCountryOpen, setIsCountryOpen] = useState(false)
@@ -42,8 +42,12 @@ function ResetPassword() {
       {/* Main reset password container */}
       <div className="w-full max-w-6xl h-auto bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative">
         {/* Window controls */}
-        <div className="flex items-center gap-2 p-4 border-b border-gray-200">
-          <span className="ml-4 text-[#1A3263] text-sm flex font-bold"><img src={evsLogo} alt="EVS Logo" className="w-5 h-5 mr-2" />EVS Reset Password</span>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <span className="ml-4 text-[#1A3263] text-sm flex font-bold">
+            <img src={evsLogo} alt="EVS Logo" className="w-5 h-5 mr-2" />EVS Reset Password</span>
+          <Link to="/">
+            <FaHome className="text-blue-800 hover:text-gray-600 cursor-pointer ml-auto mr-10 w-6 h-6" />
+          </Link>
         </div>
 
         {/* Content */}
@@ -89,7 +93,7 @@ function ResetPassword() {
             {/* Content */}
             <div className="relative z-10 text-center text-white px-8">
               <div className="mb-6 flex justify-center">
-               <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
+                <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
                   <img src={evsLogo} alt="EVS Logo" className="w-24 h-24 lg:w-34 lg:h-34" />
                 </div>
               </div>
@@ -126,22 +130,20 @@ function ResetPassword() {
                     <button
                       type="button"
                       onClick={() => setResetType('email')}
-                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                        resetType === 'email'
+                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${resetType === 'email'
                           ? 'bg-white text-blue-600 shadow-sm'
                           : 'text-gray-600 hover:text-gray-800'
-                      }`}
+                        }`}
                     >
                       Email
                     </button>
                     <button
                       type="button"
                       onClick={() => setResetType('phone')}
-                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                        resetType === 'phone'
+                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${resetType === 'phone'
                           ? 'bg-white text-blue-600 shadow-sm'
                           : 'text-gray-600 hover:text-gray-800'
-                      }`}
+                        }`}
                     >
                       Phone
                     </button>
@@ -165,7 +167,7 @@ function ResetPassword() {
                           <span className="text-sm text-blue-700">{selectedCountry}</span>
                           <FaChevronDown className={`text-xs transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
                         </button>
-                        
+
                         {isCountryOpen && (
                           <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
                             {countries.map((country) => (
@@ -222,12 +224,12 @@ function ResetPassword() {
                 </p>
               </form>
 
-            
+
             </div>
           </div>
         </div>
       </div>
-    
+
     </div>
   )
 }
