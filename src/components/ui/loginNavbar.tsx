@@ -1,0 +1,37 @@
+import { FaUserPlus } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
+import evsLogo from '../../assets/logos/evs.png'
+
+function LoginNavbar() {
+  return (
+    <div className="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-2 border-b border-gray-200 gap-2 bg-[#1A3263] flex-shrink-0">
+      {/* Logo */}
+      <div className='flex items-center gap-3'>
+        <img src={evsLogo} alt='EVS Logo' className='w-6 h-6 sm:w-8 sm:h-8' />
+        <span className='text-lg sm:text-xl font-semibold text-white'>
+          E-visitor platform
+        </span>
+      </div>
+
+      {/* Nav */}
+      <nav className='hidden md:block'>
+        <ul className='flex gap-4 text-white font-bold text-xl'>
+          <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white'>Home</Link>
+          <li className='hover:text-gray-300 cursor-pointer'>About</li>
+          <li className='hover:text-gray-300 cursor-pointer'>Services</li>
+          <li className='hover:text-gray-300 cursor-pointer'>Contact</li>
+        </ul>
+      </nav>
+
+      {/* Right */}
+      <div className='flex items-center gap-4 text-white'>
+        <Link to="/register" className='rounded-xl bg-white text-blue-800 px-2 py-1 text-lg flex items-center gap-1'>
+          <FaUserPlus size={12} />
+          Register
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+export default LoginNavbar
