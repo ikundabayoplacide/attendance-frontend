@@ -48,11 +48,11 @@ function ResetPassword() {
       {/* Main reset password container */}
       <div className="w-full max-w-6xl h-auto bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative">
         {/* Window controls */}
-        <div className="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-2 border-b border-gray-200 gap-2 bg-[#1A3263] flex-shrink-0">
+        <div className="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-3 border-b border-gray-200 gap-2 bg-[#1A3263] flex-shrink-0">
           {/* Logo */}
           <div className='flex items-center gap-3'>
             <img src={evsLogo} alt='EVS Logo' className='w-6 h-6 sm:w-8 sm:h-8' />
-            <span className='text-xs sm:text-lg font-semibold text-white'>
+            <span className='text-xs sm:text-2xl font-semibold text-white'>
               E-visitor platform
             </span>
           </div>
@@ -60,16 +60,16 @@ function ResetPassword() {
           {/* Nav */}
           <nav className='hidden md:block'>
             <ul className='flex gap-4 text-white font-bold text-sm'>
-              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white'>Home</Link>
-              <li className='hover:text-gray-300 cursor-pointer'>About</li>
-              <li className='hover:text-gray-300 cursor-pointer'>Services</li>
-              <li className='hover:text-gray-300 cursor-pointer'>Contact</li>
+              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white text-2xl'>Home</Link>
+              <li className='hover:text-gray-300 cursor-pointer text-2xl'>About</li>
+              <li className='hover:text-gray-300 cursor-pointer text-2xl'>Services</li>
+              <li className='hover:text-gray-300 cursor-pointer text-2xl '>Contact</li>
             </ul>
           </nav>
 
           {/* Right */}
           <div className='flex items-center gap-4 text-white'>
-            <Link to="/login" className='rounded-xl bg-white text-blue-800 px-2 py-1 text-xs flex items-center gap-1'>
+            <Link to="/login" className='rounded-xl bg-white text-blue-800 px-2 py-1 font-bold text-lg flex items-center gap-1'>
               <FaSignInAlt size={12} />
               Login
             </Link>

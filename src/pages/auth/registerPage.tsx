@@ -68,7 +68,7 @@ function Register() {
           {/* Logo */}
           <div className='flex items-center gap-3'>
             <img src={evsLogo} alt='EVS Logo' className='w-6 h-6 sm:w-8 sm:h-8' />
-            <span className='text-xs sm:text-lg font-semibold text-white'>
+            <span className='text-xs sm:text-2xl font-semibold text-white'>
               E-visitor platform
             </span>
           </div>
@@ -76,16 +76,16 @@ function Register() {
           {/* Nav */}
           <nav className='hidden md:block'>
             <ul className='flex gap-4 text-white font-bold text-sm'>
-              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white'>Home</Link>
-              <li className='hover:text-gray-300 cursor-pointer'>About</li>
-              <li className='hover:text-gray-300 cursor-pointer'>Services</li>
-              <li className='hover:text-gray-300 cursor-pointer'>Contact</li>
+              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white text-2xl'>Home</Link>
+              <li className='hover:text-gray-300 cursor-pointer text-2xl'>About</li>
+              <li className='hover:text-gray-300 cursor-pointer text-2xl'>Services</li>
+              <li className='hover:text-gray-300 cursor-pointer text-2xl'>Contact</li>
             </ul>
           </nav>
 
           {/* Right */}
           <div className='flex items-center gap-4 text-white'>
-            <Link to="/login" className='rounded-xl bg-white text-blue-800 px-2 py-1 text-xs flex items-center gap-1'>
+            <Link to="/login" className='rounded-xl bg-white text-blue-800 px-2 py-1 text-lg flex items-center gap-1 font-bold hover:bg-gray-100 transition-colors'>
               <FaSignInAlt size={12} />
               Login
             </Link>
@@ -140,7 +140,7 @@ function Register() {
                 </div>
               </div>
               <h2 className="text-xl lg:text-3xl font-bold mb-2 tracking-wide">JOIN US</h2>
-              <p className="text-sm lg:text-lg text-blue-100 font-light mb-4">E-Visitors System</p>
+              <p className="text-xl lg:text-lg text-blue-100 font-light mb-4">E-Visitors System</p>
             </div>
             
             {/* Social Media Buttons - positioned at bottom */}

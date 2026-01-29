@@ -47,7 +47,7 @@ function Home() {
             {/* Logo */}
             <div className='flex items-center gap-3'>
               <img src={evsLogo} alt='EVS Logo' className='w-8 h-8 sm:w-12 sm:h-12' />
-              <span className='text-sm sm:text-xl font-semibold text-white'>
+              <span className='text-sm sm:text-2xl font-semibold text-white '>
                 E-visitor platform
               </span>
             </div>
@@ -55,10 +55,10 @@ function Home() {
             {/* Nav */}
             <nav className='hidden md:block'>
               <ul className='flex gap-6 text-white font-bold'>
-                <li className='hover:text-gray-300 cursor-pointer'>Home</li>
-                <li className='hover:text-gray-300 cursor-pointer'>About</li>
-                <li className='hover:text-gray-300 cursor-pointer'>Services</li>
-                <li className='hover:text-gray-300 cursor-pointer'>Contact</li>
+                <li className='hover:text-gray-300 cursor-pointer text-2xl'>Home</li>
+                <li className='hover:text-gray-300 cursor-pointer text-2xl'>About</li>
+                <li className='hover:text-gray-300 cursor-pointer text-2xl'>Services</li>
+                <li className='hover:text-gray-300 cursor-pointer text-2xl'>Contact</li>
               </ul>
             </nav>
 
