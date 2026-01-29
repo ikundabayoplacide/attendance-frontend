@@ -168,14 +168,15 @@ function Login() {
           </svg>
 
           {/* Right side - White section */}
-          <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-2 relative z-50 overflow-y-auto">
-            <div className="w-full max-w-sm">
-              <div className="mb-4">
-                <h3 className="text-xl lg:text-2xl font-bold text-gray-800">Please Sign in</h3>
-                <p className="text-gray-500 text-xs mt-1 mb-4">Login to your account to continue</p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="w-full lg:w-1/2 bg-white flex flex-col p-2 relative z-50">
+            <div className="flex-shrink-0 mb-4">
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-800">Please Sign in</h3>
+              <p className="text-gray-500 text-xs mt-1">Login to your account to continue</p>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto">
+              <div className="w-full max-w-sm mx-auto">
+                <form onSubmit={handleSubmit} className="space-y-3">
                 {/* Login Type Toggle */}
                 <div className="mb-4 border border-gray-400 rounded-lg">
                   <div className="flex bg-gray-100 rounded-lg p-1">
@@ -347,9 +348,8 @@ function Login() {
                     Sign up
                   </Link>
                 </p>
-              </form>
-
-
+                </form>
+              </div>
             </div>
           </div>
 

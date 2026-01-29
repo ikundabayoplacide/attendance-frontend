@@ -176,14 +176,15 @@ function Register() {
           </svg>
 
           {/* Right side - White section */}
-          <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-4 relative z-50 overflow-y-auto">
-            <div className="w-full max-w-sm">
-              <div className="mb-4">
-                <h3 className="text-xl lg:text-2xl font-bold text-gray-800">Create Account</h3>
-                <p className="text-gray-500 text-xs mt-1 mb-4">Fill in your details to register</p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="w-full lg:w-1/2 bg-white flex flex-col p-4 relative z-50">
+            <div className="flex-shrink-0 mb-4">
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-800">Create Account</h3>
+              <p className="text-gray-500 text-xs mt-1">Fill in your details to register</p>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto">
+              <div className="w-full max-w-sm mx-auto">
+                <form onSubmit={handleSubmit} className="space-y-3">
                 {/* Full Name */}
                 <div>
                   <label className="block text-gray-700 text-xs font-medium mb-1">
@@ -357,9 +358,8 @@ function Register() {
                     Sign in
                   </Link>
                 </p>
-              </form>
-
-
+                </form>
+              </div>
             </div>
           </div>
         </div>
