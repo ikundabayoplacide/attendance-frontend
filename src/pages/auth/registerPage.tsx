@@ -99,7 +99,7 @@ function Register() {
           <div
             className="w-full lg:w-1/2 flex flex-col relative overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, #4a6fa5 0%, #3b5998 50%, #2d4373 100%)"
+            background: "linear-gradient(135deg, #09306b 0%, #2f4a83 50%, #2d4373 100%)"
             }}
           >
             {/* Decorative circles */}
