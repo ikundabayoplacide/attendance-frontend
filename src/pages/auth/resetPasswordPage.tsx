@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { FaChevronDown, FaSignInAlt, FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/fa'
+import { FaChevronDown, FaSignInAlt, FaFacebookF, FaLinkedinIn, FaInstagram } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
 import borderImage from '../../assets/images/kf.png'
+import { FaXTwitter } from 'react-icons/fa6'
 
 function ResetPassword() {
   const [resetType, setResetType] = useState('email')
@@ -134,7 +135,7 @@ function ResetPassword() {
                   <FaFacebookF />
                 </button>
                 <button className="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:bg-[#1A91DA] transition-colors">
-                  <FaTwitter />
+                  <FaXTwitter />
                 </button>
                 <button className="w-10 h-10 rounded-full bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white flex items-center justify-center hover:opacity-90 transition-opacity">
                   <FaInstagram />

@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaUserPlus, FaInstagram } from 'react-icons/fa'
+import { FaFacebookF, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaUserPlus, FaInstagram } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
 import borderImage from '../../assets/images/kf.png'
 import Button from '../../components/ui/Button'
+import { FaXTwitter } from 'react-icons/fa6'
 
 
 function Login() {
@@ -142,7 +143,7 @@ function Login() {
                   <FaFacebookF size={12} />
                 </button>
                 <button className="w-8 h-8 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:bg-[#1A91DA] transition-colors">
-                  <FaTwitter size={12} />
+                  <FaXTwitter size={12} />
                 </button>
                 <button className="w-8 h-8 rounded-full bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white flex items-center justify-center hover:opacity-90 transition-opacity">
                   <FaInstagram size={12} />
