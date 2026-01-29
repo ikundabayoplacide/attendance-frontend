@@ -169,7 +169,7 @@ function ResetPassword() {
 
               <form onSubmit={handleSubmit}>
                 {/* Reset Type Toggle */}
-                <div className="mb-4">
+                <div className="mb-4 border border-gray-400 rounded-md">
                   <div className="flex bg-gray-100 rounded-lg p-1">
                     <button
                       type="button"
@@ -205,7 +205,7 @@ function ResetPassword() {
                         <button
                           type="button"
                           onClick={() => setIsCountryOpen(!isCountryOpen)}
-                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-200 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors"
                         >
                           <span>{countries.find(c => c.code === selectedCountry)?.flag}</span>
                           <span className="text-sm text-blue-700">{selectedCountry}</span>
@@ -255,7 +255,7 @@ function ResetPassword() {
                         placeholder="Enter your phone number"
                         value={resetValue}
                         onChange={(e) => setResetValue(e.target.value)}
-                        className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+                        className="flex-1 px-4 py-3 bg-gray-50 border border-gray-400 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
                       />
                     </div>
                   ) : (
@@ -264,7 +264,7 @@ function ResetPassword() {
                       placeholder="Enter your email address"
                       value={resetValue}
                       onChange={(e) => setResetValue(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
                     />
                   )}
                 </div>
