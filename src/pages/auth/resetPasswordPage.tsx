@@ -59,11 +59,11 @@ function ResetPassword() {
 
           {/* Nav */}
           <nav className='hidden md:block'>
-            <ul className='flex gap-4 text-white font-bold text-sm'>
-              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white text-2xl'>Home</Link>
-              <li className='hover:text-gray-300 cursor-pointer text-2xl'>About</li>
-              <li className='hover:text-gray-300 cursor-pointer text-2xl'>Services</li>
-              <li className='hover:text-gray-300 cursor-pointer text-2xl '>Contact</li>
+            <ul className='flex gap-4 text-white font-bold text-xl'>
+              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white '>Home</Link>
+              <Link to="/about" className='hover:text-gray-300 cursor-pointer !text-white'>About</Link>
+              <Link to="/services" className='hover:text-gray-300 cursor-pointer !text-white'>Services</Link>
+              <Link to="/contact" className='hover:text-gray-300 cursor-pointer !text-white'>Contact</Link>
             </ul>
           </nav>
 
@@ -205,9 +205,10 @@ function ResetPassword() {
                         <button
                           type="button"
                           onClick={() => setIsCountryOpen(!isCountryOpen)}
-                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors min-w-[120px]"
                         >
                           <span>{countries.find(c => c.code === selectedCountry)?.flag}</span>
+                          <span className="text-xs text-black">{countries.find(c => c.code === selectedCountry)?.name}</span>
                           <span className="text-sm text-blue-700">{selectedCountry}</span>
                           <FaChevronDown className={`text-xs transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
                         </button>
@@ -255,7 +256,7 @@ function ResetPassword() {
                         placeholder="Enter your phone number"
                         value={resetValue}
                         onChange={(e) => setResetValue(e.target.value)}
-                        className="flex-1 px-4 py-3 bg-gray-50 border border-gray-400 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+                        className="flex-1 py-3 bg-gray-50 border border-gray-400 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
                       />
                     </div>
                   ) : (

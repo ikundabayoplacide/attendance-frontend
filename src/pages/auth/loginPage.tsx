@@ -41,7 +41,7 @@ function Login() {
 
   return (
     <div
-      className="w-full min-h-screen flex items-center justify-center relative px-4 py-8"
+      className="w-screen h-screen flex items-center justify-center relative overflow-hidden"
       style={{
         border: '10px solid transparent',
         borderImage: `url(${borderImage}) 10 repeat`,
@@ -54,41 +54,41 @@ function Login() {
     >
 
       {/* Main login container */}
-      <div className="w-full max-w-6xl h-auto bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative">
+      <div className="w-[95vw] h-[95vh] max-w-6xl bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative flex flex-col">
         {/* Window controls */}
-        <div className="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-3 border-b border-gray-200 gap-2 bg-[#1A3263]">
+        <div className="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-2 border-b border-gray-200 gap-2 bg-[#1A3263] flex-shrink-0">
           {/* Logo */}
           <div className='flex items-center gap-3'>
-            <img src={evsLogo} alt='EVS Logo' className='w-8 h-8 sm:w-12 sm:h-12' />
-            <span className='text-sm sm:text-2xl font-semibold text-white'>
+            <img src={evsLogo} alt='EVS Logo' className='w-6 h-6 sm:w-8 sm:h-8' />
+            <span className='text-lg sm:text-xl font-semibold text-white'>
               E-visitor platform
             </span>
           </div>
 
           {/* Nav */}
           <nav className='hidden md:block'>
-            <ul className='flex gap-6 text-white font-bold'>
-              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white text-2xl'>Home</Link>
-              <li className='hover:text-gray-300 cursor-pointer text-2xl'>About</li>
-              <li className='hover:text-gray-300 cursor-pointer text-2xl'>Services</li>
-              <li className='hover:text-gray-300 cursor-pointer text-2xl'>Contact</li>
+            <ul className='flex gap-4 text-white font-bold text-xl'>
+              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white'>Home</Link>
+              <Link to="/about" className='hover:text-gray-300 cursor-pointer !text-white'>About</Link>
+              <Link to="/services" className='hover:text-gray-300 cursor-pointer !text-white'>Services</Link>
+              <Link to="/contact" className='hover:text-gray-300 cursor-pointer !text-white'>Contact</Link>
             </ul>
           </nav>
 
           {/* Right */}
           <div className='flex items-center gap-4 text-white'>
-            <Link to="/register" className='rounded-xl bg-white text-blue-800 px-3 py-1 text-lg flex items-center gap-2'>
-              <FaUserPlus size={16} />
+            <Link to="/register" className='rounded-xl bg-white text-blue-800 px-2 py-1 text-lg flex items-center gap-1'>
+              <FaUserPlus size={12} />
               Register
             </Link>
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex flex-col lg:flex-row min-h-[500px] relative">
+        <div className="flex flex-col lg:flex-row flex-1 relative overflow-hidden">
           {/* Left side - Blue section */}
           <div
-            className="w-full lg:w-1/2  items-center justify-center relative p-8 lg:p-0 overflow-visible"
+            className="w-full lg:w-1/2 flex flex-col relative overflow-hidden"
             style={{
               background: "linear-gradient(135deg, #4a6fa5 0%, #3b5998 50%, #2d4373 100%)"
             }}
@@ -97,8 +97,8 @@ function Login() {
             <div
               className="absolute rounded-full bg-white opacity-10"
               style={{
-                width: "150px",
-                height: "150px",
+                width: "10vw",
+                height: "10vw",
                 top: "15%",
                 right: "15%",
               }}
@@ -107,8 +107,8 @@ function Login() {
             <div
               className="absolute rounded-full bg-white opacity-5"
               style={{
-                width: "100px",
-                height: "100px",
+                width: "6vw",
+                height: "6vw",
                 top: "50%",
                 left: "20%",
               }}
@@ -117,41 +117,42 @@ function Login() {
             <div
               className="absolute rounded-full bg-white opacity-10"
               style={{
-                width: "180px",
-                height: "180px",
+                width: "12vw",
+                height: "12vw",
                 bottom: "10%",
                 left: "10%",
               }}
             />
 
-            {/* Content */}
-            <div className="relative z-10 text-center text-white px-8 mt-46">
-             
-              
-              <div className="mb-6 flex justify-center">
-                <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
-                  <img src={evsLogo} alt="EVS Logo" className="w-24 h-24 lg:w-34 lg:h-34" />
+            {/* Content - flex-1 to take available space */}
+            <div className="relative z-10 text-center text-white px-4 flex-1 flex flex-col justify-center">
+              <div className="mb-4 flex justify-center">
+                <div className="w-16 h-16 lg:w-24 lg:h-24 rounded-full bg-white flex items-center justify-center shadow-xl">
+                  <img src={evsLogo} alt="EVS Logo" className="w-12 h-12 lg:w-20 lg:h-20" />
                 </div>
               </div>
-              <h2 className="text-2xl lg:text-4xl font-bold mb-3 tracking-wide">WELCOME To</h2>
-              <p className="text-lg lg:text-xl text-blue-100 font-light">E-Visitors System</p>
+              <h2 className="text-xl lg:text-3xl font-bold mb-2 tracking-wide">WELCOME To</h2>
+              <p className="text-sm lg:text-lg text-blue-100 font-light">E-Visitors System</p>
             </div>
-              <div className="flex justify-center gap-4 mt-34 mr-10">
-            <button className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:bg-[#166FE5] transition-colors">
-              <FaFacebookF />
-            </button>
-            <button className="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:bg-[#1A91DA] transition-colors">
-              <FaTwitter />
-            </button>
-            <button className="w-10 h-10 rounded-full bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white flex items-center justify-center hover:opacity-90 transition-opacity">
-              <FaInstagram />
-            </button>
-            <button className="w-10 h-10 rounded-full bg-[#0A66C2] text-white flex items-center justify-center hover:bg-[#004182] transition-colors">
-              <FaLinkedinIn />
-            </button>
+            
+            {/* Social Media Buttons - positioned at bottom */}
+            <div className="relative z-10 pb-6 flex justify-center">
+              <div className="flex justify-center gap-3">
+                <button className="w-8 h-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:bg-[#166FE5] transition-colors">
+                  <FaFacebookF size={12} />
+                </button>
+                <button className="w-8 h-8 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:bg-[#1A91DA] transition-colors">
+                  <FaTwitter size={12} />
+                </button>
+                <button className="w-8 h-8 rounded-full bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white flex items-center justify-center hover:opacity-90 transition-opacity">
+                  <FaInstagram size={12} />
+                </button>
+                <button className="w-8 h-8 rounded-full bg-[#0A66C2] text-white flex items-center justify-center hover:bg-[#004182] transition-colors">
+                  <FaLinkedinIn size={12} />
+                </button>
+              </div>
+            </div>
           </div>
-          </div>
-          
 
           {/* S-Curve Divider - positioned absolutely between sections */}
           <svg
@@ -166,17 +167,15 @@ function Login() {
             />
           </svg>
 
-        
-
           {/* Right side - White section */}
-          <div className="w-full lg:w-1/2 bg-white flex items-center justify-center  p-26 lg:p-12 relative z-50">
+          <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-2 relative z-50 overflow-y-auto">
             <div className="w-full max-w-sm">
-              <div className="mb-6">
-                <h3 className="text-2xl lg:text-3xl font-bold text-gray-800 ">Please Sign in</h3>
-                <p className="text-gray-500 text-sm mt-2 mb-8">Login to your account to continue</p>
+              <div className="mb-4">
+                <h3 className="text-xl lg:text-2xl font-bold text-gray-800">Please Sign in</h3>
+                <p className="text-gray-500 text-xs mt-1 mb-4">Login to your account to continue</p>
               </div>
 
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="space-y-3">
                 {/* Login Type Toggle */}
                 <div className="mb-4 border border-gray-400 rounded-lg">
                   <div className="flex bg-gray-100 rounded-lg p-1">
@@ -214,9 +213,10 @@ function Login() {
                         <button
                           type="button"
                           onClick={() => setIsCountryOpen(!isCountryOpen)}
-                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors min-w-[120px]"
                         >
                           <span>{countries.find(c => c.code === selectedCountry)?.flag}</span>
+                          <span className="text-xs text-black">{countries.find(c => c.code === selectedCountry)?.name}</span>
                           <span className="text-sm text-blue-700">{selectedCountry}</span>
                           <FaChevronDown className={`text-xs transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
                         </button>

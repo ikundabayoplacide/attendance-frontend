@@ -24,7 +24,7 @@ function Home() {
   ]
   return (
     <div
-      className='w-full min-h-screen flex justify-center items-center relative'
+      className='w-full h-screen flex justify-center items-center relative overflow-hidden'
       style={{
         border: '10px solid transparent',
         borderImage: `url(${borderImage}) 10 10 10 10 repeat`,
@@ -36,7 +36,7 @@ function Home() {
     >
 
       {/* MAIN CARD */}
-      <div className='w-full sm:w-11/12 md:w-10/12 lg:w-9/12 h-5/6 mb-16 mx-2 sm:mx-4 rounded-xl sm:rounded-3xl shadow-2xl border border-gray-100 relative bg-white/90 backdrop-blur-md'>
+      <div className='w-full sm:w-11/12 md:w-10/12 lg:w-9/12 h-5/6 mx-2 sm:mx-4 rounded-xl sm:rounded-3xl shadow-2xl border border-gray-100 relative bg-white/90 backdrop-blur-md'>
 
         <div className='h-full flex flex-col'>
 
@@ -55,10 +55,10 @@ function Home() {
             {/* Nav */}
             <nav className='hidden md:block'>
               <ul className='flex gap-6 text-white font-bold'>
-                <li className='hover:text-gray-300 cursor-pointer text-2xl'>Home</li>
-                <li className='hover:text-gray-300 cursor-pointer text-2xl'>About</li>
-                <li className='hover:text-gray-300 cursor-pointer text-2xl'>Services</li>
-                <li className='hover:text-gray-300 cursor-pointer text-2xl'>Contact</li>
+                <li className='hover:text-gray-300 cursor-pointer text-xl'>Home</li>
+                <li className='hover:text-gray-300 cursor-pointer text-xl'>About</li>
+                <li className='hover:text-gray-300 cursor-pointer text-xl'>Services</li>
+                <li className='hover:text-gray-300 cursor-pointer text-xl'>Contact</li>
               </ul>
             </nav>
 
