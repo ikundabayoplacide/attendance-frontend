@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaHome } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaUserPlus, FaInstagram } from 'react-icons/fa'
+import { FcGoogle } from 'react-icons/fc'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
@@ -14,6 +15,7 @@ function Login() {
   const [loginValue, setLoginValue] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('+250')
   const [isCountryOpen, setIsCountryOpen] = useState(false)
+  const [countrySearch, setCountrySearch] = useState('')
   const [password, setPassword] = useState('')
 
   const countries = [
@@ -25,6 +27,11 @@ function Login() {
     { code: '+254', name: 'Kenya', flag: '🇰🇪' },
     { code: '+256', name: 'Uganda', flag: '🇺🇬' }
   ]
+
+  const filteredCountries = countries.filter(country => 
+    country.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+    country.code.includes(countrySearch)
+  )
 
   const handleSubmit = (e: any) => {
     e.preventDefault()
@@ -49,20 +56,39 @@ function Login() {
       {/* Main login container */}
       <div className="w-full max-w-6xl h-auto bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative">
         {/* Window controls */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <span className="ml-4 text-[#1A3263] text-sm flex font-bold">
-            <img src={evsLogo} alt="EVS Logo" className="w-5 h-5 mr-2" />EVS Login
-          </span>
-          <Link to="/">
-            <FaHome className="text-blue-800 hover:text-gray-600 cursor-pointer ml-auto mr-10 w-6 h-6" />
-          </Link>
+        <div className="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-3 border-b border-gray-200 gap-2 bg-[#1A3263]">
+          {/* Logo */}
+          <div className='flex items-center gap-3'>
+            <img src={evsLogo} alt='EVS Logo' className='w-8 h-8 sm:w-12 sm:h-12' />
+            <span className='text-sm sm:text-xl font-semibold text-white'>
+              E-visitor platform
+            </span>
+          </div>
+
+          {/* Nav */}
+          <nav className='hidden md:block'>
+            <ul className='flex gap-6 text-white font-bold'>
+              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white'>Home</Link>
+              <li className='hover:text-gray-300 cursor-pointer'>About</li>
+              <li className='hover:text-gray-300 cursor-pointer'>Services</li>
+              <li className='hover:text-gray-300 cursor-pointer'>Contact</li>
+            </ul>
+          </nav>
+
+          {/* Right */}
+          <div className='flex items-center gap-4 text-white'>
+            <Link to="/register" className='rounded-xl bg-white text-blue-800 px-3 py-1 text-sm flex items-center gap-2'>
+              <FaUserPlus size={16} />
+              Register
+            </Link>
+          </div>
         </div>
 
         {/* Content */}
         <div className="flex flex-col lg:flex-row min-h-[500px] relative">
           {/* Left side - Blue section */}
           <div
-            className="w-full lg:w-1/2 flex items-center justify-center relative p-8 lg:p-0 overflow-visible"
+            className="w-full lg:w-1/2  items-center justify-center relative p-8 lg:p-0 overflow-visible"
             style={{
               background: "linear-gradient(135deg, #4a6fa5 0%, #3b5998 50%, #2d4373 100%)"
             }}
@@ -99,7 +125,9 @@ function Login() {
             />
 
             {/* Content */}
-            <div className="relative z-10 text-center text-white px-8">
+            <div className="relative z-10 text-center text-white px-8 mt-46">
+             
+              
               <div className="mb-6 flex justify-center">
                 <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
                   <img src={evsLogo} alt="EVS Logo" className="w-24 h-24 lg:w-34 lg:h-34" />
@@ -108,7 +136,22 @@ function Login() {
               <h2 className="text-2xl lg:text-4xl font-bold mb-3 tracking-wide">WELCOME To</h2>
               <p className="text-lg lg:text-xl text-blue-100 font-light">E-Visitors System</p>
             </div>
+              <div className="flex justify-center gap-4 mt-34 mr-10">
+            <button className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:bg-[#166FE5] transition-colors">
+              <FaFacebookF />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:bg-[#1A91DA] transition-colors">
+              <FaTwitter />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white flex items-center justify-center hover:opacity-90 transition-opacity">
+              <FaInstagram />
+            </button>
+            <button className="w-10 h-10 rounded-full bg-[#0A66C2] text-white flex items-center justify-center hover:bg-[#004182] transition-colors">
+              <FaLinkedinIn />
+            </button>
           </div>
+          </div>
+          
 
           {/* S-Curve Divider - positioned absolutely between sections */}
           <svg
@@ -123,17 +166,19 @@ function Login() {
             />
           </svg>
 
+        
+
           {/* Right side - White section */}
           <div className="w-full lg:w-1/2 bg-white flex items-center justify-center  p-26 lg:p-12 relative z-50">
             <div className="w-full max-w-sm">
               <div className="mb-6">
-                <h3 className="text-2xl lg:text-3xl font-bold text-gray-800">Please Sign in</h3>
+                <h3 className="text-2xl lg:text-3xl font-bold text-gray-800 ">Please Sign in</h3>
                 <p className="text-gray-500 text-sm mt-2 mb-8">Login to your account to continue</p>
               </div>
 
               <form onSubmit={handleSubmit}>
                 {/* Login Type Toggle */}
-                <div className="mb-4">
+                <div className="mb-4 border border-gray-400 rounded-lg">
                   <div className="flex bg-gray-100 rounded-lg p-1">
                     <button
                       type="button"
@@ -148,7 +193,7 @@ function Login() {
                     <button
                       type="button"
                       onClick={() => setLoginType('phone')}
-                      className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${loginType === 'phone'
+                      className={`flex-1 py-2 px-4 rounded-md  text-sm font-medium transition-colors ${loginType === 'phone'
                           ? 'bg-white text-blue-600 shadow-sm'
                           : 'text-gray-600 hover:text-gray-800'
                         }`}
@@ -169,7 +214,7 @@ function Login() {
                         <button
                           type="button"
                           onClick={() => setIsCountryOpen(!isCountryOpen)}
-                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-200 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors"
                         >
                           <span>{countries.find(c => c.code === selectedCountry)?.flag}</span>
                           <span className="text-sm text-blue-700">{selectedCountry}</span>
@@ -177,22 +222,40 @@ function Login() {
                         </button>
 
                         {isCountryOpen && (
-                          <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
-                            {countries.map((country) => (
-                              <button
-                                key={country.code}
-                                type="button"
-                                onClick={() => {
-                                  setSelectedCountry(country.code)
-                                  setIsCountryOpen(false)
-                                }}
-                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                              >
-                                <span>{country.flag}</span>
-                                <span>{country.code}</span>
-                                <span>{country.name}</span>
-                              </button>
-                            ))}
+                          <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-400 py-1 min-w-[200px] z-50">
+                            <div className="px-3 py-2 border-b border-gray-200">
+                              <input
+                                type="text"
+                                placeholder="Search country..."
+                                value={countrySearch}
+                                onChange={(e) => setCountrySearch(e.target.value)}
+                                className="w-full px-2 py-1 text-black text-sm border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                autoFocus
+                              />
+                            </div>
+                            <div className="max-h-40 overflow-y-auto  hide-scrollbar">
+                              {filteredCountries.map((country) => (
+                                <button
+                                  key={country.code}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedCountry(country.code)
+                                    setIsCountryOpen(false)
+                                    setCountrySearch('')
+                                  }}
+                                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                >
+                                  <span>{country.flag}</span>
+                                  <span>{country.code}</span>
+                                  <span>{country.name}</span>
+                                </button>
+                              ))}
+                              {filteredCountries.length === 0 && (
+                                <div className="px-3 py-2 text-sm text-gray-500 text-center">
+                                  No countries found
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -201,7 +264,7 @@ function Login() {
                         placeholder="Enter your phone number"
                         value={loginValue}
                         onChange={(e) => setLoginValue(e.target.value)}
-                        className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+                        className="flex-1 px-4 py-3 bg-gray-50 border border-gray-400 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
                       />
                     </div>
                   ) : (
@@ -210,7 +273,7 @@ function Login() {
                       placeholder="Enter your email address"
                       value={loginValue}
                       onChange={(e) => setLoginValue(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
                     />
                   )}
                 </div>
@@ -226,7 +289,7 @@ function Login() {
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
                     />
                     <button
                       type="button"
@@ -264,31 +327,18 @@ function Login() {
                 {/* Divider */}
                 <div className="flex items-center mb-6">
                   <div className="flex-1 border-t border-gray-300"></div>
-                  <span className="px-4 text-sm text-gray-500">or continue with</span>
+                  <span className="px-4 text-sm text-gray-500">or</span>
                   <div className="flex-1 border-t border-gray-300"></div>
                 </div>
 
-                {/* Social login buttons */}
-                <div className="flex justify-center gap-4 mb-4">
-                  <button
-                    type="button"
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200"
-                  >
-                    <FaFacebookF size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 hover:bg-blue-500 text-white transition-colors duration-200"
-                  >
-                    <FaTwitter size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-700 hover:bg-blue-800 text-white transition-colors duration-200"
-                  >
-                    <FaLinkedinIn size={16} />
-                  </button>
-                </div>
+                {/* Google Sign In */}
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 mb-4"
+                >
+                  <FcGoogle size={20} />
+                  <span className="text-gray-700 font-medium">Sign in with Google</span>
+                </button>
 
                 {/* Sign up link */}
                 <p className="text-center mb-2 text-sm text-gray-600">
