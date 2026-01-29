@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaChevronDown, FaHome } from 'react-icons/fa'
+import { FaChevronDown, FaSignInAlt, FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
@@ -48,19 +48,39 @@ function ResetPassword() {
       {/* Main reset password container */}
       <div className="w-full max-w-6xl h-auto bg-white backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative">
         {/* Window controls */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <span className="ml-4 text-[#1A3263] text-sm flex font-bold">
-            <img src={evsLogo} alt="EVS Logo" className="w-5 h-5 mr-2" />EVS Reset Password</span>
-          <Link to="/">
-            <FaHome className="text-blue-800 hover:text-gray-600 cursor-pointer ml-auto mr-10 w-6 h-6" />
-          </Link>
+        <div className="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-2 border-b border-gray-200 gap-2 bg-[#1A3263] flex-shrink-0">
+          {/* Logo */}
+          <div className='flex items-center gap-3'>
+            <img src={evsLogo} alt='EVS Logo' className='w-6 h-6 sm:w-8 sm:h-8' />
+            <span className='text-xs sm:text-lg font-semibold text-white'>
+              E-visitor platform
+            </span>
+          </div>
+
+          {/* Nav */}
+          <nav className='hidden md:block'>
+            <ul className='flex gap-4 text-white font-bold text-sm'>
+              <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white'>Home</Link>
+              <li className='hover:text-gray-300 cursor-pointer'>About</li>
+              <li className='hover:text-gray-300 cursor-pointer'>Services</li>
+              <li className='hover:text-gray-300 cursor-pointer'>Contact</li>
+            </ul>
+          </nav>
+
+          {/* Right */}
+          <div className='flex items-center gap-4 text-white'>
+            <Link to="/login" className='rounded-xl bg-white text-blue-800 px-2 py-1 text-xs flex items-center gap-1'>
+              <FaSignInAlt size={12} />
+              Login
+            </Link>
+          </div>
         </div>
 
         {/* Content */}
         <div className="flex flex-col lg:flex-row min-h-[500px] relative">
           {/* Left side - Blue section */}
           <div
-            className="w-full lg:w-1/2 flex items-center justify-center relative p-8 lg:p-0 overflow-visible"
+            className="w-full lg:w-1/2 flex flex-col relative overflow-visible"
             style={{
               background: "linear-gradient(135deg, #4a6fa5 0%, #3b5998 50%, #2d4373 100%)"
             }}
@@ -96,8 +116,8 @@ function ResetPassword() {
               }}
             />
 
-            {/* Content */}
-            <div className="relative z-10 text-center text-white px-8">
+            {/* Content - flex-1 to take available space */}
+            <div className="relative z-10 text-center text-white px-8 flex-1 flex flex-col justify-center">
               <div className="mb-6 flex justify-center">
                 <div className="w-24 h-24 lg:w-48 lg:h-48 rounded-full bg-white flex items-center justify-center shadow-xl">
                   <img src={evsLogo} alt="EVS Logo" className="w-24 h-24 lg:w-34 lg:h-34" />
@@ -105,6 +125,24 @@ function ResetPassword() {
               </div>
               <h2 className="text-2xl lg:text-4xl font-bold mb-3 tracking-wide">RESET PASSWORD</h2>
               <p className="text-lg lg:text-xl text-blue-100 font-light">E-Visitors System</p>
+            </div>
+            
+            {/* Social Media Buttons - positioned at bottom */}
+            <div className="relative z-10 pb-6 flex justify-center">
+              <div className="flex justify-center gap-4">
+                <button className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:bg-[#166FE5] transition-colors">
+                  <FaFacebookF />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:bg-[#1A91DA] transition-colors">
+                  <FaTwitter />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white flex items-center justify-center hover:opacity-90 transition-opacity">
+                  <FaInstagram />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-[#0A66C2] text-white flex items-center justify-center hover:bg-[#004182] transition-colors">
+                  <FaLinkedinIn />
+                </button>
+              </div>
             </div>
           </div>
 
