@@ -10,6 +10,7 @@ function ResetPassword() {
   const [resetValue, setResetValue] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('+250')
   const [isCountryOpen, setIsCountryOpen] = useState(false)
+  const [countrySearch, setCountrySearch] = useState('')
 
   const countries = [
     { code: '+250', name: 'Rwanda', flag: '🇷🇼' },
@@ -20,6 +21,11 @@ function ResetPassword() {
     { code: '+254', name: 'Kenya', flag: '🇰🇪' },
     { code: '+256', name: 'Uganda', flag: '🇺🇬' }
   ]
+
+  const filteredCountries = countries.filter(country => 
+    country.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+    country.code.includes(countrySearch)
+  )
 
   const handleSubmit = (e: any) => {
     e.preventDefault()
@@ -170,13 +176,25 @@ function ResetPassword() {
 
                         {isCountryOpen && (
                           <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
-                            {countries.map((country) => (
+                            <div className="px-3 py-2 border-b border-gray-200">
+                              <input
+                                type="text"
+                                placeholder="Search country..."
+                                value={countrySearch}
+                                onChange={(e) => setCountrySearch(e.target.value)}
+                                className="w-full px-2 py-1 text-black text-sm border border-gray-400 rounded focus:outline-none focus:ring-1 focus:ring-blue-400"
+                                autoFocus
+                              />
+                            </div>
+                            <div className="max-h-40 overflow-y-auto hide-scrollbar">
+                            {filteredCountries.map((country) => (
                               <button
                                 key={country.code}
                                 type="button"
                                 onClick={() => {
                                   setSelectedCountry(country.code)
                                   setIsCountryOpen(false)
+                                  setCountrySearch('')
                                 }}
                                 className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
                               >
@@ -185,6 +203,12 @@ function ResetPassword() {
                                 <span className="text-black">{country.name}</span>
                               </button>
                             ))}
+                            {filteredCountries.length === 0 && (
+                              <div className="px-3 py-2 text-sm text-gray-500 text-center">
+                                No countries found
+                              </div>
+                            )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -210,7 +234,7 @@ function ResetPassword() {
                 {/* Reset button */}
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
+                  className="w-full bg-[#1A3263] hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
                 >
                   Send Reset Link
                 </button>

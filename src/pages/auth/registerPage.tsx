@@ -195,7 +195,7 @@ function Register() {
                     placeholder="Enter your full name"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400 text-sm"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400 text-sm"
                   />
                 </div>
 
@@ -210,7 +210,7 @@ function Register() {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400 text-sm"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400 text-sm"
                   />
                 </div>
 
