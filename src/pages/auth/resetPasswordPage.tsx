@@ -14,13 +14,13 @@ function ResetPassword() {
   const [countrySearch, setCountrySearch] = useState('')
 
   const countries = [
-    { code: '+250', name: 'Rwanda', flag: '🇷🇼' },
-    { code: '+1', name: 'USA', flag: '🇺🇸' },
-    { code: '+44', name: 'UK', flag: '🇬🇧' },
-    { code: '+33', name: 'France', flag: '🇫🇷' },
-    { code: '+49', name: 'Germany', flag: '🇩🇪' },
-    { code: '+254', name: 'Kenya', flag: '🇰🇪' },
-    { code: '+256', name: 'Uganda', flag: '🇺🇬' }
+    { code: '+250', name: 'Rwanda', flag: 'RW' },
+    { code: '+1', name: 'USA', flag: 'US' },
+    { code: '+44', name: 'UK', flag: 'GB' },
+    { code: '+33', name: 'France', flag: 'FR' },
+    { code: '+49', name: 'Germany', flag: 'DE' },
+    { code: '+254', name: 'Kenya', flag: 'KE' },
+    { code: '+256', name: 'Uganda', flag: 'UG' }
   ]
 
   const filteredCountries = countries.filter(country => 
@@ -206,9 +206,13 @@ function ResetPassword() {
                         <button
                           type="button"
                           onClick={() => setIsCountryOpen(!isCountryOpen)}
-                          className="flex items-center gap-2 px-3 py-3 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors min-w-[120px]"
+                          className="flex items-center gap-2 px-3 py-4 bg-gray-50 border border-gray-400 border-r-0 rounded-l-lg hover:bg-gray-100 transition-colors min-w-[120px]"
                         >
-                          <span>{countries.find(c => c.code === selectedCountry)?.flag}</span>
+                          <img 
+                            src={`https://flagcdn.com/16x12/${countries.find(c => c.code === selectedCountry)?.flag.toLowerCase()}.png`}
+                            alt={countries.find(c => c.code === selectedCountry)?.name}
+                            className="w-4 h-3"
+                          />
                           <span className="text-xs text-black">{countries.find(c => c.code === selectedCountry)?.name}</span>
                           <span className="text-sm text-blue-700">{selectedCountry}</span>
                           <FaChevronDown className={`text-xs transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
@@ -238,7 +242,11 @@ function ResetPassword() {
                                 }}
                                 className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 flex items-center gap-2"
                               >
-                                <span>{country.flag}</span>
+                                <img 
+                                  src={`https://flagcdn.com/16x12/${country.flag.toLowerCase()}.png`}
+                                  alt={country.name}
+                                  className="w-4 h-3"
+                                />
                                 <span className="text-black">{country.code}</span>
                                 <span className="text-black">{country.name}</span>
                               </button>
