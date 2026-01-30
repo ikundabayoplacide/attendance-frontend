@@ -1,4 +1,4 @@
-import { FaHome, FaUsers, FaCalendarCheck, FaChartBar, FaCog, FaUserCheck, FaEye, FaExclamationTriangle, FaCalendarAlt, FaBell, FaServer, FaTimes } from 'react-icons/fa'
+import { FaHome, FaUsers, FaCalendarCheck, FaChartBar, FaCog, FaUserCheck, FaEye, FaExclamationTriangle, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard } from 'react-icons/fa'
 import { Link, useLocation } from 'react-router-dom'
 
 interface DashboardSidebarProps {
@@ -12,15 +12,17 @@ function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
   const menuItems = [
     { path: '/dashboard', icon: FaHome, label: 'Dashboard Overview', exact: true },
     { path: '/dashboard/users', icon: FaUsers, label: 'User & Roles' },
-    { path: '/dashboard/live-monitoring', icon: FaEye, label: 'Live Monitoring' },
+    { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Subscription' },
+    { path: '/dashboard/livemonitoring', icon: FaEye, label: 'Live Monitoring' },
     { path: '/dashboard/visitors', icon: FaUsers, label: 'Visitor Management' },
     { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Host Management' },
     { path: '/dashboard/approvals', icon: FaCalendarCheck, label: 'Visit Approvals' },
     { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments' },
-    { path: '/dashboard/security', icon: FaExclamationTriangle, label: 'Security & Alerts' },
     { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports & Analytics' },
+    { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
     { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
-    { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' }
+    { path: '/dashboard/security', icon: FaExclamationTriangle, label: 'Security & Alerts' },
+
   ]
 
   const settingsItem = { path: '/dashboard/settings', icon: FaCog, label: 'Settings' }

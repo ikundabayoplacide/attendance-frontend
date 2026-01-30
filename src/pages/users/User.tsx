@@ -1,14 +1,19 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FaUsers, FaUserShield, FaUserCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaToggleOn, FaToggleOff } from 'react-icons/fa'
-import { AddUserModal, AddRoleModal } from '../components/modals'
+import { AddUserModal, AddRoleModal } from '../../components/modals'
+import DeleteUserModal from '../../components/modals/DeleteUserModal'
 
 function Users() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('users')
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [showAddUserModal, setShowAddUserModal] = useState(false)
   const [showAddRoleModal, setShowAddRoleModal] = useState(false)
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<{ id: number; name: string } | null>(null)
 
   const handleAddUser = (userData: any) => {
     console.log('Adding user:', userData)
@@ -18,6 +23,20 @@ function Users() {
   const handleAddRole = (roleData: any) => {
     console.log('Adding role:', roleData)
     // Add role logic here
+  }
+
+  const handleDeleteUser = (user: { id: number; name: string }) => {
+    setUserToDelete(user)
+    setShowDeleteUserModal(true)
+  }
+
+  const confirmDeleteUser = () => {
+    if (userToDelete) {
+      console.log('Deleting user:', userToDelete)
+      // Add delete user logic here
+      setShowDeleteUserModal(false)
+      setUserToDelete(null)
+    }
   }
 
   const stats = [
@@ -238,13 +257,17 @@ function Users() {
                       <td className="py-4 px-4 text-gray-700">{user.lastLogin}</td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-2">
-                          <button className="p-2 text-gray-400 hover:text-blue-600">
+                          <button 
+                            className="p-2 text-gray-400 hover:text-blue-600"
+                            onClick={() => navigate(`/dashboard/users/${user.id}`)}
+                            title="View Details"
+                          >
                             <FaEye size={14} />
                           </button>
                           <button className="p-2 text-gray-400 hover:text-green-600">
                             <FaEdit size={14} />
                           </button>
-                          <button className="p-2 text-gray-400 hover:text-red-600">
+                          <button className="p-2 text-gray-400 hover:text-red-600" onClick={() => handleDeleteUser({ id: user.id, name: user.name })}>
                             <FaTrash size={14} />
                           </button>
                         </div>
@@ -338,6 +361,16 @@ function Users() {
         isOpen={showAddRoleModal}
         onClose={() => setShowAddRoleModal(false)}
         onSubmit={handleAddRole}
+      />
+
+      <DeleteUserModal
+        isOpen={showDeleteUserModal}
+        onClose={() => {
+          setShowDeleteUserModal(false)
+          setUserToDelete(null)
+        }}
+        onConfirm={confirmDeleteUser}
+        userName={userToDelete?.name || ''}
       />
     </div>
   )

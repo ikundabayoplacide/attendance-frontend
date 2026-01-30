@@ -27,20 +27,20 @@ function Navbar() {
 
       {/* Nav */}
       <nav className='hidden md:block'>
-        <ul className='flex gap-9 text-white font-bold'>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+        <ul className='flex gap-6 text-white font-bold'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
             <FaHome size={16} />
             Home
           </li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
             <FaInfoCircle size={16} />
             About
           </li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
             <FaCogs size={16} />
             Services
           </li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
             <FaEnvelope size={16} />
             Contact
           </li>

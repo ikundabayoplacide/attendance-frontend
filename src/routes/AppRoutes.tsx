@@ -1,13 +1,26 @@
 import { Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home'
-import Login from '../pages/auth/loginPage'
-import Register from '../pages/auth/registerPage'
-import ResetPassword from '../pages/auth/resetPasswordPage'
+
 import DashboardLayout from '../layouts/DashboardLayout'
 import Dashboard from '../pages/Dashboard'
 import Visitors from '../pages/Visitors'
 import Attendance from '../pages/Attendance'
-import Users from '../pages/Users'
+import Users from '../pages/users/User'
+import UserDetails from '../pages/users/UserDetail'
+import Login from '../pages/auth/loginPage'
+import Register from '../pages/auth/registerPage'
+import ResetPassword from '../pages/auth/resetPasswordPage'
+import LiveMonitoringPage from '../pages/live-monitoring'
+import Hostmanagement from '../pages/host'
+import SubBillingsPage from '../pages/Sub&billing'
+import ApprovePage from '../pages/Approval'
+import AppointmentPage from '../pages/Appointment'
+import ReportPage from '../pages/Report'
+import SystemHealthly from '../pages/system-healthly'
+import Notifications from '../pages/Notification'
+import Settings from '../pages/Setting'
+import SecurityPage from '../pages/security'
+
 
 function AppRoutes() {
   return (
@@ -23,9 +36,18 @@ function AppRoutes() {
         <Route index element={<Dashboard />} />
         <Route path="visitors" element={<Visitors />} />
         <Route path="attendance" element={<Attendance />} />
+        <Route path="liveMonitoring" element={<LiveMonitoringPage />} />
         <Route path="users" element={<Users />} />
-        <Route path="reports" element={<div className="p-6"><h1 className="text-2xl font-bold text-black">Reports</h1><p className="text-gray-600">Reports features coming soon.</p></div>} />
-        <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold text-black">Settings</h1><p className="text-gray-600">Settings features coming soon.</p></div>} />
+        <Route path="users/:id" element={<UserDetails />} />
+        <Route path="hosts" element={<Hostmanagement/>}/>
+        <Route path="billings" element={<SubBillingsPage/>}/>
+        <Route path="approvals" element={<ApprovePage/>}/>
+        <Route path="appointments" element={<AppointmentPage/>}/>
+        <Route path="reports" element={<ReportPage/>}/>
+        <Route path="system-health" element={<SystemHealthly/>}/>
+        <Route path="notifications" element={<Notifications/>}/>
+        <Route path="security" element={<SecurityPage/>}/>
+        <Route path="settings" element={<Settings />}/>
       </Route>
     </Routes>
   )

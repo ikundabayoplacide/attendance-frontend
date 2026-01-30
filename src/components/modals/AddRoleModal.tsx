@@ -31,8 +31,9 @@ function AddRoleModal({ isOpen, onClose, onSubmit }: AddRoleModalProps) {
             <input
               type="text"
               value={formData.name}
+              placeholder='e.g., Administrator'
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              className="w-full px-3 text-black py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
               required
             />
           </div>
@@ -41,8 +42,9 @@ function AddRoleModal({ isOpen, onClose, onSubmit }: AddRoleModalProps) {
             <textarea
               rows={3}
               value={formData.description}
+              placeholder='Brief description of the role'
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              className="w-full px-3 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
               required
             />
           </div>

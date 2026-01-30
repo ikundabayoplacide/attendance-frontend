@@ -51,7 +51,7 @@ function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             <div className="w-8 h-8 bg-[#1A3263] rounded-full flex items-center justify-center">
               <FaUser className="text-white" size={14} />
             </div>
-            <span className="text-sm font-medium text-gray-700">Admin</span>
+            <span className="text-sm font-medium text-gray-700">Owner</span>
           </div>
 
           {isDropdownOpen && (

@@ -1,8 +1,8 @@
 function Visitors() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Visitors Management</h1>
+      <div className="flex-shrink-0 mb-2">
+        <h1 className="!text-3xl font-bold  text-gray-900">Visitors Management</h1>
         <p className="text-gray-600">Manage and track all visitors</p>
       </div>
 
