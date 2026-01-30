@@ -1,4 +1,4 @@
-import { FaSignInAlt } from 'react-icons/fa'
+import { FaSignInAlt, FaHome, FaInfoCircle, FaCogs, FaEnvelope } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 
@@ -15,11 +15,23 @@ function RegisterNavbar() {
 
       {/* Nav */}
       <nav className='hidden md:block'>
-        <ul className='flex gap-4 text-white font-bold text-xl'>
-          <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white'>Home</Link>
-          <Link to="/about" className='hover:text-gray-300 cursor-pointer !text-white'>About</Link>
-          <Link to="/services" className='hover:text-gray-300 cursor-pointer !text-white'>Services</Link>
-          <Link to="/contact" className='hover:text-gray-300 cursor-pointer !text-white'>Contact</Link>
+        <ul className='flex gap-9 text-white !font-bold text-xl'>
+          <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+            <FaHome size={16} />
+            Home
+          </Link>
+          <Link to="/about" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+            <FaInfoCircle size={16} />
+            About
+          </Link>
+          <Link to="/services" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+            <FaCogs size={16} />
+            Services
+          </Link>
+          <Link to="/contact" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+            <FaEnvelope size={16} />
+            Contact
+          </Link>
         </ul>
       </nav>
 

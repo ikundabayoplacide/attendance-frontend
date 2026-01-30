@@ -1,17 +1,20 @@
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import DashboardHeader from '../components/ui/dashboardHeader'
 import DashboardSidebar from '../components/ui/dashboardSidebar'
 
 function DashboardLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <DashboardHeader />
+      <DashboardHeader onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <DashboardSidebar />
+        <DashboardSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
         
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">

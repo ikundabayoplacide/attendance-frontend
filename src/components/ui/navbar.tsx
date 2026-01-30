@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaChevronDown, FaSignInAlt } from 'react-icons/fa'
+import { FaChevronDown, FaSignInAlt, FaHome, FaInfoCircle, FaCogs, FaEnvelope } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 
@@ -27,11 +27,23 @@ function Navbar() {
 
       {/* Nav */}
       <nav className='hidden md:block'>
-        <ul className='flex gap-6 text-white font-bold'>
-          <li className='hover:text-gray-300 cursor-pointer text-xl'>Home</li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl'>About</li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl'>Services</li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl'>Contact</li>
+        <ul className='flex gap-9 text-white font-bold'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+            <FaHome size={16} />
+            Home
+          </li>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+            <FaInfoCircle size={16} />
+            About
+          </li>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+            <FaCogs size={16} />
+            Services
+          </li>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-3'>
+            <FaEnvelope size={16} />
+            Contact
+          </li>
         </ul>
       </nav>
 

@@ -1,9 +1,14 @@
 import { FaBell, FaUser } from 'react-icons/fa'
+import { HiOutlineMenu } from 'react-icons/hi'
 import { IoMdLogOut } from 'react-icons/io'
 import { useState, useEffect, useRef } from 'react'
 import evsLogo from '../../assets/logos/evs.png'
 
-function DashboardHeader() {
+interface DashboardHeaderProps {
+  onMenuClick: () => void
+}
+
+function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -20,10 +25,16 @@ function DashboardHeader() {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-      {/* Logo */}
+      {/* Left side */}
       <div className="flex items-center gap-3">
+        <button 
+          onClick={onMenuClick}
+          className="lg:hidden p-2 text-gray-600 hover:text-[#1A3263] hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <HiOutlineMenu size={20} />
+        </button>
         <img src={evsLogo} alt="EVS Logo" className="w-8 h-8" />
-        <span className="text-2xl font-bold text-[#1A3263]">E-Visitors Dashboard</span>
+        <span className="text-2xl font-bold text-[#1A3263] hidden sm:block">E-Visitors Dashboard</span>
       </div>
 
       {/* Right side */}
