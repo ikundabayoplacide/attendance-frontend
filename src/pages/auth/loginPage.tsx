@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FaFacebookF, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaInstagram } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
 import borderImage from '../../assets/images/kf.png'
@@ -11,6 +11,7 @@ import { FaXTwitter } from 'react-icons/fa6'
 
 
 function Login() {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [loginType, setLoginType] = useState('email') // 'email' or 'phone'
@@ -305,6 +306,7 @@ function Login() {
                 {/* Sign in button */}
                 <Button
                   className="w-full bg-[#1A3263] hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
+                  onClick={()=>navigate('/dashboard')}
                 >
                   Sign in
                 </Button>
