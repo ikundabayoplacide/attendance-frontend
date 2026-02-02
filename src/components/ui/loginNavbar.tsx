@@ -20,15 +20,15 @@ function LoginNavbar() {
             <FaHome size={16} />
             Home
           </Link>
-          <li className='hover:text-gray-300 cursor-pointer flex items-center gap-3'>
+          <li className='hover:text-gray-300 cursor-pointer flex items-center gap-2'>
             <FaInfoCircle size={16} />
             About
           </li>
-          <li className='hover:text-gray-300 cursor-pointer flex items-center gap-3'>
+          <li className='hover:text-gray-300 cursor-pointer flex items-center gap-2'>
             <FaCogs size={16} />
             Services
           </li>
-          <li className='hover:text-gray-300 cursor-pointer flex items-center gap-3'>
+          <li className='hover:text-gray-300 cursor-pointer flex items-center gap-2'>
             <FaEnvelope size={16} />
             Contact
           </li>

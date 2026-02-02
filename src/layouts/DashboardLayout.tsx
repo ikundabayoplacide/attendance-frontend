@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useSearchParams } from 'react-router-dom'
 import DashboardHeader from '../components/ui/dashboardHeader'
 import DashboardSidebar from '../components/ui/dashboardSidebar'
 
 function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [searchParams] = useSearchParams()
+  
+  // Get user role from URL parameters, default to owner
+  const userRole = searchParams.get('role') === 'customer' ? 'customer' : 'owner'
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -14,7 +18,11 @@ function DashboardLayout() {
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <DashboardSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        <DashboardSidebar 
+          isOpen={isSidebarOpen} 
+          onClose={() => setIsSidebarOpen(false)} 
+          userRole={userRole}
+        />
         
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">

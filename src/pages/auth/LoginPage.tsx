@@ -306,7 +306,7 @@ function Login() {
                 {/* Sign in button */}
                 <Button
                   className="w-full bg-[#1A3263] hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
-                  onClick={()=>navigate('/dashboard')}
+                  onClick={()=>navigate('/dashboard?role=owner')}
                 >
                   Sign in
                 </Button>
@@ -321,6 +321,7 @@ function Login() {
                 {/* Google Sign In */}
                 <button
                   type="button"
+                  onClick={()=>navigate('/dashboard?role=customer')}
                   className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 mb-4"
                 >
                   <FcGoogle size={20} />

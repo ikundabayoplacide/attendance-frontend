@@ -16,19 +16,19 @@ function RegisterNavbar() {
       {/* Nav */}
       <nav className='hidden md:block'>
         <ul className='flex gap-9 text-white !font-bold text-xl'>
-          <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+          <Link to="/" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-2'>
             <FaHome size={16} />
             Home
           </Link>
-          <Link to="/about" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+          <Link to="/about" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-2'>
             <FaInfoCircle size={16} />
             About
           </Link>
-          <Link to="/services" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+          <Link to="/services" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-2'>
             <FaCogs size={16} />
             Services
           </Link>
-          <Link to="/contact" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-3'>
+          <Link to="/contact" className='hover:text-gray-300 cursor-pointer !text-white flex items-center gap-2'>
             <FaEnvelope size={16} />
             Contact
           </Link>

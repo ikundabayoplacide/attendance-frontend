@@ -1,29 +1,46 @@
 import { FaHome, FaUsers, FaCalendarCheck, FaChartBar, FaCog, FaUserCheck, FaEye, FaExclamationTriangle, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard } from 'react-icons/fa'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 
 interface DashboardSidebarProps {
   isOpen: boolean
   onClose: () => void
+  userRole?: 'owner' | 'customer'
 }
 
-function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
+function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSidebarProps) {
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  
+  // Preserve role parameter in navigation
+  const roleParam = searchParams.get('role')
+  const addRoleParam = (path: string) => {
+    return roleParam ? `${path}?role=${roleParam}` : path
+  }
 
-  const menuItems = [
+  // System Owner menu items
+  const systemOwnerItems = [
+    { path: '/dashboard', icon: FaHome, label: 'Business Dashboard', exact: true },
+    { path: '/dashboard/customers', icon: FaUsers, label: 'Customer Management' },
+    { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
+    { path: '/dashboard/reports', icon: FaChartBar, label: 'Business Analytics' },
+    { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
+  ]
+
+  // Customer menu items
+  const customerItems = [
     { path: '/dashboard', icon: FaHome, label: 'Dashboard Overview', exact: true },
-    { path: '/dashboard/users', icon: FaUsers, label: 'User & Roles' },
-    { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Subscription' },
-    { path: '/dashboard/livemonitoring', icon: FaEye, label: 'Live Monitoring' },
+    { path: '/dashboard/users', icon: FaUsers, label: 'User Management' },
     { path: '/dashboard/visitors', icon: FaUsers, label: 'Visitor Management' },
     { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Host Management' },
     { path: '/dashboard/approvals', icon: FaCalendarCheck, label: 'Visit Approvals' },
     { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments' },
+    { path: '/dashboard/livemonitoring', icon: FaEye, label: 'Live Monitoring' },
     { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports & Analytics' },
-    { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
     { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
-    { path: '/dashboard/security', icon: FaExclamationTriangle, label: 'Security & Alerts' },
-
+    { path: '/dashboard/security', icon: FaExclamationTriangle, label: 'Security & Alerts' }
   ]
+
+  const menuItems = userRole === 'owner' ? systemOwnerItems : customerItems
 
   const settingsItem = { path: '/dashboard/settings', icon: FaCog, label: 'Settings' }
 
@@ -70,7 +87,7 @@ function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
               return (
                 <li key={item.path}>
                   <Link
-                    to={item.path}
+                    to={addRoleParam(item.path)}
                     className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
                       isActive(item.path, item.exact)
                         ? 'bg-white text-[#1A3263] font-medium'
@@ -89,7 +106,7 @@ function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
         {/* Settings at bottom */}
         <div className="flex-shrink border-t border-white/20 ">
           <Link
-            to={settingsItem.path}
+            to={addRoleParam(settingsItem.path)}
             className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
               isActive(settingsItem.path)
                 ? 'bg-white text-[#1A3263] font-medium'

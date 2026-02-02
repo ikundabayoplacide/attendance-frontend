@@ -3,6 +3,7 @@ import { HiOutlineMenu } from 'react-icons/hi'
 import { IoMdLogOut } from 'react-icons/io'
 import { useState, useEffect, useRef } from 'react'
 import evsLogo from '../../assets/logos/evs.png'
+import {useNavigate } from 'react-router-dom'
 
 interface DashboardHeaderProps {
   onMenuClick: () => void
@@ -11,6 +12,7 @@ interface DashboardHeaderProps {
 function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -51,12 +53,12 @@ function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             <div className="w-8 h-8 bg-[#1A3263] rounded-full flex items-center justify-center">
               <FaUser className="text-white" size={14} />
             </div>
-            <span className="text-sm font-medium text-gray-700">Owner</span>
+            <span className="text-sm font-medium text-gray-700">User</span>
           </div>
 
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px] z-50">
-              <button className="w-full flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors">
+              <button className="w-full flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors" onClick={() => navigate("/")}>
                 <IoMdLogOut size={16} />
                 <span className="text-sm">Logout</span>
               </button>

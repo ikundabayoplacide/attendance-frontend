@@ -28,19 +28,19 @@ function Navbar() {
       {/* Nav */}
       <nav className='hidden md:block'>
         <ul className='flex gap-6 text-white font-bold'>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-2'>
             <FaHome size={16} />
             Home
           </li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-2'>
             <FaInfoCircle size={16} />
             About
           </li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-2'>
             <FaCogs size={16} />
             Services
           </li>
-          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-1'>
+          <li className='hover:text-gray-300 cursor-pointer text-xl flex items-center gap-2'>
             <FaEnvelope size={16} />
             Contact
           </li>
