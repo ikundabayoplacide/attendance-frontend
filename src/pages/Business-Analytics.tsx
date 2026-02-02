@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FaChartLine, FaUsers, FaBuilding, FaArrowUp, FaArrowDown } from 'react-icons/fa'
 import { IoMdTrendingDown, IoMdTrendingUp } from 'react-icons/io'
 
-function ReportPage() {
+function BusinessAnalytics() {
   const [timeRange, setTimeRange] = useState('30d')
 
   // Mock analytics data
@@ -190,4 +190,4 @@ function ReportPage() {
     </div>
   )
 }
-export default ReportPage;
+export default BusinessAnalytics;

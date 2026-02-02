@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
-import AddCustomer from '../components/modals/AddCustomer'
-import DeleteCustomer from '../components/modals/deleteCustomer'
+import { useNavigate } from 'react-router-dom'
+import AddCustomer from '../../components/modals/AddCustomer'
+import DeleteCustomer from '../../components/modals/deleteCustomer'
 
 function Customers() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [planFilter, setPlanFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -236,7 +238,10 @@ function Customers() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900">
+                      <button 
+                        onClick={() => navigate(`/dashboard/customers/${customer.id}`)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
                         <FaEye size={16} />
                       </button>
                       <button className="text-green-600 hover:text-green-900">

@@ -1,21 +1,22 @@
 import { useState } from "react";
 
-interface AddCustomerProps {
+interface EditCustomerProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (customerData: any) => void;
+  customerData?: any;
 }
 
-function AddCustomer({ isOpen, onClose, onSubmit }: AddCustomerProps) {
+function EditCustomer({ isOpen, onClose, onSubmit, customerData }: EditCustomerProps) {
   const [formData, setFormData] = useState({
-    companyName: "",
-    contactPerson: "",
-    email: "",
-    phone: "",
-    address: "",
-    subscriptionPlan: "",
-    startTime: "",
-    endTime: ""
+    companyName: customerData?.companyName || "",
+    contactPerson: customerData?.contactPerson || "",
+    email: customerData?.email || "",
+    phone: customerData?.phone || "",
+    address: customerData?.address || "",
+    subscriptionPlan: customerData?.plan || "",
+    startTime: customerData?.startDate || "",
+    endTime: customerData?.endDate || ""
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,7 +31,7 @@ function AddCustomer({ isOpen, onClose, onSubmit }: AddCustomerProps) {
 return (
     <div className="fixed inset-0 bg-black/40 bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 w-full max-w-md">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Customer</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Customer</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
@@ -140,7 +141,7 @@ return (
                     type="submit"
                     className="flex-1  bg-[#1A3263] text-white py-2 px-4 rounded-lg hover:bg-blue-800 transition-colors"
                   >
-                    Add Customer
+                    Update Customer
                   </button>
                 </div>
               </form>  
@@ -149,5 +150,5 @@ return (
     </div>
 </div>
 )}
-export default AddCustomer;
+export default EditCustomer;
 

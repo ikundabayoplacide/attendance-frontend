@@ -22,8 +22,9 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
     { path: '/dashboard', icon: FaHome, label: 'Business Dashboard', exact: true },
     { path: '/dashboard/customers', icon: FaUsers, label: 'Customer Management' },
     { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
-    { path: '/dashboard/reports', icon: FaChartBar, label: 'Business Analytics' },
+    { path: '/dashboard/Analytics', icon: FaChartBar, label: 'Business Analytics' },
     { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
+    { path: '/dashboard/system-reports', icon: FaChartBar, label: 'System Reports' }
   ]
 
   // Customer menu items
@@ -41,7 +42,7 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
   ]
 
   const menuItems = userRole === 'owner' ? systemOwnerItems : customerItems
-
+ 
   const settingsItem = { path: '/dashboard/settings', icon: FaCog, label: 'Settings' }
 
   const isActive = (path: string, exact?: boolean) => {

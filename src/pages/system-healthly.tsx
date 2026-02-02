@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FaServer, FaExclamationTriangle, FaCheckCircle, FaClock, FaMemory, FaHdd } from 'react-icons/fa'
 import { FiCpu } from 'react-icons/fi'
+import { HiOutlineRefresh } from 'react-icons/hi'
 
 function SystemHealthly() {
   const [refreshTime, setRefreshTime] = useState(new Date().toLocaleTimeString())
@@ -71,9 +72,9 @@ function SystemHealthly() {
           <p className="text-sm text-gray-500">Last updated: {refreshTime}</p>
           <button 
             onClick={() => setRefreshTime(new Date().toLocaleTimeString())}
-            className="mt-1 px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
+            className="mt-2 flex gap-2 px-3 py-1 bg-[#1A3263] text-white text-sm rounded-lg hover:bg-blue-700"
           >
-            Refresh
+           <HiOutlineRefresh size={17} /> Refresh
           </button>
         </div>
       </div>

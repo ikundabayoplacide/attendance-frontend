@@ -9,7 +9,6 @@ import UserDetails from '../pages/users/UserDetail'
 
 import ApprovePage from '../pages/Approval'
 import AppointmentPage from '../pages/Appointment'
-import ReportPage from '../pages/Report'
 import SystemHealthly from '../pages/system-healthly'
 import Notifications from '../pages/Notification'
 import Settings from '../pages/Setting'
@@ -19,9 +18,12 @@ import Register from '../pages/auth/RegisterPage'
 import ResetPassword from '../pages/auth/ResetPasswordPage'
 import LiveMonitoringPage from '../pages/Live-monitoring'
 import Hostmanagement from '../pages/Host'
-import Customers from '../pages/Customers'
+import Customers from '../pages/customers/Customers'
+import CustomerDetail from '../pages/customers/CustomerDetail'
 import SubBillingsPage from '../pages/Sub&billing'
 import Users from '../pages/users/User'
+import BusinessAnalytics from '../pages/Business-Analytics'
+import ReportPage from '../pages/Reports'
 
 
 function AppRoutes() {
@@ -39,8 +41,10 @@ function AppRoutes() {
         
         {/* System Owner Routes */}
         <Route path="customers" element={<Customers />} />
+        <Route path="customers/:id" element={<CustomerDetail />} />
         <Route path="billings" element={<SubBillingsPage/>}/>
         <Route path="system-health" element={<SystemHealthly/>}/>
+        <Route path='system-reports' element={<ReportPage/>}/>
         
         {/* Customer Routes */}
         <Route path="users" element={<Users />} />
@@ -53,7 +57,7 @@ function AppRoutes() {
         <Route path="appointments" element={<AppointmentPage/>}/>
         
         {/* Shared Routes */}
-        <Route path="reports" element={<ReportPage/>}/>
+        <Route path="Analytics" element={<BusinessAnalytics/>}/>
         <Route path="notifications" element={<Notifications/>}/>
         <Route path="security" element={<SecurityPage/>}/>
         <Route path="settings" element={<Settings />}/>
