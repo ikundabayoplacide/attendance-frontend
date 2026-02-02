@@ -21,7 +21,7 @@ function Settings() {
   })
   
   // Roles Data
-  const [roles, setRoles] = useState([
+  const [roles] = useState([
     { id: 1, name: 'Super Admin', description: 'Full system access and control', permissions: 8, users: 2 },
     { id: 2, name: 'Admin', description: 'Administrative privileges with limited system access', permissions: 6, users: 5 },
     { id: 3, name: 'Manager', description: 'Department management and user oversight', permissions: 4, users: 12 },
