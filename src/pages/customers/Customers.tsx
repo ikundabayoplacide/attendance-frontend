@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AddCustomer from '../../components/modals/AddCustomer'
-import DeleteCustomer from '../../components/modals/DeleteCustomer'
+import { DeleteCustomer } from '../../components/modals'
 
 function Customers() {
   const navigate = useNavigate()
