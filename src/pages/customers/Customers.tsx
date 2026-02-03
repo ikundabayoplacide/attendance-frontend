@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AddCustomer from '../../components/modals/AddCustomer'
-import DeleteCustomer  from '../../components/modals/DeleteCustomer'
+// import DeleteCustomer  from '../../components/modals/DeleteCustomer'
 
 function Customers() {
   const navigate = useNavigate()
@@ -10,23 +10,23 @@ function Customers() {
   const [planFilter, setPlanFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [selectedCustomer, setSelectedCustomer] = useState<{id: number, companyName: string} | null>(null)
+  // const [ setShowDeleteModal] = useState(false)
+  // const [ setSelectedCustomer] = useState<{id: number, companyName: string} | null>(null)
 
   const handleAddCustomer = (customerData: any) => {
     console.log('Adding customer:', customerData)
   }
 
-  const handleDeleteCustomer = (customerData: any) => {
-    console.log('Deleting customer:', customerData)
-    setShowDeleteModal(false)
-    setSelectedCustomer(null)
-  }
+  // const handleDeleteCustomer = (customerData: any) => {
+  //   console.log('Deleting customer:', customerData)
+  //   setShowDeleteModal(false)
+  //   setSelectedCustomer(null)
+  // }
 
-  const openDeleteModal = (customer: {id: number, companyName: string}) => {
-    setSelectedCustomer(customer)
-    setShowDeleteModal(true)
-  }
+  // const openDeleteModal = (customer: {id: number, companyName: string}) => {
+  //   setSelectedCustomer(customer)
+  //   setShowDeleteModal(true)
+  // }
  
   // Mock customer data
   const customers = [
@@ -248,7 +248,7 @@ function Customers() {
                         <FaEdit size={16} />
                       </button>
                       <button 
-                        onClick={() => openDeleteModal({id: customer.id, companyName: customer.companyName})}
+                        // onClick={() => openDeleteModal({id: customer.id, companyName: customer.companyName})}
                         className="text-red-600 hover:text-red-900"
                       >
                         <FaTrash size={16} />
@@ -269,7 +269,7 @@ function Customers() {
         onSubmit={handleAddCustomer}
       />
       
-      <DeleteCustomer
+      {/* <DeleteCustomer
         isOpen={showDeleteModal}
         customerName={selectedCustomer?.companyName || ''}
         onClose={() => {
@@ -277,7 +277,7 @@ function Customers() {
           setSelectedCustomer(null)
         }}
         onSubmit={handleDeleteCustomer}
-      />
+      /> */}
     </div>
   )
 }
