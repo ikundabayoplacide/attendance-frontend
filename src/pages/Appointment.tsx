@@ -1,15 +1,13 @@
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaUser } from 'react-icons/fa'
+// import { useNavigate, useSearchParams } from 'react-router-dom'
+import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSearch, FaEdit, FaEye, FaUser } from 'react-icons/fa'
 import ScheduleAppointmentModal from '../components/modals/ScheduleAppointmentModal'
 
 function AppointmentPage() {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  // const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
-  const [viewMode, setViewMode] = useState('list') // list or calendar
   const [showScheduleModal, setShowScheduleModal] = useState(false)
 
   const handleScheduleAppointment = (appointmentData: any) => {
@@ -19,7 +17,7 @@ function AppointmentPage() {
   }
 
   // Get current role parameter
-  const currentRole = searchParams.get('role') || 'customer'
+  // const currentRole = searchParams.get('role') || 'customer'
 
   const stats = [
     { title: 'Total Appointments', value: '32', icon: FaCalendarAlt, color: 'bg-blue-500' },

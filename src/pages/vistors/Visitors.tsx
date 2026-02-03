@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FaUsers, FaUserCheck, FaUserClock, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaFilter } from 'react-icons/fa'
+// import { useNavigate, useSearchParams } from 'react-router-dom'
+import { FaUsers, FaUserCheck, FaUserClock, FaUserTimes, FaPlus, FaSearch, FaEdit, FaEye } from 'react-icons/fa'
 import AddVisitorModal from '../../components/modals/AddVisitorModal'
 
 function Visitors() {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  // const navigate = useNavigate()
+  // const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
@@ -18,7 +18,7 @@ function Visitors() {
   }
 
   // Get current role parameter
-  const currentRole = searchParams.get('role') || 'customer'
+  // const currentRole = searchParams.get('role') || 'customer'
 
   const stats = [
     { title: 'Total Visitors Today', value: '24', icon: FaUsers, color: 'bg-blue-500' },

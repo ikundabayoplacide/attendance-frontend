@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+// import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUserCheck, FaUsers, FaCalendarCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaBuilding } from 'react-icons/fa'
 
 function Hostmanagement() {
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
+  // const navigate = useNavigate()
+  // const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
 
   // Get current role parameter
-  const currentRole = searchParams.get('role') || 'customer'
+  // const currentRole = searchParams.get('role') || 'customer'
 
   const stats = [
     { title: 'Total Hosts', value: '48', icon: FaUserCheck, color: 'bg-blue-500' },
