@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUsers, FaUserShield, FaUserCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaToggleOn, FaToggleOff } from 'react-icons/fa'
 import { AddUserModal, AddRoleModal } from '../../components/modals'
 import DeleteUserModal from '../../components/modals/DeleteUserModal'
 
 function Users() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState('users')
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
@@ -14,6 +15,9 @@ function Users() {
   const [showAddRoleModal, setShowAddRoleModal] = useState(false)
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false)
   const [userToDelete, setUserToDelete] = useState<{ id: number; name: string } | null>(null)
+
+  // Get current role parameter
+  const currentRole = searchParams.get('role') || 'owner'
 
   const handleAddUser = (userData: any) => {
     console.log('Adding user:', userData)
@@ -259,7 +263,7 @@ function Users() {
                         <div className="flex items-center gap-2">
                           <button 
                             className="p-2 text-gray-400 hover:text-blue-600"
-                            onClick={() => navigate(`/dashboard/users/${user.id}`)}
+                            onClick={() => navigate(`/dashboard/users/${user.id}?role=${currentRole}`)}
                             title="View Details"
                           >
                             <FaEye size={14} />

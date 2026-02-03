@@ -3,7 +3,7 @@ import Home from '../pages/Home'
 
 import DashboardLayout from '../layouts/DashboardLayout'
 import Dashboard from '../pages/Dashboard'
-import Visitors from '../pages/Visitors'
+import Visitors from '../pages/vistors/Visitors'
 import Attendance from '../pages/Attendance'
 import UserDetails from '../pages/users/UserDetail'
 

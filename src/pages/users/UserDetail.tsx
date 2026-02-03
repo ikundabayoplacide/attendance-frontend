@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEye, FaEdit, FaBan, FaCheck, FaArrowLeft } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import SuspendModal from '../../components/modals/SuspendModal'
 import EditUserModal from '../../components/modals/EditUserModal'
 
 function UserDetails() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState('profile')
   const [showSuspendModal, setShowSuspendModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+
+  const currentRole = searchParams.get('role') || 'owner'
 
   // Mock user data - replace with actual data from API/props
   const user = {
@@ -71,7 +74,7 @@ function UserDetails() {
       <div className="flex-shrink-0 mb-4">
         <div className="flex items-center gap-3 mb-1">
           <button 
-            onClick={() => navigate('/dashboard/users')}
+            onClick={() => navigate(`/dashboard/users?role=${currentRole}`)}
             className="p-2 text-gray-600 hover:text-[#1A3263] hover:bg-gray-100 rounded-lg"
           >
             <FaArrowLeft size={20} />
