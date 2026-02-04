@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
+import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 
 interface MapChartProps {
@@ -31,7 +32,19 @@ const MapChart: React.FC<MapChartProps> = ({ className }) => {
 
     const chart = root.container.children.push(am5map.MapChart.new(root, {}));
 
-  
+    const polygonSeries = chart.series.push(
+      am5map.MapPolygonSeries.new(root, {
+        geoJSON: am4geodata_worldLow as any,
+        exclude: ["AQ"]
+      })
+    );
+
+    polygonSeries.mapPolygons.template.setAll({
+      tooltipText: "{name}",
+      fill: am5.color(0xaaaaaa),
+      stroke: am5.color(0xffffff),
+      strokeWidth: 0.5
+    });
 
     const bubbleSeries = chart.series.push(
       am5map.MapPointSeries.new(root, {
@@ -48,9 +61,9 @@ const MapChart: React.FC<MapChartProps> = ({ className }) => {
 
       const circle = container.children.push(
         am5.Circle.new(root, {
-          radius: 20,
+          radius: 15,
           fillOpacity: 0.7,
-          fill: am5.color(0xff0000),
+          fill: am5.color(0x0066cc),
           cursorOverStyle: "pointer",
           tooltipText: `{name}: [bold]{value}[/]`
         }, circleTemplate)
@@ -95,8 +108,8 @@ const MapChart: React.FC<MapChartProps> = ({ className }) => {
       {
         target: circleTemplate,
         dataField: "value",
-        min: 10,
-        max: 50,
+        min: 8,
+        max: 35,
         minValue: 0,
         maxValue: 100,
         key: "radius"
