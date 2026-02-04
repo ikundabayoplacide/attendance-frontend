@@ -215,7 +215,7 @@ export default function EditUserModal({ isOpen, onClose, onSubmit, user }: EditU
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border  border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border bg-gray-200  border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>

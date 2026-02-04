@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FaPlus } from 'react-icons/fa'
 
 interface AddUserModalProps {
   isOpen: boolean
@@ -79,15 +80,15 @@ function AddUserModal({ isOpen, onClose, onSubmit }: AddUserModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="flex-1 px-4 py-2 bg-gray-200 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-200"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#1A3263] text-white rounded-lg hover:bg-[#1A3263]/90"
+              className="flex-1 px-2 py-2 bg-[#1A3263] text-white rounded-lg hover:bg-[#1A3263]/90"
             >
-              Add User
+            <span className="flex items-center justify-center gap-2"><FaPlus className="mr-2"/> Add User</span>
             </button>
           </div>
         </form>

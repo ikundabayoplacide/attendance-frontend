@@ -37,7 +37,7 @@ function LoginNavbar() {
 
       {/* Right */}
       <div className='flex items-center gap-4 text-white'>
-        <Link to="/register" className='rounded-xl bg-white text-blue-800 px-2 py-1 text-lg flex items-center gap-1'>
+        <Link to="/register" className='rounded-xl bg-white bg-[#1A3263] px-2 py-1 text-lg flex items-center gap-1'>
           <FaUserPlus size={12} />
           Register
         </Link>

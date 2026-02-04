@@ -78,7 +78,7 @@ function Navbar() {
         </div>
         <Link
           to='/login'
-          className='rounded-xl bg-white text-blue-800 px-3 py-1 text-sm'
+          className='rounded-xl bg-white bg-[#1A3263] px-3 py-1 text-sm'
         >
           <FaSignInAlt size={23} /> 
         </Link>
