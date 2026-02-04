@@ -172,7 +172,7 @@ function CustomerDashboard() {
             <button className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
               <FaEye className="text-purple-600" size={20} />
               <div className="text-left">
-                <p className="font-medium text-gray-900">Live Monitoring</p>
+                <p className="font-medium text-gray-900">Scanning</p>
                 <p className="text-sm text-gray-500">View real-time activity</p>
               </div>
             </button>

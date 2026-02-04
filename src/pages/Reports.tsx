@@ -49,9 +49,10 @@ function ReportPage() {
   }
 
   return (
-    <div className="flex-shrink-0 p-6">
+    <div>
+      <div className='flex-shrink-0 p-2'>
       <h1 className="!text-2xl font-bold text-black mb-6">Custom Report Builder</h1>
-      
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Field Selection */}
         <div className="bg-white rounded-lg shadow-sm border p-6">

@@ -12,11 +12,9 @@ import AppointmentPage from '../pages/Appointment'
 import SystemHealthly from '../pages/system-healthly'
 import Notifications from '../pages/Notification'
 import Settings from '../pages/Setting'
-import SecurityPage from '../pages/security'
 import Login from '../pages/auth/LoginPage'
 import Register from '../pages/auth/RegisterPage'
 import ResetPassword from '../pages/auth/ResetPasswordPage'
-import LiveMonitoringPage from '../pages/Live-monitoring'
 import Hostmanagement from '../pages/Host'
 import Customers from '../pages/customers/Customers'
 import CustomerDetail from '../pages/customers/CustomerDetail'
@@ -24,6 +22,9 @@ import SubBillingsPage from '../pages/Sub&billing'
 import Users from '../pages/users/User'
 import BusinessAnalytics from '../pages/Business-Analytics'
 import ReportPage from '../pages/Reports'
+import ScanningPage from '../pages/vistors/ScanningPage'
+import EventsPage from '../pages/Events'
+import Equipment from '../pages/Equipment'
 
 
 function AppRoutes() {
@@ -51,15 +52,17 @@ function AppRoutes() {
         <Route path="users/:id" element={<UserDetails />} />
         <Route path="visitors" element={<Visitors />} />
         <Route path="attendance" element={<Attendance />} />
-        <Route path="livemonitoring" element={<LiveMonitoringPage />} />
+        <Route path="scanning" element={<ScanningPage />} />
+        <Route path="events" element={<EventsPage/>}/>
+        <Route path='equipments' element={<Equipment/>}/>
         <Route path="hosts" element={<Hostmanagement/>}/>
         <Route path="approvals" element={<ApprovePage/>}/>
         <Route path="appointments" element={<AppointmentPage/>}/>
+        <Route path="reports" element={<ReportPage/>}/>
         
         {/* Shared Routes */}
         <Route path="Analytics" element={<BusinessAnalytics/>}/>
         <Route path="notifications" element={<Notifications/>}/>
-        <Route path="security" element={<SecurityPage/>}/>
         <Route path="settings" element={<Settings />}/>
       </Route>
     </Routes>

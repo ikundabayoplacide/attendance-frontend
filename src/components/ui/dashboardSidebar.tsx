@@ -1,6 +1,7 @@
-import { FaHome, FaUsers, FaCalendarCheck, FaChartBar, FaCog, FaUserCheck, FaEye, FaExclamationTriangle, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard } from 'react-icons/fa'
+import { FaHome, FaUsers, FaCalendarCheck, FaChartBar,FaCog, FaUserCheck, FaEye, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard } from 'react-icons/fa'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
-
+import { IoMdAnalytics } from 'react-icons/io'
+import { BsFillCalendar3EventFill } from 'react-icons/bs'
 interface DashboardSidebarProps {
   isOpen: boolean
   onClose: () => void
@@ -19,10 +20,10 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
 
   // System Owner menu items
   const systemOwnerItems = [
-    { path: '/dashboard', icon: FaHome, label: 'Business Dashboard', exact: true },
+    { path: '/dashboard', icon: FaHome, label: 'Ouner Dashboard', exact: true },
     { path: '/dashboard/customers', icon: FaUsers, label: 'Customer Management' },
     { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
-    { path: '/dashboard/Analytics', icon: FaChartBar, label: 'Business Analytics' },
+    { path: '/dashboard/Analytics', icon: IoMdAnalytics, label: 'Business Analytics' },
     { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
     { path: '/dashboard/system-reports', icon: FaChartBar, label: 'System Reports' }
   ]
@@ -31,14 +32,15 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
   const customerItems = [
     { path: '/dashboard', icon: FaHome, label: 'Dashboard Overview', exact: true },
     { path: '/dashboard/users', icon: FaUsers, label: 'User Management' },
+    { path: '/dashboard/scanning', icon: FaEye, label: 'Scanning' },
     { path: '/dashboard/visitors', icon: FaUsers, label: 'Visitor Management' },
     { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Host Management' },
     { path: '/dashboard/approvals', icon: FaCalendarCheck, label: 'Visit Approvals' },
     { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments' },
-    { path: '/dashboard/livemonitoring', icon: FaEye, label: 'Live Monitoring' },
+    {path:  '/dashboard/Events', icon: BsFillCalendar3EventFill, label: 'Events'},
+    {path:  '/dashboard/equipments', icon: FaServer, label: 'Equipment Management'},
     { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports & Analytics' },
     { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
-    { path: '/dashboard/security', icon: FaExclamationTriangle, label: 'Security & Alerts' }
   ]
 
   const menuItems = userRole === 'owner' ? systemOwnerItems : customerItems

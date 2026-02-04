@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@amcharts/amcharts4-geodata": "^4.1.31",
+    "@amcharts/amcharts5": "^5.15.5",
+    "@amcharts/amcharts5-geodata": "^5.1.5",
     "@tailwindcss/vite": "^4.1.18",
     "lottie-react": "^2.4.1",
     "react": "^19.2.0",

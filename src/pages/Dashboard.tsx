@@ -104,7 +104,7 @@ function Dashboard() {
       
       {/* Header */}
       <div className="flex-shrink-0">
-        <h1 className="!text-4xl py-1 font-bold text-gray-900">Business Dashboard</h1>
+        <h1 className="!text-4xl py-1 font-bold text-gray-900">Owner Dashboard</h1>
         <p className="text-gray-600">Monitor your E-Visitors SaaS platform performance and revenue</p>
       </div>
 

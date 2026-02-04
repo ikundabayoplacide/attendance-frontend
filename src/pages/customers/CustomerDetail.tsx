@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEdit, FaBan, FaArrowLeft, FaSearch, FaPlus, FaTrash } from 'react-icons/fa'
+import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEdit, FaBan, FaArrowLeft, FaSearch, FaPlus, FaTrash, FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning } from 'react-icons/fa'
+import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
 import { useNavigate, useParams } from 'react-router-dom'
 import EditCustomer from '../../components/modals/EditCustomer'
 import SuspendCustomer from '../../components/modals/SuspendCustomer'
@@ -14,6 +15,18 @@ function CustomerDetail() {
   const [blacklistedUsers, setBlacklistedUsers] = useState([
     { id: 1, name: 'John Doe', email: 'john@example.com', reason: 'Security violation', dateAdded: '2024-01-10' },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', reason: 'Inappropriate behavior', dateAdded: '2024-01-08' }
+  ])
+
+  const [verificationTools, setVerificationTools] = useState([
+    { id: 1, name: 'Face', description: 'Facial recognition verification', active: true, type: 'face', icon: FaUser },
+    { id: 2, name: 'Fingerprint', description: 'Biometric fingerprint verification', active: true, type: 'fingerprint', icon: FaFingerprint },
+    { id: 3, name: 'Igipande', description: 'Rwanda national ID card verification', active: false, type: 'igipande', icon: FaIdCard },
+    { id: 4, name: 'ID/Passport', description: 'Government ID or passport verification', active: false, type: 'id-passport', icon: FaIdCard },
+    { id: 5, name: 'Voice', description: 'Voice pattern recognition', active: false, type: 'voice', icon: FaMicrophone },
+    { id: 6, name: 'OCR', description: 'Optical character recognition scanning', active: true, type: 'ocr', icon: MdQrCodeScanner },
+    { id: 7, name: 'Gesture', description: 'Hand gesture recognition', active: false, type: 'gesture', icon: FaHandPaper },
+    { id: 8, name: 'Motion', description: 'Motion detection verification', active: false, type: 'motion', icon: FaRunning },
+    { id: 9, name: 'Pupil', description: 'Eye pupil recognition system', active: false, type: 'pupil', icon: MdVisibility }
   ])
 
   // Mock customer data
@@ -63,6 +76,14 @@ function CustomerDetail() {
 
   const handleRemoveFromBlacklist = (userId: number) => {
     setBlacklistedUsers(blacklistedUsers.filter(user => user.id !== userId))
+  }
+
+  const handleToggleVerificationTool = (toolId: number) => {
+    setVerificationTools(tools => 
+      tools.map(tool => 
+        tool.id === toolId ? { ...tool, active: !tool.active } : tool
+      )
+    )
   }
 
   const handleEditCustomer = (customerData: any) => {
@@ -202,7 +223,7 @@ function CustomerDetail() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
-              {['profile', 'subscription', 'blacklist', 'visits', 'activity'].map((tab) => (
+              {['profile', 'subscription', 'blacklist', 'visits', 'activity', 'tools'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -424,6 +445,68 @@ function CustomerDetail() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tools Activation Tab */}
+          {activeTab === 'tools' && (
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Verification Tools</h3>
+                  <p className="text-sm text-gray-600">Manage verification methods available for visitor check-in</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {verificationTools.map((tool) => (
+                  <div key={tool.id} className={`border-2 rounded-lg p-4 transition-all ${
+                    tool.active 
+                      ? 'border-green-200 bg-green-50' 
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <tool.icon className={`text-xl ${tool.active ? 'text-green-600' : 'text-gray-400'}`} />
+                        <h4 className="font-medium text-gray-900">{tool.name}</h4>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          tool.active 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {tool.active ? 'Active' : 'Inactive'}
+                        </span>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={tool.active}
+                            onChange={() => handleToggleVerificationTool(tool.id)}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">{tool.description}</p>
+                    
+                    {tool.active && (
+                      <div className="text-xs text-green-600 font-medium">
+                        ✓ Available for visitor verification
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2">How it works:</h4>
+                <p className="text-sm text-blue-800">
+                  Active tools will be available as verification options when visitors check in. 
+                  Visitors can choose from any of the enabled verification methods during the scanning process.
+                </p>
               </div>
             </div>
           )}

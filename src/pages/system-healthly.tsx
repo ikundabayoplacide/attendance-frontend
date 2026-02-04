@@ -87,7 +87,7 @@ function SystemHealthly() {
               <FaCheckCircle className="text-green-600" size={32} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">All Systems Operational</h2>
+              <h2 className="!text-xl font-bold text-gray-900">All Systems Operational</h2>
               <p className="text-gray-600">Platform uptime: {systemStatus.uptime} | Last incident: {systemStatus.lastIncident}</p>
             </div>
           </div>
@@ -141,7 +141,7 @@ function SystemHealthly() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{service.responseTime}</p>
+                  <p className="!text-sm  text-gray-900">{service.responseTime}</p>
                   <p className="text-xs text-gray-500">avg response</p>
                 </div>
               </div>
