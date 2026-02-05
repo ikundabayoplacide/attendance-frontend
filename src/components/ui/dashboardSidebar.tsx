@@ -1,7 +1,17 @@
-import { FaHome, FaUsers, FaCalendarCheck, FaChartBar,FaCog, FaUserCheck, FaEye, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard } from 'react-icons/fa'
+import { FaHome, FaUsers, FaCalendarCheck, FaChartBar,FaCog, FaUserCheck, FaEye, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard, FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { IoMdAnalytics } from 'react-icons/io'
 import { BsFillCalendar3EventFill } from 'react-icons/bs'
+import { useState } from 'react'
+
+interface MenuItem {
+  path: string
+  icon: React.ComponentType<{ size?: number; className?: string }>
+  label: string
+  exact?: boolean
+  children?: { path: string; label: string }[]
+}
+
 interface DashboardSidebarProps {
   isOpen: boolean
   onClose: () => void
@@ -11,6 +21,7 @@ interface DashboardSidebarProps {
 function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSidebarProps) {
   const location = useLocation()
   const [searchParams] = useSearchParams()
+  const [expandedItems, setExpandedItems] = useState<string[]>([])
   
   // Preserve role parameter in navigation
   const roleParam = searchParams.get('role')
@@ -19,9 +30,20 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
   }
 
   // System Owner menu items
-  const systemOwnerItems = [
+  const systemOwnerItems: MenuItem[] = [
     { path: '/dashboard', icon: FaHome, label: 'Ouner Dashboard', exact: true },
-    { path: '/dashboard/customers', icon: FaUsers, label: 'Customer Management' },
+    { 
+      path: '/dashboard/customers', 
+      icon: FaUsers, 
+      label: 'Customer Management',
+      children: [
+        {path: '/dashboard/customers/all', label: 'All Accounts' },
+        { path: '/dashboard/customers/active', label: 'Active Accounts' },
+        { path: '/dashboard/customers/inactive', label: 'Inactive Accounts' },
+        { path: '/dashboard/customers/suspended', label: 'Suspended Accounts' },
+        { path: '/dashboard/customers/blocked', label: 'Blocked Accounts' }
+      ]
+    },
     { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
     { path: '/dashboard/Analytics', icon: IoMdAnalytics, label: 'Business Analytics' },
     { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
@@ -29,7 +51,7 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
   ]
 
   // Customer menu items
-  const customerItems = [
+  const customerItems: MenuItem[] = [
     { path: '/dashboard', icon: FaHome, label: 'Dashboard Overview', exact: true },
     { path: '/dashboard/users', icon: FaUsers, label: 'User Management' },
     { path: '/dashboard/scanning', icon: FaEye, label: 'Scanning' },
@@ -52,6 +74,14 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
       return location.pathname === path
     }
     return location.pathname.startsWith(path)
+  }
+
+  const toggleExpanded = (path: string) => {
+    setExpandedItems(prev => 
+      prev.includes(path) 
+        ? prev.filter(item => item !== path)
+        : [...prev, path]
+    )
   }
 
   return (
@@ -87,19 +117,60 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
           <ul className="space-y-4 pb-4">
             {menuItems.map((item) => {
               const Icon = item.icon
+              const hasChildren = 'children' in item && item.children
+              const isExpanded = expandedItems.includes(item.path)
+              
               return (
                 <li key={item.path}>
-                  <Link
-                    to={addRoleParam(item.path)}
-                    className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-                      isActive(item.path, item.exact)
-                        ? 'bg-white text-[#1A3263] font-medium'
-                        : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
-                    }`}
-                  >
-                    <Icon size={18} className={isActive(item.path, item.exact) ? 'text-[#1A3263]' : 'text-gray-300'} />
-                    <span className={`font-bold ${isActive(item.path, item.exact) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{item.label}</span>
-                  </Link>
+                  {hasChildren ? (
+                    <>
+                      <button
+                        onClick={() => toggleExpanded(item.path)}
+                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
+                          isActive(item.path)
+                            ? 'bg-white text-[#1A3263] font-medium'
+                            : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
+                        }`}
+                      >
+                        <Icon size={18} className={isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
+                        <span className={`font-bold flex-1 text-left ${isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{item.label}</span>
+                        {isExpanded ? 
+                          <FaChevronDown size={14} className={isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'} /> : 
+                          <FaChevronRight size={14} className={isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
+                        }
+                      </button>
+                      {isExpanded && (
+                        <ul className="ml-6 mt-2 space-y-2">
+                          {item.children?.map((child) => (
+                            <li key={child.path}>
+                              <Link
+                                to={addRoleParam(child.path)}
+                                className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
+                                  isActive(child.path)
+                                    ? 'bg-white text-[#1A3263] font-medium'
+                                    : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      to={addRoleParam(item.path)}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
+                        isActive(item.path, item.exact)
+                          ? 'bg-white text-[#1A3263] font-medium'
+                          : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
+                      }`}
+                    >
+                      <Icon size={18} className={isActive(item.path, item.exact) ? 'text-[#1A3263]' : 'text-gray-300'} />
+                      <span className={`font-bold ${isActive(item.path, item.exact) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{item.label}</span>
+                    </Link>
+                  )}
                 </li>
               )
             })}
