@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEye, FaEdit, FaBan, FaCheck, FaArrowLeft } from 'react-icons/fa'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import SuspendModal from '../../components/modals/SuspendModal'
-import EditUserModal from '../../components/modals/EditUserModal'
+import SuspendModal from '../../../components/modals/SuspendModal'
+import EditUserModal from '../../../components/modals/EditUserModal'
 
 function UserDetails() {
   const navigate = useNavigate()

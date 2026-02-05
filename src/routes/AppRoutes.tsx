@@ -1,30 +1,37 @@
 import { Routes, Route } from 'react-router-dom'
-import Home from '../pages/Home'
+import Home from '../pages/dashboard/Home'
 
 import DashboardLayout from '../layouts/DashboardLayout'
 import Dashboard from '../pages/Dashboard'
-import Visitors from '../pages/vistors/Visitors'
-import Attendance from '../pages/Attendance'
-import UserDetails from '../pages/users/UserDetail'
+import Visitors from '../pages/dashboard/vistors/Visitors'
+import Attendance from '../pages/dashboard/attendance/Attendance'
+import UserDetails from '../pages/dashboard/users/UserDetail'
 
-import ApprovePage from '../pages/Approval'
-import AppointmentPage from '../pages/Appointment'
-import SystemHealthly from '../pages/system-healthly'
-import Notifications from '../pages/Notification'
-import Settings from '../pages/Setting'
+import ApprovePage from '../pages/dashboard/approval/Approval'
+import SystemHealthly from '../pages/dashboard/healthly'
+import Notifications from '../pages/dashboard/notifications/Notification'
+import Settings from '../pages/dashboard/settings/Setting'
 import Login from '../pages/auth/LoginPage'
 import Register from '../pages/auth/RegisterPage'
 import ResetPassword from '../pages/auth/ResetPasswordPage'
-import Hostmanagement from '../pages/Host'
-import Customers from '../pages/customers/Customers'
-import CustomerDetail from '../pages/customers/CustomerDetail'
-import SubBillingsPage from '../pages/Sub&billing'
-import Users from '../pages/users/User'
-import BusinessAnalytics from '../pages/Business-Analytics'
-import ReportPage from '../pages/Reports'
-import ScanningPage from '../pages/vistors/ScanningPage'
-import EventsPage from '../pages/Events'
-import Equipment from '../pages/Equipment'
+import Hostmanagement from '../pages/dashboard/hosting/Host'
+import Customers from '../pages/dashboard/accounts'
+import ActiveCustomers from '../pages/dashboard/accounts/active'
+import InactiveCustomers from '../pages/dashboard/accounts/inactive'
+import SuspendedCustomers from '../pages/dashboard/accounts/suspended'
+import BlacklistedCustomers from '../pages/dashboard/accounts/blacklisted'
+import CustomerDetail from '../pages/dashboard/accounts/CustomerDetail'
+import SubBillingsPage from '../pages/dashboard/payment/Sub&billing'
+import Users from '../pages/dashboard/users/User'
+import BusinessAnalytics from '../pages/dashboard/analytics/Business-Analytics'
+import ReportPage from '../pages/dashboard/reports/Reports'
+import ScanningPage from '../pages/dashboard/vistors/ScanningPage'
+import EventsPage from '../pages/dashboard/events/Events'
+import Equipment from '../pages/dashboard/equipments/Equipment'
+import AppointmentPage from '../pages/dashboard/appointment/Appointment'
+import FormPage from '../pages/dashboard/forms'
+import CreateForm from '../pages/dashboard/forms/CreateForm'
+import Security from '../pages/dashboard/security'
 
 
 function AppRoutes() {
@@ -42,10 +49,17 @@ function AppRoutes() {
         
         {/* System Owner Routes */}
         <Route path="customers" element={<Customers />} />
+        <Route path="customers/active" element={<ActiveCustomers />} />
+        <Route path="customers/inactive" element={<InactiveCustomers />} />
+        <Route path="customers/suspended" element={<SuspendedCustomers />} />
+        <Route path="customers/blacklisted" element={<BlacklistedCustomers />} />
         <Route path="customers/:id" element={<CustomerDetail />} />
         <Route path="billings" element={<SubBillingsPage/>}/>
         <Route path="system-health" element={<SystemHealthly/>}/>
+        <Route path='forms' element={<FormPage/>}/>
+        <Route path='forms/create' element={<CreateForm/>}/>
         <Route path='system-reports' element={<ReportPage/>}/>
+        <Route path='security' element={<Security/>}/>
         
         {/* Customer Routes */}
         <Route path="users" element={<Users />} />
@@ -59,6 +73,7 @@ function AppRoutes() {
         <Route path="approvals" element={<ApprovePage/>}/>
         <Route path="appointments" element={<AppointmentPage/>}/>
         <Route path="reports" element={<ReportPage/>}/>
+
         
         {/* Shared Routes */}
         <Route path="Analytics" element={<BusinessAnalytics/>}/>

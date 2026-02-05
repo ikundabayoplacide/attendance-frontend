@@ -1,6 +1,6 @@
 import { FaDollarSign, FaBuilding, FaChartLine, FaExclamationTriangle, FaCreditCard, FaServer, FaArrowUp, FaArrowDown, FaGlobe } from 'react-icons/fa'
 import { useSearchParams } from 'react-router-dom'
-import CustomerDashboard from './customers/CustomerDashboard'
+import CustomerDashboard from './dashboard/accounts/CustomerDashboard'
 
 function Dashboard() {
   const [searchParams] = useSearchParams()

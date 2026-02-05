@@ -1,0 +1,242 @@
+import { useState } from 'react'
+import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaSearch, FaUnlock, FaExclamationTriangle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+
+function SuspendedCustomers() {
+  const navigate = useNavigate()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [planFilter, setPlanFilter] = useState('all')
+
+  // Mock suspended customer data
+  const customers = [
+    {
+      id: 7,
+      companyName: 'Violation Corp',
+      contactPerson: 'Mark Johnson',
+      email: 'mark@violationcorp.com',
+      plan: 'Professional',
+      users: 25,
+      monthlyRevenue: 0,
+      status: 'Suspended',
+      joinDate: '2023-06-10',
+      suspendedDate: '2024-03-15',
+      reason: 'Policy violation'
+    },
+    {
+      id: 8,
+      companyName: 'Overdue Payments Ltd',
+      contactPerson: 'Jane Wilson',
+      email: 'jane@overduepayments.com',
+      plan: 'Enterprise',
+      users: 50,
+      monthlyRevenue: 0,
+      status: 'Suspended',
+      joinDate: '2023-09-20',
+      suspendedDate: '2024-03-01',
+      reason: 'Payment overdue'
+    }
+  ]
+
+  const filteredCustomers = customers.filter(customer =>
+    customer.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.contactPerson.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="!text-2xl font-bold text-gray-900">Suspended Customers</h1>
+          <p className="text-gray-600">Manage customers with suspended accounts</p>
+        </div>
+      </div>
+
+      {/* Alert Banner */}
+      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <FaExclamationTriangle className="h-5 w-5 text-yellow-400" />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-yellow-700">
+              These accounts are temporarily suspended. Review each case carefully before taking action.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-yellow-500">
+              <FaBuilding className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Suspended Customers</p>
+              <p className="text-2xl font-bold text-gray-900">8</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-red-500">
+              <FaDollarSign className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Lost Revenue</p>
+              <p className="text-2xl font-bold text-gray-900">$2,150</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-yellow-500">
+              <FaUsers className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Affected Users</p>
+              <p className="text-2xl font-bold text-gray-900">213</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-green-500">
+              <FaCalendarAlt className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Avg. Suspension</p>
+              <p className="text-2xl font-bold text-gray-900">12 days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex-1 relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search suspended customers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <select
+            value={planFilter}
+            onChange={(e) => setPlanFilter(e.target.value)}
+            className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="all">All Plans</option>
+            <option value="Basic">Basic</option>
+            <option value="Professional">Professional</option>
+            <option value="Enterprise">Enterprise</option>
+          </select>
+          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
+            <FaUnlock size={14} />
+            Unsuspend Selected
+          </button>
+        </div>
+      </div>
+
+      {/* Customers Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Company
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Contact Person
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Plan
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Users
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Suspended Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reason
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredCustomers.map((customer) => (
+                <tr key={customer.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{customer.companyName}</div>
+                      <div className="text-sm text-gray-500">{customer.email}</div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{customer.contactPerson}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      customer.plan === 'Enterprise' ? 'bg-blue-100 text-blue-800' :
+                      customer.plan === 'Professional' ? 'bg-green-100 text-green-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {customer.plan}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {customer.users}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {customer.suspendedDate}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      customer.reason === 'Payment overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {customer.reason}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button 
+                        onClick={() => navigate(`/dashboard/customers/${customer.id}`)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        <FaEye size={16} />
+                      </button>
+                      <button className="text-green-600 hover:text-green-900" title="Unsuspend">
+                        <FaUnlock size={16} />
+                      </button>
+                      <button className="text-orange-600 hover:text-orange-900">
+                        <FaEdit size={16} />
+                      </button>
+                      <button className="text-red-600 hover:text-red-900">
+                        <FaTrash size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default SuspendedCustomers

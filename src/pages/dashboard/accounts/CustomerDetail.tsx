@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEdit, FaBan, FaArrowLeft, FaSearch, FaPlus, FaTrash, FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning } from 'react-icons/fa'
 import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
 import { useNavigate, useParams } from 'react-router-dom'
-import EditCustomer from '../../components/modals/EditCustomer'
-import SuspendCustomer from '../../components/modals/SuspendCustomer'
+import EditCustomer from '../../../components/modals/EditCustomer'
+import SuspendCustomer from '../../../components/modals/SuspendCustomer'
 
 function CustomerDetail() {
   const navigate = useNavigate()

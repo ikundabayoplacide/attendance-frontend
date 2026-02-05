@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUsers, FaUserShield, FaUserCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaToggleOn, FaToggleOff } from 'react-icons/fa'
-import { AddUserModal, AddRoleModal } from '../../components/modals'
-import DeleteUserModal from '../../components/modals/DeleteUserModal'
+import { AddUserModal, AddRoleModal } from '../../../components/modals'
+import DeleteUserModal from '../../../components/modals/DeleteUserModal'
 
 function Users() {
   const navigate = useNavigate()

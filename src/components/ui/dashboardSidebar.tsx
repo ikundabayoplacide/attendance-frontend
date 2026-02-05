@@ -2,7 +2,9 @@ import { FaHome, FaUsers, FaCalendarCheck, FaChartBar,FaCog, FaUserCheck, FaEye,
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { IoMdAnalytics } from 'react-icons/io'
 import { BsFillCalendar3EventFill } from 'react-icons/bs'
+import { FaFileWaveform } from "react-icons/fa6";
 import { useState } from 'react'
+import { MdOutlineSecurity } from 'react-icons/md'
 
 interface MenuItem {
   path: string
@@ -37,17 +39,25 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
       icon: FaUsers, 
       label: 'Customer Management',
       children: [
-        {path: '/dashboard/customers/all', label: 'All Accounts' },
+        {path: '/dashboard/customers', label: 'All Accounts' },
         { path: '/dashboard/customers/active', label: 'Active Accounts' },
         { path: '/dashboard/customers/inactive', label: 'Inactive Accounts' },
         { path: '/dashboard/customers/suspended', label: 'Suspended Accounts' },
-        { path: '/dashboard/customers/blocked', label: 'Blocked Accounts' }
+        { path: '/dashboard/customers/blacklisted', label: 'Blacklisted Accounts' }
       ]
     },
     { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
     { path: '/dashboard/Analytics', icon: IoMdAnalytics, label: 'Business Analytics' },
+    {path: '/dashboard/forms', icon: FaFileWaveform, label: 'Form Management',
+      children: [
+        { path: '/dashboard/forms', label: 'All Forms' },
+        { path: '/dashboard/forms/create', label: 'Create New Form' },
+      ]
+    },
+    { path: '/dashboard/system-reports', icon: FaChartBar, label: 'System Reports' },
     { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
-    { path: '/dashboard/system-reports', icon: FaChartBar, label: 'System Reports' }
+    {path:  '/dashboard/security', icon: MdOutlineSecurity, label: 'Security Control'},
+
   ]
 
   // Customer menu items
@@ -73,7 +83,8 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
     if (exact) {
       return location.pathname === path
     }
-    return location.pathname.startsWith(path)
+    // For all child items, use exact match
+    return location.pathname === path
   }
 
   const toggleExpanded = (path: string) => {
@@ -127,35 +138,39 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
                       <button
                         onClick={() => toggleExpanded(item.path)}
                         className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-                          isActive(item.path)
+                          location.pathname === item.path
                             ? 'bg-white text-[#1A3263] font-medium'
                             : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
                         }`}
                       >
-                        <Icon size={18} className={isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
-                        <span className={`font-bold flex-1 text-left ${isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{item.label}</span>
+                        <Icon size={18} className={location.pathname === item.path ? 'text-[#1A3263]' : 'text-gray-300'} />
+                        <span className={`font-bold flex-1 text-left ${location.pathname === item.path ? 'text-[#1A3263]' : 'text-gray-300'}`}>{item.label}</span>
                         {isExpanded ? 
-                          <FaChevronDown size={14} className={isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'} /> : 
-                          <FaChevronRight size={14} className={isActive(item.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
+                          <FaChevronDown size={14} className={location.pathname === item.path ? 'text-[#1A3263]' : 'text-gray-300'} /> : 
+                          <FaChevronRight size={14} className={location.pathname === item.path ? 'text-[#1A3263]' : 'text-gray-300'} />
                         }
                       </button>
                       {isExpanded && (
-                        <ul className="ml-6 mt-2 space-y-2">
-                          {item.children?.map((child) => (
-                            <li key={child.path}>
-                              <Link
-                                to={addRoleParam(child.path)}
-                                className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                                  isActive(child.path)
-                                    ? 'bg-white text-[#1A3263] font-medium'
-                                    : 'text-gray-300 hover:bg-white/10 hover:text-white'
-                                }`}
-                              >
-                                {child.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                        <div className="relative ml-6 mt-2">
+                          <div className="absolute  top-0 bottom-0 w-px bg-white/30"></div>
+                          <ul className="space-y-2">
+                            {item.children?.map((child) => (
+                              <li key={child.path} className="relative">
+                                <div className="absolute  top-4 w-3 h-px bg-white/30"></div>
+                                <Link
+                                  to={addRoleParam(child.path)}
+                                  className={`block pl-6 pr-4 py-2 rounded-lg text-sm transition-colors ${
+                                    isActive(child.path)
+                                      ? 'bg-white text-[#1A3263] font-medium'
+                                      : '!text-white hover:bg-white/10 hover:text-white'
+                                  }`}
+                                >
+                                  {child.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
                     </>
                   ) : (

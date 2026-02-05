@@ -1,0 +1,252 @@
+import { useState } from 'react'
+import { FaUsers, FaDollarSign, FaEye, FaEdit, FaTrash, FaSearch, FaShieldAlt, FaBan, FaExclamationCircle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+
+function BlacklistedCustomers() {
+  const navigate = useNavigate()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [reasonFilter, setReasonFilter] = useState('all')
+
+  // Mock blacklisted customer data
+  const customers = [
+    {
+      id: 9,
+      companyName: 'Fraudulent Inc',
+      contactPerson: 'Bad Actor',
+      email: 'bad@fraudulent.com',
+      plan: 'Enterprise',
+      users: 100,
+      monthlyRevenue: 0,
+      status: 'Blacklisted',
+      joinDate: '2023-03-15',
+      blacklistedDate: '2024-02-10',
+      reason: 'Fraudulent activity'
+    },
+    {
+      id: 10,
+      companyName: 'Abuse Systems',
+      contactPerson: 'John Abuser',
+      email: 'john@abusesystems.com',
+      plan: 'Professional',
+      users: 30,
+      monthlyRevenue: 0,
+      status: 'Blacklisted',
+      joinDate: '2023-11-05',
+      blacklistedDate: '2024-01-20',
+      reason: 'System abuse'
+    }
+  ]
+
+  const filteredCustomers = customers.filter(customer =>
+    customer.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.contactPerson.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="!text-2xl font-bold text-gray-900">Blacklisted Customers</h1>
+          <p className="text-gray-600">Manage permanently blocked customer accounts</p>
+        </div>
+      </div>
+
+      {/* Alert Banner */}
+      <div className="bg-red-50 border-l-4 border-red-400 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <FaExclamationCircle className="h-5 w-5 text-red-400" />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-red-700">
+              <strong>Warning:</strong> These accounts are permanently blacklisted due to serious violations. Exercise extreme caution when reviewing.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-red-500">
+              <FaBan className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Blacklisted Accounts</p>
+              <p className="text-2xl font-bold text-gray-900">4</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-red-500">
+              <FaDollarSign className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Prevented Losses</p>
+              <p className="text-2xl font-bold text-gray-900">$15,400</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-red-500">
+              <FaUsers className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Blocked Users</p>
+              <p className="text-sm font-bold text-gray-900">456</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 rounded-lg bg-orange-500">
+              <FaShieldAlt className="text-white" size={24} />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Security Score</p>
+              <p className="text-2xl font-bold text-gray-900">98%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex-1 relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search blacklisted customers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <select
+            value={reasonFilter}
+            onChange={(e) => setReasonFilter(e.target.value)}
+            className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="all">All Reasons</option>
+            <option value="Fraudulent activity">Fraudulent Activity</option>
+            <option value="System abuse">System Abuse</option>
+            <option value="Terms violation">Terms Violation</option>
+          </select>
+          <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2">
+            <FaBan size={14} />
+            Export Blacklist
+          </button>
+        </div>
+      </div>
+
+      {/* Customers Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Company
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Contact Person
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Previous Plan
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Users Affected
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Blacklisted Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reason
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredCustomers.map((customer) => (
+                <tr key={customer.id} className="hover:bg-red-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                        <FaBan className="text-red-500" size={12} />
+                        {customer.companyName}
+                      </div>
+                      <div className="text-sm text-gray-500">{customer.email}</div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{customer.contactPerson}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      customer.plan === 'Enterprise' ? 'bg-blue-100 text-blue-800' :
+                      customer.plan === 'Professional' ? 'bg-green-100 text-green-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {customer.plan}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {customer.users}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {customer.blacklistedDate}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                      {customer.reason}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button 
+                        onClick={() => navigate(`/dashboard/customers/${customer.id}`)}
+                        className="text-blue-600 hover:text-blue-900"
+                        title="View Details"
+                      >
+                        <FaEye size={16} />
+                      </button>
+                      <button className="text-orange-600 hover:text-orange-900" title="Edit Notes">
+                        <FaEdit size={16} />
+                      </button>
+                      <button className="text-red-600 hover:text-red-900" title="Permanent Delete">
+                        <FaTrash size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Security Notice */}
+      <div className="bg-gray-50 rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <FaShieldAlt className="text-gray-600" size={16} />
+          <h3 className="text-sm font-medium text-gray-900">Security Notice</h3>
+        </div>
+        <p className="text-xs text-gray-600">
+          All blacklisted accounts are monitored for attempted access. Any suspicious activity is automatically logged and reported to security team.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default BlacklistedCustomers

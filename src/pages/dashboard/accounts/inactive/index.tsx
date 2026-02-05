@@ -1,67 +1,37 @@
 import { useState } from 'react'
-import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
+import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaSearch, FaPlay } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import AddCustomer from '../../components/modals/AddCustomer'
-// import DeleteCustomer  from '../../components/modals/DeleteCustomer'
 
-function Customers() {
+function InactiveCustomers() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [planFilter, setPlanFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [showAddModal, setShowAddModal] = useState(false)
-  // const [ setShowDeleteModal] = useState(false)
-  // const [ setSelectedCustomer] = useState<{id: number, companyName: string} | null>(null)
 
-  const handleAddCustomer = (customerData: any) => {
-    console.log('Adding customer:', customerData)
-  }
-
-  // const handleDeleteCustomer = (customerData: any) => {
-  //   console.log('Deleting customer:', customerData)
-  //   setShowDeleteModal(false)
-  //   setSelectedCustomer(null)
-  // }
-
-  // const openDeleteModal = (customer: {id: number, companyName: string}) => {
-  //   setSelectedCustomer(customer)
-  //   setShowDeleteModal(true)
-  // }
- 
-  // Mock customer data
+  // Mock inactive customer data
   const customers = [
     {
-      id: 1,
-      companyName: 'TechCorp Solutions',
-      contactPerson: 'John Smith',
-      email: 'john@techcorp.com',
-      plan: 'Enterprise',
-      users: 45,
-      monthlyRevenue: 900,
-      status: 'Active',
-      joinDate: '2024-01-15'
-    },
-    {
-      id: 2,
-      companyName: 'StartupHub Inc',
-      contactPerson: 'Sarah Johnson',
-      email: 'sarah@startuphub.com',
-      plan: 'Professional',
-      users: 12,
-      monthlyRevenue: 200,
-      status: 'Active',
-      joinDate: '2024-02-20'
-    },
-    {
-      id: 3,
-      companyName: 'Global Enterprises',
-      contactPerson: 'Mike Wilson',
-      email: 'mike@global.com',
+      id: 5,
+      companyName: 'Dormant Corp',
+      contactPerson: 'Lisa Brown',
+      email: 'lisa@dormantcorp.com',
       plan: 'Basic',
-      users: 8,
-      monthlyRevenue: 82,
-      status: 'Cancelled',
-      joinDate: '2023-11-10'
+      users: 5,
+      monthlyRevenue: 0,
+      status: 'Inactive',
+      joinDate: '2023-08-15',
+      lastActivity: '2024-01-10'
+    },
+    {
+      id: 6,
+      companyName: 'Paused Solutions',
+      contactPerson: 'Tom Davis',
+      email: 'tom@pausedsolutions.com',
+      plan: 'Professional',
+      users: 15,
+      monthlyRevenue: 0,
+      status: 'Inactive',
+      joinDate: '2023-12-01',
+      lastActivity: '2024-02-28'
     }
   ]
 
@@ -75,8 +45,8 @@ function Customers() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="!text-2xl font-bold text-gray-900">Customer Management</h1>
-          <p className="text-gray-600">Manage your customer companies and subscriptions</p>
+          <h1 className="!text-2xl font-bold text-gray-900">Inactive Customers</h1>
+          <p className="text-gray-600">Manage customers with inactive accounts</p>
         </div>
       </div>
 
@@ -84,36 +54,36 @@ function Customers() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-lg bg-blue-500">
+            <div className="p-3 rounded-lg bg-gray-500">
               <FaBuilding className="text-white" size={24} />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Customers</p>
-              <p className="text-2xl font-bold text-gray-900">156</p>
+              <p className="text-sm font-medium text-gray-600">Inactive Customers</p>
+              <p className="text-2xl font-bold text-gray-900">18</p>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-lg bg-green-500">
+            <div className="p-3 rounded-lg bg-gray-500">
               <FaDollarSign className="text-white" size={24} />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">$47,850</p>
+              <p className="text-sm font-medium text-gray-600">Lost Revenue</p>
+              <p className="text-2xl font-bold text-gray-900">$3,200</p>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-lg bg-purple-500">
+            <div className="p-3 rounded-lg bg-gray-500">
               <FaUsers className="text-white" size={24} />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total End Users</p>
-              <p className="text-2xl font-bold text-gray-900">3,247</p>
+              <p className="text-sm font-medium text-gray-600">Inactive Users</p>
+              <p className="text-2xl font-bold text-gray-900">287</p>
             </div>
           </div>
         </div>
@@ -124,8 +94,8 @@ function Customers() {
               <FaCalendarAlt className="text-white" size={24} />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">New This Month</p>
-              <p className="text-2xl font-bold text-gray-900">12</p>
+              <p className="text-sm font-medium text-gray-600">Reactivation Rate</p>
+              <p className="text-2xl font-bold text-gray-900">23%</p>
             </div>
           </div>
         </div>
@@ -138,7 +108,7 @@ function Customers() {
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search customers..."
+              placeholder="Search inactive customers..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -154,21 +124,9 @@ function Customers() {
             <option value="Professional">Professional</option>
             <option value="Enterprise">Enterprise</option>
           </select>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">All Status</option>
-            <option value="Active">Active</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-blue-800 flex items-center gap-2"
-          >
-            <FaPlus size={14} />
-            Add New Customer
+          <button className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center gap-2">
+            <FaPlay size={14} />
+            Reactivate Selected
           </button>
         </div>
       </div>
@@ -192,7 +150,7 @@ function Customers() {
                   Users
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Revenue
+                  Last Activity
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
@@ -227,13 +185,11 @@ function Customers() {
                     {customer.users}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${customer.monthlyRevenue}
+                    {customer.lastActivity}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      customer.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {customer.status}
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                      Inactive
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -244,13 +200,13 @@ function Customers() {
                       >
                         <FaEye size={16} />
                       </button>
+                      <button className="text-orange-600 hover:text-orange-900" title="Reactivate">
+                        <FaPlay size={16} />
+                      </button>
                       <button className="text-green-600 hover:text-green-900">
                         <FaEdit size={16} />
                       </button>
-                      <button 
-                        // onClick={() => openDeleteModal({id: customer.id, companyName: customer.companyName})}
-                        className="text-red-600 hover:text-red-900"
-                      >
+                      <button className="text-red-600 hover:text-red-900">
                         <FaTrash size={16} />
                       </button>
                     </div>
@@ -261,25 +217,8 @@ function Customers() {
           </table>
         </div>
       </div>
-
-      {/* Modals */}
-      <AddCustomer
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onSubmit={handleAddCustomer}
-      />
-      
-      {/* <DeleteCustomer
-        isOpen={showDeleteModal}
-        customerName={selectedCustomer?.companyName || ''}
-        onClose={() => {
-          setShowDeleteModal(false)
-          setSelectedCustomer(null)
-        }}
-        onSubmit={handleDeleteCustomer}
-      /> */}
     </div>
   )
 }
 
-export default Customers
+export default InactiveCustomers

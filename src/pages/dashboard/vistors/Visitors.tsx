@@ -1,7 +1,7 @@
 import { useState } from 'react'
 // import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUsers, FaUserCheck, FaUserClock, FaUserTimes, FaPlus, FaSearch, FaEdit, FaEye } from 'react-icons/fa'
-import AddVisitorModal from '../../components/modals/AddVisitorModal'
+import AddVisitorModal from '../../../components/modals/AddVisitorModal'
 
 function Visitors() {
   // const navigate = useNavigate()

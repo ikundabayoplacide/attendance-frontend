@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import MapChart from "../components/ui/MapChart";
-import AddEventModal from "../components/modals/AddEventModal";
 import { FaCalendarAlt, FaMapMarkerAlt, FaClock, FaUsers } from 'react-icons/fa';
+import MapChart from '../../../components/ui/MapChart';
+import AddEventModal from '../../../components/modals/AddEventModal';
 
 function EventsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);

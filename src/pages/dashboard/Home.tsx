@@ -1,13 +1,12 @@
-import borderImage from '../assets/images/kf.png'
-import homeImage from '../assets/images/chartImagenow.png'
-import cloudImage from '../assets/images/kigaliport.png'
-import computerSite from '../assets/images/removedBackground.png'
-import chatbotAnimation from '../assets/avatar/Cute chatbot greeting people with computer.json'
-
+import chatbotAnimation from '../../assets/avatar/Cute chatbot greeting people with computer.json'
+import homeImage from '../../assets/images/homeImage.png'
+import cloudImage from '../../assets/images/hero_left_bg.svg'
+import computerSite from '../../assets/images/removedBackground.png'
+import borderImage from '../../assets/images/imigongo.svg'
 import Lottie from 'lottie-react'
 import { FaArrowRight } from 'react-icons/fa'
-import Button from '../components/ui/Button'
-import Navbar from '../components/ui/navbar'
+import Button from '../../components/ui/Button'
+import Navbar from '../../components/ui/navbar'
 
 function Home() {
   return (

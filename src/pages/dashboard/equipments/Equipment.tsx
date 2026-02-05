@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaEye, FaSearch } from 'react-icons/fa';
-import EquipmentDetailsModal from '../components/modals/EquipmentDetailsModal';
+import EquipmentDetailsModal from '../../../components/modals/EquipmentDetailsModal';
 
 function Equipment() {
     const [isModalOpen, setIsModalOpen] = useState(false);

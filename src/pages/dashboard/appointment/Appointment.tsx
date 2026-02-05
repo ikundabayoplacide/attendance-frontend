@@ -1,7 +1,7 @@
 import { useState } from 'react'
 // import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSearch, FaEdit, FaEye, FaUser } from 'react-icons/fa'
-import ScheduleAppointmentModal from '../components/modals/ScheduleAppointmentModal'
+import ScheduleAppointmentModal from '../../../components/modals/ScheduleAppointmentModal'
 
 function AppointmentPage() {
   // const [searchParams] = useSearchParams()
