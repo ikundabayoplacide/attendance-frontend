@@ -30,7 +30,7 @@ import EventsPage from '../pages/dashboard/events/Events'
 import Equipment from '../pages/dashboard/equipments/Equipment'
 import AppointmentPage from '../pages/dashboard/appointment/Appointment'
 import FormPage from '../pages/dashboard/forms'
-import CreateForm from '../pages/dashboard/forms/CreateForm'
+import CreateForm from '../pages/dashboard/forms/createForm'
 import Security from '../pages/dashboard/security'
 
 
