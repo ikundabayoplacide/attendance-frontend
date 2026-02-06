@@ -305,7 +305,7 @@ function Login() {
 
                 {/* Sign in button */}
                 <Button
-                  className="w-full bg-[#1A3263] hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
+                  className="w-full bg-[#1A3263] hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
                   onClick={()=>navigate('/dashboard?role=owner')}
                 >
                   Sign in
