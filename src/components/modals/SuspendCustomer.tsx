@@ -131,7 +131,7 @@ export default function SuspendCustomer({ isOpen, onClose, onSubmit, customerNam
         <div className="flex gap-3">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-300"
           >
             Cancel
           </button>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { FaShieldAlt, FaExclamationTriangle, FaBan, FaEye, FaSearch, FaFilter } from 'react-icons/fa'
+import { FaShieldAlt, FaExclamationTriangle, FaBan, FaEye, FaSearch, FaFilter, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import BlockDeviceModal from '../../../components/modals/blockDevice'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
 
 interface SecurityThreat {
   id: string
@@ -19,6 +20,8 @@ function Security() {
   const [severityFilter, setSeverityFilter] = useState('all')
   const [showBlockModal, setShowBlockModal] = useState(false)
   const [selectedThreat, setSelectedThreat] = useState<SecurityThreat | null>(null)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   // Mock security threats data
   const threats: SecurityThreat[] = [
@@ -68,6 +71,26 @@ function Security() {
       // Handle blocking logic here
     }
   }
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const exportFields = [
+    { id: 'ipAddress', label: 'IP Address' },
+    { id: 'deviceInfo', label: 'Device Info' },
+    { id: 'location', label: 'Location' },
+    { id: 'threatType', label: 'Threat Type' },
+    { id: 'severity', label: 'Severity' },
+    { id: 'timestamp', label: 'Timestamp' },
+    { id: 'attempts', label: 'Attempts' },
+    { id: 'status', label: 'Status' },
+  ]
 
   const filteredThreats = threats.filter(threat => {
     const matchesSearch = threat.ipAddress.includes(searchTerm) ||
@@ -159,7 +182,7 @@ function Security() {
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -183,6 +206,34 @@ function Security() {
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
+          </div>
+
+          {/* Export Options */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleExport('pdf')}
+              className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+              title="Export as PDF"
+            >
+              <FaFilePdf size={16} />
+              <span className="hidden sm:inline">PDF</span>
+            </button>
+            <button
+              onClick={() => handleExport('word')}
+              className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              title="Export as Word"
+            >
+              <FaFileWord size={16} />
+              <span className="hidden sm:inline">Word</span>
+            </button>
+            <button
+              onClick={() => handleExport('print')}
+              className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              title="Print"
+            >
+              <FaPrint size={16} />
+              <span className="hidden sm:inline">Print</span>
+            </button>
           </div>
         </div>
       </div>
@@ -285,6 +336,16 @@ function Security() {
           }}
         />
       )}
+
+      {/* Export Modal */}
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Security Report"
+      />
     </div>
   )
 }

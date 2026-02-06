@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
+import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AddCustomer from '../../../components/modals/AddCustomer'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
 // import DeleteCustomer  from '../../components/modals/DeleteCustomer'
 
 function Customers() {
@@ -10,12 +11,37 @@ function Customers() {
   const [planFilter, setPlanFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
   // const [ setShowDeleteModal] = useState(false)
   // const [ setSelectedCustomer] = useState<{id: number, companyName: string} | null>(null)
 
   const handleAddCustomer = (customerData: any) => {
     console.log('Adding customer:', customerData)
   }
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+    // Handle report generation logic here
+  }
+
+  // Define available fields for export
+  const exportFields = [
+    { id: 'companyName', label: 'Company Name' },
+    { id: 'contactPerson', label: 'Contact Person' },
+    { id: 'email', label: 'Email' },
+    { id: 'phone', label: 'Phone' },
+    { id: 'plan', label: 'Subscription Plan' },
+    { id: 'users', label: 'Total Users' },
+    { id: 'monthlyRevenue', label: 'Monthly Revenue' },
+    { id: 'status', label: 'Status' },
+    { id: 'joinDate', label: 'Join Date' },
+  ]
 
   // const handleDeleteCustomer = (customerData: any) => {
   //   console.log('Deleting customer:', customerData)
@@ -133,7 +159,7 @@ function Customers() {
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -163,6 +189,35 @@ function Customers() {
             <option value="Active">Active</option>
             <option value="Cancelled">Cancelled</option>
           </select>
+          
+          {/* Export Options */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleExport('pdf')}
+              className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+              title="Export as PDF"
+            >
+              <FaFilePdf size={16} />
+              <span className="hidden sm:inline">PDF</span>
+            </button>
+            <button
+              onClick={() => handleExport('word')}
+              className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              title="Export as Word"
+            >
+              <FaFileWord size={16} />
+              <span className="hidden sm:inline">Word</span>
+            </button>
+            <button
+              onClick={() => handleExport('print')}
+              className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              title="Print"
+            >
+              <FaPrint size={16} />
+              <span className="hidden sm:inline">Print</span>
+            </button>
+          </div>
+
           <button
             onClick={() => setShowAddModal(true)}
             className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-blue-800 flex items-center gap-2"
@@ -177,27 +232,27 @@ function Customers() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-[#1A3263]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Company
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Contact Person
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Plan
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Users
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Revenue
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -267,6 +322,15 @@ function Customers() {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         onSubmit={handleAddCustomer}
+      />
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Customer Report"
       />
       
       {/* <DeleteCustomer

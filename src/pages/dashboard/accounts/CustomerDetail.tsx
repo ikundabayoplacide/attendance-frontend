@@ -34,6 +34,7 @@ function CustomerDetail() {
     id: parseInt(id || '1'),
     companyName: 'TechCorp Solutions',
     contactPerson: 'John Smith',
+    contactPersonPhone: '+1 (555) 987-6543',
     email: 'john@techcorp.com',
     phone: '+1 (555) 123-4567',
     address: '123 Business Ave, Tech City, TC 12345',
@@ -169,7 +170,7 @@ function CustomerDetail() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="flex items-center gap-3">
                   <FaPhone className="text-gray-400" />
                   <div>
@@ -184,6 +185,7 @@ function CustomerDetail() {
                     <p className="font-medium text-gray-900">{customer.contactPerson}</p>
                   </div>
                 </div>
+                
                 <div className="flex items-center gap-3">
                   <FaShieldAlt className="text-gray-400" />
                   <div>
@@ -193,6 +195,13 @@ function CustomerDetail() {
                     </span>
                   </div>
                 </div>
+                  <div className="flex items-center gap-3">
+                  <FaClock className="text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Last Activity</p>
+                    <p className="font-medium text-gray-900">{customer.lastActivity}</p>
+                  </div>
+                </div>
                 <div className="flex items-center gap-3">
                   <FaClock className="text-gray-400" />
                   <div>
@@ -200,18 +209,20 @@ function CustomerDetail() {
                     <p className="font-medium text-gray-900">{customer.users}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+              
+              
+                  <div className="flex items-center gap-3">
                   <FaCalendarAlt className="text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Contact person Phone</p>
+                    <p className="font-medium text-gray-900">{customer.contactPersonPhone}</p>
+                  </div>
+                </div>
+                 <div className="flex items-center gap-3">
+                  <FaClock className="text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-500">Member Since</p>
                     <p className="font-medium text-gray-900">{customer.joinDate}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaClock className="text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Last Activity</p>
-                    <p className="font-medium text-gray-900">{customer.lastActivity}</p>
                   </div>
                 </div>
               </div>
@@ -223,7 +234,7 @@ function CustomerDetail() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
-              {['profile', 'subscription', 'blacklist', 'visits', 'activity', 'tools'].map((tab) => (
+              {['profile', 'subscription', 'blacklist', 'visits', 'tools', 'activity'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -430,26 +441,7 @@ function CustomerDetail() {
               </div>
             </div>
           )}
-
-          {/* Activity Tab */}
-          {activeTab === 'activity' && (
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-              <div className="space-y-4">
-                {activityLog.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">{activity.action}</p>
-                      <p className="text-sm text-gray-600">by {activity.user}</p>
-                      <p className="text-xs text-gray-500">{activity.timestamp}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Tools Activation Tab */}
+  {/* Tools Activation Tab */}
           {activeTab === 'tools' && (
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
@@ -510,6 +502,25 @@ function CustomerDetail() {
               </div>
             </div>
           )}
+          {/* Activity Tab */}
+          {activeTab === 'activity' && (
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+              <div className="space-y-4">
+                {activityLog.map((activity) => (
+                  <div key={activity.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{activity.action}</p>
+                      <p className="text-sm text-gray-600">by {activity.user}</p>
+                      <p className="text-xs text-gray-500">{activity.timestamp}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        
         </div>
       </div>
 

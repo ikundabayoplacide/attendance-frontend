@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FaUsers, FaDollarSign, FaSearch, FaEye, FaDownload, FaBan, FaCheck, FaExclamationTriangle, FaChartLine } from 'react-icons/fa'
+import MonthlyApexChart from '../../../components/ui/MontlyApexChart'
 
 function SubBillingsPage() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -113,7 +114,7 @@ function SubBillingsPage() {
       
       {/* Header */}
       <div className="flex-shrink-0">
-        <h1 className="!text-4xl py-1 font-bold text-gray-900">Billing & Subscription Management</h1>
+        <h1 className="!text-2xl py-1 font-bold text-gray-900">Billing & Subscription Management</h1>
         <p className="text-gray-600">Monitor revenue, manage subscriptions, and control customer payments</p>
       </div>
 
@@ -168,12 +169,8 @@ function SubBillingsPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Revenue Chart Placeholder */}
                 <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Revenue Trend</h3>
-                  <div className="h-64 flex items-center justify-center text-gray-500">
-                    <div className="text-center">
-                      <FaChartLine size={48} className="mx-auto mb-2 text-gray-400" />
-                      <p>Revenue chart visualization</p>
-                    </div>
+                  <div className="h-auto w-full flex items-center justify-center text-gray-500">
+                  <MonthlyApexChart data={[100, 150, 200, 180, 220, 250, 300, 280, 320, 350, 400, 450]} />
                   </div>
                 </div>
 
@@ -254,14 +251,14 @@ function SubBillingsPage() {
               {/* Subscriptions Table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Company</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Plan</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Users</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Next Billing</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                  <thead className='bg-[#1A3263] rounded'>
+                    <tr className="border-b border-gray-200 rounded">
+                      <th className="text-left py-3 px-4 font-medium text-white">Company</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Plan</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Users</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Next Billing</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -311,15 +308,15 @@ function SubBillingsPage() {
             <div className="p-6">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead>
+                  <thead className='bg-[#1A3263] rounded'>
                     <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Invoice ID</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Company</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Amount</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Date</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Due Date</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Invoice ID</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Company</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Amount</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Date</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Due Date</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Actions</th>
                     </tr>
                   </thead>
                   <tbody>

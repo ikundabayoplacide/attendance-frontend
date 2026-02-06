@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaFilePdf, FaFileWord, FaPrint, FaUsers, FaClock } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
+import DeleteFormModal from '../../../components/modals/DeleteFormModal'
+import EditFormModal from '../../../components/modals/EditFormModal'
 
 interface Form {
   id: string
@@ -18,6 +21,11 @@ function AllForms() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedForm, setSelectedForm] = useState<Form | null>(null)
 
   // Mock forms data
   const forms: Form[] = [
@@ -84,9 +92,48 @@ function AllForms() {
   })
 
   const handleExport = (type: 'pdf' | 'word' | 'print') => {
-    console.log(`Exporting forms as ${type}`)
-    // Handle export logic here
+    setExportFormat(type)
+    setShowExportModal(true)
   }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const handleDeleteForm = (form: Form) => {
+    setSelectedForm(form)
+    setShowDeleteModal(true)
+  }
+
+  const handleEditForm = (form: Form) => {
+    setSelectedForm(form)
+    setShowEditModal(true)
+  }
+
+  const confirmEditForm = (formData: any) => {
+    console.log('Updating form:', formData)
+    // Handle update logic here
+  }
+
+  const confirmDeleteForm = () => {
+    if (selectedForm) {
+      console.log('Deleting form:', selectedForm.id)
+      // Handle delete logic here
+    }
+    setShowDeleteModal(false)
+    setSelectedForm(null)
+  }
+
+  const exportFields = [
+    { id: 'title', label: 'Form Title' },
+    { id: 'description', label: 'Description' },
+    { id: 'status', label: 'Status' },
+    { id: 'responses', label: 'Responses' },
+    { id: 'allowedRoles', label: 'Allowed Roles' },
+    { id: 'createdDate', label: 'Created Date' },
+    { id: 'startTime', label: 'Start Time' },
+    { id: 'endTime', label: 'End Time' },
+  ]
 
   return (
     <div className="space-y-6">
@@ -216,24 +263,24 @@ function AllForms() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-[#1A3263]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Form Details
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Responses
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Allowed Roles
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Created Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -281,10 +328,18 @@ function AllForms() {
                       <button className="text-blue-600 hover:text-blue-900" title="View">
                         <FaEye size={16} />
                       </button>
-                      <button className="text-green-600 hover:text-green-900" title="Edit">
+                      <button 
+                        onClick={() => handleEditForm(form)}
+                        className="text-green-600 hover:text-green-900" 
+                        title="Edit"
+                      >
                         <FaEdit size={16} />
                       </button>
-                      <button className="text-red-600 hover:text-red-900" title="Delete">
+                      <button 
+                        onClick={() => handleDeleteForm(form)}
+                        className="text-red-600 hover:text-red-900" 
+                        title="Delete"
+                      >
                         <FaTrash size={16} />
                       </button>
                     </div>
@@ -295,6 +350,42 @@ function AllForms() {
           </table>
         </div>
       </div>
+
+      {/* Export Modal */}
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Forms Report"
+      />
+
+      {/* Delete Modal */}
+      {selectedForm && (
+        <DeleteFormModal
+          isOpen={showDeleteModal}
+          formTitle={selectedForm.title}
+          onClose={() => {
+            setShowDeleteModal(false)
+            setSelectedForm(null)
+          }}
+          onConfirm={confirmDeleteForm}
+        />
+      )}
+
+      {/* Edit Modal */}
+      {selectedForm && (
+        <EditFormModal
+          isOpen={showEditModal}
+          formData={selectedForm}
+          onClose={() => {
+            setShowEditModal(false)
+            setSelectedForm(null)
+          }}
+          onSubmit={confirmEditForm}
+        />
+      )}
     </div>
   )
 }

@@ -1,9 +1,10 @@
-import { FaDollarSign, FaBuilding, FaChartLine, FaExclamationTriangle, FaCreditCard, FaServer, FaArrowUp, FaArrowDown, FaGlobe } from 'react-icons/fa'
-import { useSearchParams } from 'react-router-dom'
+import { FaDollarSign, FaBuilding, FaChartLine, FaExclamationTriangle, FaCreditCard, FaServer, FaArrowUp, FaArrowDown } from 'react-icons/fa'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import CustomerDashboard from './dashboard/accounts/CustomerDashboard'
 
 function Dashboard() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   
   // Get user role from URL parameters, default to owner
   const userRole = searchParams.get('role') === 'customer' ? 'customer' : 'owner'
@@ -16,19 +17,13 @@ function Dashboard() {
   // System Owner Dashboard
   // Primary Business Metrics
   const primaryStats = [
+    {title:'Annual Revenue', value: '$574,200', icon: FaChartLine, color: 'bg-yellow-500', change: '+18.5%', trend: 'up' },
     { title: 'Monthly Recurring Revenue', value: '$47,850', icon: FaDollarSign, color: 'bg-green-500', change: '+15.3%', trend: 'up' },
     { title: 'Total Customers', value: '156', icon: FaBuilding, color: 'bg-blue-500', change: '+8.2%', trend: 'up' },
     { title: 'Active Subscriptions', value: '142', icon: FaCreditCard, color: 'bg-purple-500', change: '+12.1%', trend: 'up' },
     { title: 'System Uptime', value: '99.8%', icon: FaServer, color: 'bg-indigo-500', change: '+0.2%', trend: 'up' }
   ]
 
-  // Secondary Business Metrics
-  const secondaryStats = [
-    { title: 'Annual Recurring Revenue', value: '$574,200', change: '+18.5%', trend: 'up' },
-    { title: 'Customer Churn Rate', value: '2.1%', change: '-0.8%', trend: 'down' },
-    { title: 'Average Revenue Per User', value: '$337', change: '+5.2%', trend: 'up' },
-    { title: 'Total End Users', value: '3,247', change: '+22.4%', trend: 'up' }
-  ]
 
   // Critical Business Alerts
   const criticalAlerts = [
@@ -84,207 +79,202 @@ function Dashboard() {
     }
   ]
 
-  // Customer Geographic Distribution
-  const geoDistribution = [
-    { region: 'North America', customers: 89, percentage: '57%', color: 'bg-blue-500' },
-    { region: 'Europe', customers: 42, percentage: '27%', color: 'bg-green-500' },
-    { region: 'Asia Pacific', customers: 19, percentage: '12%', color: 'bg-purple-500' },
-    { region: 'Others', customers: 6, percentage: '4%', color: 'bg-gray-500' }
+  // Customer recently registered
+  const recentCustomers = [
+    {
+      id: 1,
+      name: "TechCorp Solutions",
+      plan: "Enterprise",
+      signupDate: "2023-06-15",
+      status: "Active",
+      logo: "/api/placeholder/40/40"
+    },
+    {
+      id: 2,
+      name: "StartupHub Inc",
+      plan: "Professional",
+      signupDate: "2023-06-14",
+      status: "Active",
+      logo: "/api/placeholder/40/40"
+    },
+    {
+      id: 3,
+      name: "Global Enterprises",
+      plan: "Enterprise",
+      signupDate: "2023-06-12",
+      status: "Cancelled",
+      logo: "/api/placeholder/40/40"
+    }
   ]
 
+
   return (
-    <div className="flex flex-col h-full">
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-        `
-      }} />
-      
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex-shrink-0">
-        <h1 className="!text-4xl py-1 font-bold text-gray-900">Owner Dashboard</h1>
-        <p className="text-gray-600">Monitor your E-Visitors SaaS platform performance and revenue</p>
+      <div>
+        <h1 className="!text-3xl font-bold text-gray-900">Owner Dashboard</h1>
+        <p className="text-gray-600 mt-1">Monitor your E-Visitors SaaS platform performance and revenue</p>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        
-        {/* Primary KPI Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {primaryStats.map((stat, index) => {
-            const Icon = stat.icon
-            return (
-              <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      {stat.trend === 'up' ? (
-                        <FaArrowUp className="text-green-500" size={12} />
-                      ) : (
-                        <FaArrowDown className="text-red-500" size={12} />
-                      )}
-                      <p className={`text-sm ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
-                        {stat.change} from last month
-                      </p>
-                    </div>
-                  </div>
-                  <div className={`${stat.color} p-3 rounded-lg`}>
-                    <Icon className="text-white" size={24} />
-                  </div>
+      {/* Primary KPI Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        {primaryStats.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <div key={index} className="bg-white rounded-lg shadow-sm border p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`${stat.color} p-2.5 rounded-lg`}>
+                  <Icon className="text-white" size={18} />
                 </div>
+               
               </div>
-            )
-          })}
-        </div>
-
-        {/* Secondary Metrics */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Key Business Metrics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {secondaryStats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{stat.value}</p>
-                <div className="flex items-center justify-center gap-1 mt-1">
+              <p className="text-sm text-gray-600 my-4">{stat.title}</p>
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+               <div className="flex items-center gap-1">
                   {stat.trend === 'up' ? (
                     <FaArrowUp className="text-green-500" size={10} />
                   ) : (
                     <FaArrowDown className="text-red-500" size={10} />
                   )}
-                  <p className={`text-xs ${stat.change.startsWith('+') || stat.change.startsWith('-') && stat.trend === 'down' ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`text-xs mt-2 font-medium ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
                     {stat.change}
-                  </p>
+                  </span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          )
+        })}
+      </div>
 
-        {/* Critical Business Alerts */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <FaExclamationTriangle className="text-orange-500" size={20} />
-            <h2 className="text-lg font-semibold text-gray-900">Business Alerts</h2>
-          </div>
+      {/* Critical Business Alerts */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <FaExclamationTriangle className="text-orange-500" size={18} />
+          <h2 className="text-lg font-semibold text-gray-900">Business Alerts</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {criticalAlerts.map((alert) => (
+            <div key={alert.id} className={`flex items-center gap-3 p-3 rounded-lg border-l-4 ${
+              alert.severity === 'high' ? 'bg-red-50 border-red-500' : 'bg-yellow-50 border-yellow-500'
+            }`}>
+              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                alert.severity === 'high' ? 'bg-red-500' : 'bg-yellow-500'
+              }`}></div>
+              <span className="text-sm text-gray-700 flex-1">{alert.message}</span>
+              <button className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 whitespace-nowrap">
+                {alert.action}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Revenue Breakdown */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Plan</h2>
           <div className="space-y-3">
-            {criticalAlerts.map((alert) => (
-              <div key={alert.id} className={`flex items-center gap-3 p-4 rounded-lg border-l-4 ${
-                alert.severity === 'high' ? 'bg-red-50 border-red-500' : 'bg-yellow-50 border-yellow-500'
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${
-                  alert.severity === 'high' ? 'bg-red-500' : 'bg-yellow-500'
-                }`}></div>
-                <span className="text-sm text-gray-700 flex-1">{alert.message}</span>
-                <button className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                  {alert.action}
-                </button>
+            {revenueBreakdown.map((plan, index) => (
+              <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2.5 h-2.5 rounded-full ${plan.color}`}></div>
+                    <p className="font-medium text-gray-900 text-sm">{plan.plan}</p>
+                    <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded-full">
+                      {plan.growth}
+                    </span>
+                  </div>
+                  <p className="font-semibold text-gray-900 text-sm">{plan.revenue}/mo</p>
+                </div>
+                <div className="flex justify-between text-xs text-gray-600">
+                  <span>{plan.customers} customers</span>
+                  <span>ARPU: {plan.arpu}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Revenue Breakdown by Plan */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Subscription Plan</h2>
-            <div className="space-y-4">
-              {revenueBreakdown.map((plan, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${plan.color}`}></div>
-                      <p className="font-medium text-gray-900">{plan.plan}</p>
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                        {plan.growth}
-                      </span>
-                    </div>
-                    <p className="font-semibold text-gray-900">{plan.revenue}/mo</p>
-                  </div>
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>{plan.customers} customers</span>
-                    <span>ARPU: {plan.arpu}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Geographic Distribution */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <FaGlobe className="text-blue-500" size={18} />
-              <h2 className="text-lg font-semibold text-gray-900">Customer Distribution</h2>
-            </div>
-            <div className="space-y-3">
-              {geoDistribution.map((geo, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${geo.color}`}></div>
-                    <span className="font-medium text-gray-900">{geo.region}</span>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900">{geo.customers}</p>
-                    <p className="text-sm text-gray-500">{geo.percentage}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Business Activity */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Business Activity</h2>
+        {/* Recent Customers */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Customers</h2>
           <div className="space-y-3">
-            {businessActivity.map((activity) => (
-              <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className={`w-2 h-2 rounded-full mt-2 ${activity.color}`}></div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-700">{activity.message}</p>
-                  <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+            {recentCustomers.map((customer) => (
+              <div key={customer.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
+                  {customer.name.charAt(0)}
                 </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 text-sm truncate">{customer.name}</p>
+                  <p className="text-xs text-gray-500">{customer.plan} • {customer.signupDate}</p>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  customer.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  {customer.status}
+                </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Quick Business Actions */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        {/* Quick Actions */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-              <FaBuilding className="text-blue-600" size={20} />
+          <div className="space-y-2">
+            <button className="w-full flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+            onClick={()=>navigate("/dashboard/customers")}
+            >
+              <FaBuilding className="text-blue-600" size={18} />
               <div className="text-left">
-                <p className="font-medium text-gray-900">Customer Management</p>
-                <p className="text-sm text-gray-500">View all customers</p>
+                <p className="font-medium text-gray-900 text-sm">Customer Management</p>
+                <p className="text-xs text-gray-500">View all customers</p>
               </div>
             </button>
-            <button className="flex items-center gap-3 p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-              <FaCreditCard className="text-green-600" size={20} />
+            <button className="w-full flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+            onClick={()=>navigate("/dashboard/billings")}
+            >
+              <FaCreditCard className="text-green-600" size={18} />
               <div className="text-left">
-                <p className="font-medium text-gray-900">Billing & Payments</p>
-                <p className="text-sm text-gray-500">Manage subscriptions</p>
+                <p className="font-medium text-gray-900 text-sm">Billing & Payments</p>
+                <p className="text-xs text-gray-500">Manage subscriptions</p>
               </div>
             </button>
-            <button className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
-              <FaChartLine className="text-purple-600" size={20} />
+            <button className="w-full flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+            onClick={()=>navigate("/dashboard/Analytics")}
+            >
+              <FaChartLine className="text-purple-600" size={18} />
               <div className="text-left">
-                <p className="font-medium text-gray-900">Business Analytics</p>
-                <p className="text-sm text-gray-500">Revenue & growth</p>
+                <p className="font-medium text-gray-900 text-sm">Business Analytics</p>
+                <p className="text-xs text-gray-500">Revenue & growth</p>
               </div>
             </button>
-            <button className="flex items-center gap-3 p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
-              <FaServer className="text-indigo-600" size={20} />
+            <button className="w-full flex items-center gap-3 p-3 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+            onClick={()=>navigate("/dashboard/forms")}
+            >
+              <FaServer className="text-indigo-600" size={18} />
               <div className="text-left">
-                <p className="font-medium text-gray-900">Platform Health</p>
-                <p className="text-sm text-gray-500">System monitoring</p>
+                <p className="font-medium text-gray-900 text-sm"> Form Management</p>
+                <p className="text-xs text-gray-500">Manage all forms</p>
               </div>
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Business Activity */}
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Business Activity</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {businessActivity.map((activity) => (
+            <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${activity.color}`}></div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-700">{activity.message}</p>
+                <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

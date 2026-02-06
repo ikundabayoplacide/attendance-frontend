@@ -80,13 +80,13 @@ function Settings() {
       {/* Tabs */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6">
+          <nav className="flex space-x-8 px-6 bg-[#1A3263]">
             <button
               onClick={() => setActiveTab('webinfo')}
-              className={`py-4 px-1 border-b-2 font-medium  text-medium !font-bold ${
+              className={`py-4 px-1 border-b-3 font-medium  text-medium !font-bold ${
                 activeTab === 'webinfo'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500  hover:text-gray-700'
+                  ? 'border-yellow-500 text-white'
+                  : 'border-transparent text-gray-300  hover:text-gray-400'
               }`}
             >
               <FaInfo className="inline mr-2" />
@@ -96,8 +96,8 @@ function Settings() {
               onClick={() => setActiveTab('authentication')}
               className={`py-4 px-1 border-b-2 font-medium text-medium !font-bold ${
                 activeTab === 'authentication'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-yellow-500 text-white'
+                  : 'border-transparent text-gray-300 hover:text-gray-400'
               }`}
             >
               <FaLock className="inline mr-2" />
@@ -105,10 +105,10 @@ function Settings() {
             </button>
             <button
               onClick={() => setActiveTab('roles')}
-              className={`py-4 px-1 border-b-2 font-medium text-medium !font-bold ${
+              className={`py-4 px-1 border-b-4 font-medium text-medium !font-bold ${
                 activeTab === 'roles'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-yellow-500 text-white'
+                  : 'border-transparent text-gray-300 hover:text-gray-400'
               }`}
             >
               <FaUsers className="inline mr-2" />
@@ -118,8 +118,8 @@ function Settings() {
               onClick={() => setActiveTab('logs')}
               className={`py-4 px-1 border-b-2 font-medium text-medium !font-bold ${
                 activeTab === 'logs'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-yellow-500 text-white'
+                  : 'border-transparent text-gray-300 hover:text-gray-400'
               }`}
             >
               <FaClipboardList className="inline mr-2" />
