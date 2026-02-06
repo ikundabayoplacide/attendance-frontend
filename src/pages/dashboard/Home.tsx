@@ -2,7 +2,7 @@ import chatbotAnimation from '../../assets/avatar/Cute chatbot greeting people w
 import homeImage from '../../assets/images/chartImagenow.png'
 import cloudImage from '../../assets/images/kigaliport.png'
 import computerSite from '../../assets/images/removedBackground.png'
-import borderImage from '../../assets/images/imigongo.svg'
+import borderImage from '../../assets/images/design.png'
 import Lottie from 'lottie-react'
 import { FaArrowRight } from 'react-icons/fa'
 import Button from '../../components/ui/Button'

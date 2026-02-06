@@ -1,11 +1,14 @@
 import { useState } from 'react'
-import { FaUsers, FaDollarSign, FaEye, FaEdit, FaTrash, FaSearch, FaShieldAlt, FaBan, FaExclamationCircle } from 'react-icons/fa'
+import { FaUsers, FaDollarSign, FaEye, FaEdit, FaTrash, FaSearch, FaShieldAlt, FaBan, FaExclamationCircle, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import ExportReportModal from '../../../../components/modals/ExportReportModal'
 
 function BlacklistedCustomers() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [reasonFilter, setReasonFilter] = useState('all')
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   // Mock blacklisted customer data
   const customers = [
@@ -42,6 +45,26 @@ function BlacklistedCustomers() {
     customer.contactPerson.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const exportFields = [
+    { id: 'companyName', label: 'Company Name' },
+    { id: 'contactPerson', label: 'Contact Person' },
+    { id: 'email', label: 'Email' },
+    { id: 'plan', label: 'Previous Plan' },
+    { id: 'users', label: 'Users Affected' },
+    { id: 'blacklistedDate', label: 'Blacklisted Date' },
+    { id: 'reason', label: 'Blacklist Reason' },
+    { id: 'joinDate', label: 'Join Date' }
+  ]
+
+  const handleExport = (format: 'pdf' | 'word' | 'print') => {
+    setExportFormat(format)
+    setShowExportModal(true)
+  }
+
+  const handleExportReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { format, fields: selectedFields, startDate, endDate })
+  }
 
   return (
     <div className="space-y-6">
@@ -140,6 +163,18 @@ function BlacklistedCustomers() {
             <option value="System abuse">System Abuse</option>
             <option value="Terms violation">Terms Violation</option>
           </select>
+          <button onClick={() => handleExport('pdf')} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2">
+            <FaFilePdf size={14} />
+            <span className="hidden sm:inline">PDF</span>
+          </button>
+          <button onClick={() => handleExport('word')} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+            <FaFileWord size={14} />
+            <span className="hidden sm:inline">Word</span>
+          </button>
+          <button onClick={() => handleExport('print')} className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center gap-2">
+            <FaPrint size={14} />
+            <span className="hidden sm:inline">Print</span>
+          </button>
           <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2">
             <FaBan size={14} />
             Export Blacklist
@@ -245,6 +280,14 @@ function BlacklistedCustomers() {
           All blacklisted accounts are monitored for attempted access. Any suspicious activity is automatically logged and reported to security team.
         </p>
       </div>
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleExportReport}
+        exportFormat={exportFormat}
+        fields={exportFields}
+      />
     </div>
   )
 }

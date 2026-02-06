@@ -46,6 +46,7 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
         { path: '/dashboard/customers/blacklisted', label: 'Blacklisted Accounts' }
       ]
     },
+    { path: '/dashboard/users', icon: FaUsers, label: 'User Management' },
     { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
     { path: '/dashboard/Analytics', icon: IoMdAnalytics, label: 'Business Analytics' },
     {path: '/dashboard/forms', icon: FaFileWaveform, label: 'Form Management',
@@ -54,7 +55,12 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
         { path: '/dashboard/forms/create', label: 'Create New Form' },
       ]
     },
-    { path: '/dashboard/system-reports', icon: FaChartBar, label: 'System Reports' },
+    { path: '/dashboard/system-reports', icon: FaChartBar, label: 'System Reports',
+      children: [
+        { path: '/dashboard/system-reports', label: 'System Reports' },
+        { path: '/dashboard/system-reports/createReport', label: 'Create Report' },
+      ]
+     },
     { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
     {path:  '/dashboard/security', icon: MdOutlineSecurity, label: 'Security Control'},
 

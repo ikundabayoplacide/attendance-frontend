@@ -1,17 +1,39 @@
 import { useState } from 'react'
-import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa'
+import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AddCustomer from '../../../../components/modals/AddCustomer'
+import ExportReportModal from '../../../../components/modals/ExportReportModal'
 
 function ActiveCustomers() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [planFilter, setPlanFilter] = useState('all')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   const handleAddCustomer = (customerData: any) => {
     console.log('Adding customer:', customerData)
   }
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const exportFields = [
+    { id: 'companyName', label: 'Company Name' },
+    { id: 'contactPerson', label: 'Contact Person' },
+    { id: 'email', label: 'Email' },
+    { id: 'plan', label: 'Plan' },
+    { id: 'users', label: 'Users' },
+    { id: 'monthlyRevenue', label: 'Monthly Revenue' },
+    { id: 'joinDate', label: 'Join Date' },
+  ]
 
   // Mock active customer data
   const customers = [
@@ -118,7 +140,7 @@ function ActiveCustomers() {
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -139,6 +161,31 @@ function ActiveCustomers() {
             <option value="Professional">Professional</option>
             <option value="Enterprise">Enterprise</option>
           </select>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleExport('pdf')}
+              className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+            >
+              <FaFilePdf size={16} />
+              <span className="hidden sm:inline">PDF</span>
+            </button>
+            <button
+              onClick={() => handleExport('word')}
+              className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+            >
+              <FaFileWord size={16} />
+              <span className="hidden sm:inline">Word</span>
+            </button>
+            <button
+              onClick={() => handleExport('print')}
+              className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <FaPrint size={16} />
+              <span className="hidden sm:inline">Print</span>
+            </button>
+          </div>
+
           <button
             onClick={() => setShowAddModal(true)}
             className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-blue-800 flex items-center gap-2"
@@ -236,6 +283,15 @@ function ActiveCustomers() {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         onSubmit={handleAddCustomer}
+      />
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Active Customers Report"
       />
     </div>
   )

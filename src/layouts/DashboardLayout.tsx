@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet, useSearchParams } from 'react-router-dom'
 import DashboardHeader from '../components/ui/dashboardHeader'
 import DashboardSidebar from '../components/ui/dashboardSidebar'
+import borderImage from '../assets/images/design.png'
 
 function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -24,8 +25,15 @@ function DashboardLayout() {
           userRole={userRole}
         />
         
-        {/* Content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        {/* Content with border design */}
+        <main 
+          className="flex-1 overflow-y-auto p-6 relative"
+          style={{
+            borderTop: '8px solid transparent',
+            borderBottom: '8px solid transparent',
+            borderImage: `url(${borderImage}) 8 repeat`,
+          }}
+        >
           <Outlet />
         </main>
       </div>

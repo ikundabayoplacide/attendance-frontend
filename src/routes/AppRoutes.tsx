@@ -24,7 +24,7 @@ import CustomerDetail from '../pages/dashboard/accounts/CustomerDetail'
 import SubBillingsPage from '../pages/dashboard/payment/Sub&billing'
 import Users from '../pages/dashboard/users/User'
 import BusinessAnalytics from '../pages/dashboard/analytics/Business-Analytics'
-import ReportPage from '../pages/dashboard/reports/Reports'
+import ReportPage from '../pages/dashboard/reports'
 import ScanningPage from '../pages/dashboard/vistors/ScanningPage'
 import EventsPage from '../pages/dashboard/events/Events'
 import Equipment from '../pages/dashboard/equipments/Equipment'
@@ -32,6 +32,7 @@ import AppointmentPage from '../pages/dashboard/appointment/Appointment'
 import FormPage from '../pages/dashboard/forms'
 import CreateForm from '../pages/dashboard/forms/createForm'
 import Security from '../pages/dashboard/security'
+import CreateReport from '../pages/dashboard/reports/createReport'
 
 
 function AppRoutes() {
@@ -59,6 +60,7 @@ function AppRoutes() {
         <Route path='forms' element={<FormPage/>}/>
         <Route path='forms/create' element={<CreateForm/>}/>
         <Route path='system-reports' element={<ReportPage/>}/>
+        <Route path='system-reports/createReport' element={<CreateReport/>}/>
         <Route path='security' element={<Security/>}/>
         
         {/* Customer Routes */}
@@ -73,6 +75,7 @@ function AppRoutes() {
         <Route path="approvals" element={<ApprovePage/>}/>
         <Route path="appointments" element={<AppointmentPage/>}/>
         <Route path="reports" element={<ReportPage/>}/>
+        <Route path="reports/create" element={<CreateReport/>}/>
 
         
         {/* Shared Routes */}

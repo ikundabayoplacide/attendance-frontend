@@ -1,11 +1,32 @@
 import { useState } from 'react'
-import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaSearch, FaPlay } from 'react-icons/fa'
+import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaSearch, FaPlay, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import ExportReportModal from '../../../../components/modals/ExportReportModal'
 
 function InactiveCustomers() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [planFilter, setPlanFilter] = useState('all')
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const exportFields = [
+    { id: 'companyName', label: 'Company Name' },
+    { id: 'contactPerson', label: 'Contact Person' },
+    { id: 'email', label: 'Email' },
+    { id: 'plan', label: 'Plan' },
+    { id: 'users', label: 'Users' },
+    { id: 'lastActivity', label: 'Last Activity' },
+  ]
 
   // Mock inactive customer data
   const customers = [
@@ -103,7 +124,7 @@ function InactiveCustomers() {
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -124,6 +145,22 @@ function InactiveCustomers() {
             <option value="Professional">Professional</option>
             <option value="Enterprise">Enterprise</option>
           </select>
+
+          <div className="flex items-center gap-2">
+            <button onClick={() => handleExport('pdf')} className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <FaFilePdf size={16} />
+              <span className="hidden sm:inline">PDF</span>
+            </button>
+            <button onClick={() => handleExport('word')} className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+              <FaFileWord size={16} />
+              <span className="hidden sm:inline">Word</span>
+            </button>
+            <button onClick={() => handleExport('print')} className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <FaPrint size={16} />
+              <span className="hidden sm:inline">Print</span>
+            </button>
+          </div>
+
           <button className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center gap-2">
             <FaPlay size={14} />
             Reactivate Selected
@@ -217,6 +254,15 @@ function InactiveCustomers() {
           </table>
         </div>
       </div>
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Inactive Customers Report"
+      />
     </div>
   )
 }
