@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FaInfo, FaLock, FaUsers, FaClipboardList, FaSearch, FaPlus, FaEdit, FaTrash, FaSave } from 'react-icons/fa'
+import DeleteLogModal from '../../../components/modals/DeleteLogModal'
 
 function Settings() {
   const [activeTab, setActiveTab] = useState('webinfo')
@@ -37,8 +38,11 @@ function Settings() {
     { id: 5, timestamp: '2024-01-20 14:10:18', user: 'admin@system.com', action: 'System Settings', details: 'Updated system configuration', level: 'info' }
   ])
   
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, logId: 0, logAction: '' })
+  
   const handleDeleteLog = (logId: number) => {
     setSystemLogs(systemLogs.filter(log => log.id !== logId))
+    setDeleteModal({ isOpen: false, logId: 0, logAction: '' })
   }
   
   const filteredRoles = roles.filter(role => 
@@ -308,7 +312,7 @@ function Settings() {
                     <p className="text-xs text-gray-500">{log.timestamp}</p>
                   </div>
                   <button
-                    onClick={() => handleDeleteLog(log.id)}
+                    onClick={() => setDeleteModal({ isOpen: true, logId: log.id, logAction: log.action })}
                     className="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-lg transition-colors"
                     title="Delete log"
                   >
@@ -320,6 +324,13 @@ function Settings() {
           </div>
         )}
       </div>
+
+      <DeleteLogModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, logId: 0, logAction: '' })}
+        onConfirm={() => handleDeleteLog(deleteModal.logId)}
+        logAction={deleteModal.logAction}
+      />
     </div>
   )
 }
