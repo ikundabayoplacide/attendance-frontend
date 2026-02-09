@@ -3,18 +3,20 @@ import Home from '../pages/dashboard/Home'
 
 import DashboardLayout from '../layouts/DashboardLayout'
 import Dashboard from '../pages/Dashboard'
-import Visitors from '../pages/dashboard/vistors/Visitors'
+import Visitors from '../pages/dashboard/vistors'
 import Attendance from '../pages/dashboard/attendance/Attendance'
 import UserDetails from '../pages/dashboard/users/UserDetail'
+import ActiveUsers from '../pages/dashboard/users/active'
+import InactiveUsers from '../pages/dashboard/users/inactive'
+import BlacklistedUsers from '../pages/dashboard/users/blacklisted'
 
-import ApprovePage from '../pages/dashboard/approval/Approval'
 import SystemHealthly from '../pages/dashboard/healthly'
 import Notifications from '../pages/dashboard/notifications/Notification'
 import Settings from '../pages/dashboard/settings/Setting'
 import Login from '../pages/auth/LoginPage'
 import Register from '../pages/auth/RegisterPage'
 import ResetPassword from '../pages/auth/ResetPasswordPage'
-import Hostmanagement from '../pages/dashboard/hosting/Host'
+import Hostmanagement from '../pages/dashboard/hosting'
 import Customers from '../pages/dashboard/accounts'
 import ActiveCustomers from '../pages/dashboard/accounts/active'
 import InactiveCustomers from '../pages/dashboard/accounts/inactive'
@@ -22,17 +24,21 @@ import SuspendedCustomers from '../pages/dashboard/accounts/suspended'
 import BlacklistedCustomers from '../pages/dashboard/accounts/blacklisted'
 import CustomerDetail from '../pages/dashboard/accounts/CustomerDetail'
 import SubBillingsPage from '../pages/dashboard/payment/Sub&billing'
-import Users from '../pages/dashboard/users/User'
+import Users from '../pages/dashboard/users'
 import BusinessAnalytics from '../pages/dashboard/analytics/Business-Analytics'
 import ReportPage from '../pages/dashboard/reports'
 import ScanningPage from '../pages/dashboard/vistors/ScanningPage'
 import EventsPage from '../pages/dashboard/events/Events'
 import Equipment from '../pages/dashboard/equipments/Equipment'
+import AddEquipmentPage from '../pages/dashboard/equipments/add'
 import AppointmentPage from '../pages/dashboard/appointment/Appointment'
 import FormPage from '../pages/dashboard/forms'
 import CreateForm from '../pages/dashboard/forms/createForm'
 import Security from '../pages/dashboard/security'
 import CreateReport from '../pages/dashboard/reports/createReport'
+import CalendarViewPage from '../pages/dashboard/appointment/viaCalender'
+import HandoverManagement from '../pages/dashboard/handover'
+import HandoverPage from '../pages/dashboard/handover'
 
 
 function AppRoutes() {
@@ -65,17 +71,23 @@ function AppRoutes() {
         
         {/* Customer Routes */}
         <Route path="users" element={<Users />} />
+        <Route path="users/active" element={<ActiveUsers />} />
+        <Route path="users/inactive" element={<InactiveUsers />} />
+        <Route path="users/blacklisted" element={<BlacklistedUsers />} />
         <Route path="users/:id" element={<UserDetails />} />
         <Route path="visitors" element={<Visitors />} />
         <Route path="attendance" element={<Attendance />} />
         <Route path="scanning" element={<ScanningPage />} />
         <Route path="events" element={<EventsPage/>}/>
         <Route path='equipments' element={<Equipment/>}/>
+        <Route path="equipments/add" element={<AddEquipmentPage/>}/>
+        <Route path="handover" element={<HandoverManagement/>}/>
         <Route path="hosts" element={<Hostmanagement/>}/>
-        <Route path="approvals" element={<ApprovePage/>}/>
         <Route path="appointments" element={<AppointmentPage/>}/>
+        <Route path="appointments/viaCalender" element={<CalendarViewPage/>}/>
         <Route path="reports" element={<ReportPage/>}/>
         <Route path="reports/create" element={<CreateReport/>}/>
+        <Route path="handover" element={<HandoverPage/>}/>
 
         
         {/* Shared Routes */}

@@ -177,18 +177,18 @@ function Hostmanagement() {
           </div>
 
           {/* Hosts Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto  rounded-lg border border-gray-200">
             <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Host</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Department</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Position</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Total Visitors</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Pending</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Last Activity</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+              <thead className='bg-[#1A3263]'>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-white">Host</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Department</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Position</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Total Visitors</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Pending</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Last Activity</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Actions</th>
                 </tr>
               </thead>
               <tbody>

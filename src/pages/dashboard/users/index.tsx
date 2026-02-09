@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FaUsers, FaUserShield, FaUserCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaToggleOn, FaToggleOff } from 'react-icons/fa'
+import { FaUsers, FaUserShield, FaUserCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaToggleOn, FaToggleOff, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import { AddUserModal, AddRoleModal } from '../../../components/modals'
 import DeleteUserModal from '../../../components/modals/DeleteUserModal'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
 
 function Users() {
   const navigate = useNavigate()
@@ -15,6 +16,8 @@ function Users() {
   const [showAddRoleModal, setShowAddRoleModal] = useState(false)
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false)
   const [userToDelete, setUserToDelete] = useState<{ id: number; name: string } | null>(null)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   // Get current role parameter
   const currentRole = searchParams.get('role') || 'owner'
@@ -42,6 +45,24 @@ function Users() {
       setUserToDelete(null)
     }
   }
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const exportFields = [
+    { id: 'name', label: 'Name' },
+    { id: 'email', label: 'Email' },
+    { id: 'role', label: 'Role' },
+    { id: 'department', label: 'Department' },
+    { id: 'status', label: 'Status' },
+    { id: 'lastLogin', label: 'Last Login' },
+  ]
 
   const stats = [
     { title: 'Total Users', value: '156', icon: FaUsers, color: 'bg-blue-500' },
@@ -205,6 +226,34 @@ function Users() {
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
+              
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                  title="Export as PDF"
+                >
+                  <FaFilePdf size={16} />
+                  <span className="hidden sm:inline">PDF</span>
+                </button>
+                <button
+                  onClick={() => handleExport('word')}
+                  className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                  title="Export as Word"
+                >
+                  <FaFileWord size={16} />
+                  <span className="hidden sm:inline">Word</span>
+                </button>
+                <button
+                  onClick={() => handleExport('print')}
+                  className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  title="Print"
+                >
+                  <FaPrint size={16} />
+                  <span className="hidden sm:inline">Print</span>
+                </button>
+              </div>
+
               <button
                 onClick={() => setShowAddUserModal(true)}
                 className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
@@ -215,16 +264,16 @@ function Users() {
             </div>
 
             {/* Users Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-hidden rounded-lg border border-gray-200">
               <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">User</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Role</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Department</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Last Login</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                <thead className='bg-[#1A3263]'>
+                  <tr>
+                    <th className="text-left py-3 px-4 font-medium text-white">User</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Role</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Department</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Last Login</th>
+                    <th className="text-left py-3 px-4 font-medium text-white">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -375,6 +424,15 @@ function Users() {
         }}
         onConfirm={confirmDeleteUser}
         userName={userToDelete?.name || ''}
+      />
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Users Report"
       />
     </div>
   )

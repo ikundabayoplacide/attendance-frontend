@@ -1,6 +1,6 @@
 import { useState } from 'react'
 // import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSearch, FaEdit, FaEye, FaUser } from 'react-icons/fa'
+import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSearch, FaEdit, FaEye, FaUser, FaEllipsisV } from 'react-icons/fa'
 import ScheduleAppointmentModal from '../../../components/modals/ScheduleAppointmentModal'
 
 function AppointmentPage() {
@@ -9,6 +9,7 @@ function AppointmentPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
   const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null)
 
   const handleScheduleAppointment = (appointmentData: any) => {
     console.log('Scheduling appointment:', appointmentData)
@@ -197,19 +198,19 @@ function AppointmentPage() {
           </div>
 
           {/* Appointments Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-hidden overflow-y-auto rounded-lg">
             <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Visitor</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Company</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Purpose</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Host</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Date & Time</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Duration</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Location</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+              <thead className='bg-[#1A3263]'>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-white">Visitor</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Company</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Purpose</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Host</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Date_and_Time</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Duration</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Location</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -247,21 +248,65 @@ function AppointmentPage() {
                       </span>
                     </td>
                     <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 text-gray-400 hover:text-blue-600" title="View Details">
-                          <FaEye size={14} />
+                      <div className="relative">
+                        <button
+                          onClick={() => setOpenDropdown(openDropdown === appointment.id ? null : appointment.id)}
+                          className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                        >
+                          <FaEllipsisV size={14} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-green-600" title="Edit">
-                          <FaEdit size={14} />
-                        </button>
-                        {appointment.status === 'Pending' && (
-                          <button className="p-2 text-gray-400 hover:text-green-600" title="Confirm">
-                            <FaCalendarCheck size={14} />
-                          </button>
+                        {openDropdown === appointment.id && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-10"
+                              onClick={() => setOpenDropdown(null)}
+                            />
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                              <button
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                onClick={() => {
+                                  console.log('View', appointment.id)
+                                  setOpenDropdown(null)
+                                }}
+                              >
+                                <FaEye size={14} className="text-blue-600" />
+                                View Details
+                              </button>
+                              <button
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                onClick={() => {
+                                  console.log('Edit', appointment.id)
+                                  setOpenDropdown(null)
+                                }}
+                              >
+                                <FaEdit size={14} className="text-green-600" />
+                                Edit
+                              </button>
+                              {appointment.status === 'Pending' && (
+                                <button
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                  onClick={() => {
+                                    console.log('Confirm', appointment.id)
+                                    setOpenDropdown(null)
+                                  }}
+                                >
+                                  <FaCalendarCheck size={14} className="text-green-600" />
+                                  Confirm
+                                </button>
+                              )}
+                              <button
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                onClick={() => {
+                                  console.log('Cancel', appointment.id)
+                                  setOpenDropdown(null)
+                                }}
+                              >
+                                <FaCalendarTimes size={14} className="text-red-600" />
+                                Cancel
+                              </button>
+                            </div>
+                          </>
                         )}
-                        <button className="p-2 text-gray-400 hover:text-red-600" title="Cancel">
-                          <FaCalendarTimes size={14} />
-                        </button>
                       </div>
                     </td>
                   </tr>

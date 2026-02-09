@@ -1,4 +1,4 @@
-import { FaHome, FaUsers, FaCalendarCheck, FaChartBar,FaCog, FaUserCheck, FaEye, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard, FaChevronDown, FaChevronRight } from 'react-icons/fa'
+import { FaHome, FaUsers, FaChartBar,FaCog, FaUserCheck, FaEye, FaCalendarAlt, FaBell, FaServer, FaTimes, FaCreditCard, FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { IoMdAnalytics } from 'react-icons/io'
 import { BsFillCalendar3EventFill } from 'react-icons/bs'
@@ -46,10 +46,17 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
         { path: '/dashboard/customers/blacklisted', label: 'Blacklisted Accounts' }
       ]
     },
-    { path: '/dashboard/users', icon: FaUsers, label: 'User Management' },
+    { path: '/dashboard/users', icon: FaUsers, label: 'User Management',
+      children:[
+      {path:'/dashboard/users', label: 'All Users' },
+      {path:'/dashboard/users/active', label: ' Active Users' },
+      {path:'/dashboard/users/inactive', label: 'Inactive Users' },
+      {path:'/dashboard/users/blacklisted', label: 'Blacklisted Users' },
+      ]
+     },
     { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
     { path: '/dashboard/Analytics', icon: IoMdAnalytics, label: 'Business Analytics' },
-    {path: '/dashboard/forms', icon: FaFileWaveform, label: 'Form Management',
+    { path: '/dashboard/forms', icon: FaFileWaveform, label: 'Form Management',
       children: [
         { path: '/dashboard/forms', label: 'All Forms' },
         { path: '/dashboard/forms/create', label: 'Create New Form' },
@@ -69,14 +76,31 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
   // Customer menu items
   const customerItems: MenuItem[] = [
     { path: '/dashboard', icon: FaHome, label: 'Dashboard Overview', exact: true },
-    { path: '/dashboard/users', icon: FaUsers, label: 'User Management' },
+    { path: '/dashboard/users', icon: FaUsers, label: 'User Management',
+      children:[
+        {path: '/dashboard/users', label: 'All Users' },
+        {path: '/dashboard/users/active', label: ' Active Users' },
+        {path:'/dashboard/users/inactive', label: ' Inactive Users' },
+        {path:'/dashboard/users/blacklisted', label: ' BlackListed Users' },
+      ]
+     },
     { path: '/dashboard/scanning', icon: FaEye, label: 'Scanning' },
     { path: '/dashboard/visitors', icon: FaUsers, label: 'Visitor Management' },
     { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Host Management' },
-    { path: '/dashboard/approvals', icon: FaCalendarCheck, label: 'Visit Approvals' },
-    { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments' },
+    { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments',
+      children:[
+        {path: '/dashboard/appointments', label: 'All Appointments' },
+        {path: '/dashboard/appointments/viaCalender', label: 'Calendar View' },
+      ]
+     },
     {path:  '/dashboard/Events', icon: BsFillCalendar3EventFill, label: 'Events'},
-    {path:  '/dashboard/equipments', icon: FaServer, label: 'Equipment Management'},
+    {path:  '/dashboard/equipments', icon: FaServer, label: 'Equipment Management',
+      children: [
+        { path: '/dashboard/equipments', label: 'All Equipments' },
+        { path: '/dashboard/equipments/add', label: 'Add New Equipment' },
+      ]
+    },
+    {path:'/dashboard/handover', icon: FaUserCheck, label: 'Handover Management'},
     { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports & Analytics' },
     { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
   ]

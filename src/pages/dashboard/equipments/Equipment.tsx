@@ -67,21 +67,21 @@ function Equipment() {
 
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-[#1A3263]">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Name
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Phone
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Entry Time
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Exit Time
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Equipment
                             </th>
                         </tr>
@@ -104,7 +104,7 @@ function Equipment() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center gap-2">
                                         <FaEye 
-                                            className="text-blue-600 cursor-pointer hover:text-blue-800" 
+                                            className="text-[#1A3263] cursor-pointer hover:text-blue-800" 
                                             size={16}
                                             onClick={() => handleViewEquipment(visitor)}
                                         />
@@ -125,7 +125,7 @@ function Equipment() {
                     <button className="px-3 py-1 text-black border border-gray-300 rounded text-sm hover:bg-gray-50">
                         Previous
                     </button>
-                    <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+                    <button className="px-3 py-1 bg-[#1A3263] text-white rounded text-sm hover:bg-blue-700">
                         1
                     </button>
                     <button className="px-3 py-1 text-black border border-gray-300 rounded text-sm hover:bg-gray-50">

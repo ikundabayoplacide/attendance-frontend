@@ -192,19 +192,19 @@ function Visitors() {
           </div>
 
           {/* Visitors Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-hidden rounded-lg border border-gray-200">
             <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Visitor</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Company</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Purpose</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Host</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Check In</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Check Out</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Badge</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+              <thead className='bg-[#1A3263]'>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-white">Visitor</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Company</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Purpose</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Host</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Check In</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Check Out</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Status</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Badge</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Actions</th>
                 </tr>
               </thead>
               <tbody>
