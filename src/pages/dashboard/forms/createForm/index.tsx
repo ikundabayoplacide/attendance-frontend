@@ -141,6 +141,72 @@ function CreateForm() {
     )
   }
 
+  const addGridRow = (questionId: number) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === questionId
+          ? { ...q, gridRows: [...(q.gridRows || []), `Row ${(q.gridRows?.length || 0) + 1}`] }
+          : q
+      )
+    )
+  }
+
+  const addGridColumn = (questionId: number) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === questionId
+          ? { ...q, gridColumns: [...(q.gridColumns || []), `Column ${(q.gridColumns?.length || 0) + 1}`] }
+          : q
+      )
+    )
+  }
+
+  const updateGridRow = (questionId: number, rowIndex: number, newValue: string) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === questionId
+          ? {
+              ...q,
+              gridRows: q.gridRows?.map((row, idx) => (idx === rowIndex ? newValue : row)),
+            }
+          : q
+      )
+    )
+  }
+
+  const updateGridColumn = (questionId: number, colIndex: number, newValue: string) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === questionId
+          ? {
+              ...q,
+              gridColumns: q.gridColumns?.map((col, idx) => (idx === colIndex ? newValue : col)),
+            }
+          : q
+      )
+    )
+  }
+
+  const deleteGridRow = (questionId: number, rowIndex: number) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === questionId
+          ? { ...q, gridRows: q.gridRows?.filter((_, i) => i !== rowIndex) }
+          : q
+      )
+    )
+  }
+
+  const deleteGridColumn = (questionId: number, colIndex: number) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === questionId
+          ? { ...q, gridColumns: q.gridColumns?.filter((_, i) => i !== colIndex) }
+          : q
+      )
+    )
+  }
+
   const deleteOption = (questionId: number, optionIndex: number) => {
     setQuestions((prevQuestions) =>
       prevQuestions.map((q) =>
@@ -367,6 +433,178 @@ function CreateForm() {
                 </div>
               )}
 
+              {question.type?.toLowerCase() === 'dropdown' && (
+                <div className="mt-4 space-y-2">
+                  {question.options?.map((option, index) => (
+                    <div key={index} className="flex items-center" style={{ width: '60%' }}>
+                      <span className="mr-2 text-gray-400">{index + 1}.</span>
+                      <input
+                        type="text"
+                        value={option}
+                        onChange={(e) => updateOption(question.id, index, e.target.value)}
+                        className="flex-1 text-black text-gray-700 focus:outline-none border-b border-transparent hover:border-gray-300 focus:border-purple-600 bg-transparent"
+                      />
+                      <button
+                        onClick={() => deleteOption(question.id, index)}
+                        className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => addOption(question.id)}
+                    className="text-blue-500 hover:underline"
+                  >
+                    Add option
+                  </button>
+                </div>
+              )}
+
+              {question.type?.toLowerCase() === 'file upload' && (
+                <div className="mt-4">
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <p className="text-gray-500 text-sm">Users will be able to upload files</p>
+                  </div>
+                </div>
+              )}
+
+              {question.type?.toLowerCase() === 'date' && (
+                <div className="mt-4">
+                  <input
+                    type="text"
+                    placeholder="Day, Month, Year"
+                    className="border text-gray-500 border-gray-300 rounded px-3 py-2 focus:outline-none bg-gray-50"
+                    readOnly
+                  />
+                </div>
+              )}
+
+              {question.type?.toLowerCase() === 'time' && (
+                <div className="mt-4">
+                  <input
+                    type="text"
+                    placeholder="Hours : Minutes"
+                    className="border text-gray-500 border-gray-300 rounded px-3 py-2 focus:outline-none bg-gray-50"
+                    readOnly
+                  />
+                </div>
+              )}
+
+              {question.type?.toLowerCase() === 'multiple choice grid' && (
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Rows</p>
+                    {question.gridRows?.map((row, index) => (
+                      <div key={index} className="flex items-center mb-2" style={{ width: '60%' }}>
+                        <span className="mr-2 text-gray-400">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={row}
+                          onChange={(e) => updateGridRow(question.id, index, e.target.value)}
+                          className="flex-1 text-black text-gray-700 focus:outline-none border-b border-transparent hover:border-gray-300 focus:border-purple-600 bg-transparent"
+                        />
+                        <button
+                          onClick={() => deleteGridRow(question.id, index)}
+                          className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addGridRow(question.id)}
+                      className="text-blue-500 hover:underline text-sm"
+                    >
+                      Add row
+                    </button>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Columns</p>
+                    {question.gridColumns?.map((col, index) => (
+                      <div key={index} className="flex items-center mb-2" style={{ width: '60%' }}>
+                        <span className="mr-2 text-gray-400">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={col}
+                          onChange={(e) => updateGridColumn(question.id, index, e.target.value)}
+                          className="flex-1 text-black text-gray-700 focus:outline-none border-b border-transparent hover:border-gray-300 focus:border-purple-600 bg-transparent"
+                        />
+                        <button
+                          onClick={() => deleteGridColumn(question.id, index)}
+                          className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addGridColumn(question.id)}
+                      className="text-blue-500 hover:underline text-sm"
+                    >
+                      Add column
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {question.type?.toLowerCase() === 'checkbox grid' && (
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Rows</p>
+                    {question.gridRows?.map((row, index) => (
+                      <div key={index} className="flex items-center mb-2" style={{ width: '60%' }}>
+                        <span className="mr-2 text-gray-400">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={row}
+                          onChange={(e) => updateGridRow(question.id, index, e.target.value)}
+                          className="flex-1 text-black text-gray-700 focus:outline-none border-b border-transparent hover:border-gray-300 focus:border-purple-600 bg-transparent"
+                        />
+                        <button
+                          onClick={() => deleteGridRow(question.id, index)}
+                          className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addGridRow(question.id)}
+                      className="text-blue-500 hover:underline text-sm"
+                    >
+                      Add row
+                    </button>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Columns</p>
+                    {question.gridColumns?.map((col, index) => (
+                      <div key={index} className="flex items-center mb-2" style={{ width: '60%' }}>
+                        <span className="mr-2 text-gray-400">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={col}
+                          onChange={(e) => updateGridColumn(question.id, index, e.target.value)}
+                          className="flex-1 text-black text-gray-700 focus:outline-none border-b border-transparent hover:border-gray-300 focus:border-purple-600 bg-transparent"
+                        />
+                        <button
+                          onClick={() => deleteGridColumn(question.id, index)}
+                          className="ml-2 text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addGridColumn(question.id)}
+                      className="text-blue-500 hover:underline text-sm"
+                    >
+                      Add column
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="mt-4 border-t border-gray-200 pt-4 flex items-center justify-end gap-4">
                 <button
                   onClick={() => addQuestion()}
@@ -415,7 +653,7 @@ function CreateForm() {
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Form description"
-              rows={3}
+              rows={1}
             />
           </div>
 
