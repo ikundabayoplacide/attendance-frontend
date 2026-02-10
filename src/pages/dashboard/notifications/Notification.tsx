@@ -119,7 +119,7 @@ function Notifications() {
         </div>
         <button
           onClick={markAllAsRead}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+          className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
         >
           <FaCheck size={14} />
           Mark All Read

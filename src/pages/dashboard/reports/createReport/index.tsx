@@ -61,9 +61,16 @@ function CreateReport() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0 flex justify-between items-center'>
         <div>
           <h1 className="!text-2xl font-bold text-gray-900">Create New Report</h1>
           <p className="text-gray-600 mt-1">Add custom fields to generate your report</p>
@@ -76,7 +83,9 @@ function CreateReport() {
         </button>
       </div>
 
-      {/* Report Basic Info */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Report Basic Info */}
       <div className="bg-white rounded-lg shadow-sm border p-6 space-y-4">
         <h2 className="text-lg font-semibold text-gray-900">General Information</h2>
         
@@ -207,22 +216,23 @@ function CreateReport() {
         </div>
       )}
 
-      {/* Actions */}
-      <div className="flex justify-end gap-4">
-        <button
-          onClick={() => navigate('/dashboard/reports')}
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSaveReport}
-          disabled={!reportTitle.trim()}
-          className="bg-[#1A3263] text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
-        >
-          <FaSave size={14} />
-          Save Report
-        </button>
+        {/* Actions */}
+        <div className="flex justify-end gap-4">
+          <button
+            onClick={() => navigate('/dashboard/reports')}
+            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSaveReport}
+            disabled={!reportTitle.trim()}
+            className="bg-[#1A3263] text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+          >
+            <FaSave size={14} />
+            Save Report
+          </button>
+        </div>
       </div>
     </div>
   )

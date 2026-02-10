@@ -75,14 +75,24 @@ function Settings() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0'>
         <h1 className="!text-2xl font-bold text-gray-900">Settings</h1>
         <p className="text-gray-600">Manage system configuration and preferences</p>
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8 px-6 bg-[#1A3263]">
             <button
@@ -323,14 +333,15 @@ function Settings() {
             </div>
           </div>
         )}
-      </div>
+        </div>
 
-      <DeleteLogModal
-        isOpen={deleteModal.isOpen}
-        onClose={() => setDeleteModal({ isOpen: false, logId: 0, logAction: '' })}
-        onConfirm={() => handleDeleteLog(deleteModal.logId)}
-        logAction={deleteModal.logAction}
-      />
+        <DeleteLogModal
+          isOpen={deleteModal.isOpen}
+          onClose={() => setDeleteModal({ isOpen: false, logId: 0, logAction: '' })}
+          onConfirm={() => handleDeleteLog(deleteModal.logId)}
+          logAction={deleteModal.logAction}
+        />
+      </div>
     </div>
   )
 }

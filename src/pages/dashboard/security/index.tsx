@@ -120,17 +120,24 @@ function Security() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="!text-2xl font-bold text-gray-900">Security Control Center</h1>
-          <p className="text-gray-600">Monitor and manage system security threats</p>
-        </div>
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0'>
+        <h1 className="!text-2xl font-bold text-gray-900">Security Control Center</h1>
+        <p className="text-gray-600">Monitor and manage system security threats</p>
       </div>
 
-      {/* Security Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Security Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-red-500">
@@ -212,7 +219,7 @@ function Security() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleExport('pdf')}
-              className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
               title="Export as PDF"
             >
               <FaFilePdf size={16} />
@@ -220,7 +227,7 @@ function Security() {
             </button>
             <button
               onClick={() => handleExport('word')}
-              className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
               title="Export as Word"
             >
               <FaFileWord size={16} />
@@ -228,7 +235,7 @@ function Security() {
             </button>
             <button
               onClick={() => handleExport('print')}
-              className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
               title="Print"
             >
               <FaPrint size={16} />
@@ -318,6 +325,7 @@ function Security() {
               ))}
             </tbody>
           </table>
+        </div>
         </div>
       </div>
 

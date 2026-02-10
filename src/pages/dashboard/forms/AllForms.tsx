@@ -136,16 +136,23 @@ function AllForms() {
   ]
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="!text-2xl font-bold text-gray-900">All Forms</h1>
-          <p className="text-gray-600">Manage and view all organizational forms</p>
-        </div>
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0'>
+        <h1 className="!text-2xl font-bold text-gray-900">All Forms</h1>
+        <p className="text-gray-600">Manage and view all organizational forms</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
@@ -224,7 +231,7 @@ function AllForms() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleExport('pdf')}
-              className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
               title="Export as PDF"
             >
               <FaFilePdf size={16} />
@@ -232,7 +239,7 @@ function AllForms() {
             </button>
             <button
               onClick={() => handleExport('word')}
-              className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
               title="Export as Word"
             >
               <FaFileWord size={16} />
@@ -240,7 +247,7 @@ function AllForms() {
             </button>
             <button
               onClick={() => handleExport('print')}
-              className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
               title="Print"
             >
               <FaPrint size={16} />
@@ -259,95 +266,96 @@ function AllForms() {
         </div>
       </div>
 
-      {/* Forms Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-[#1A3263]">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Form Details
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Responses
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Allowed Roles
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Created Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredForms.map((form) => (
-                <tr key={form.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{form.title}</div>
-                      <div className="text-sm text-gray-500">{form.description}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      form.status === 'Active' ? 'bg-green-100 text-green-800' :
-                      form.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {form.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {form.responses}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex flex-wrap gap-1">
-                      {form.allowedRoles.slice(0, 2).map(roleId => (
-                        <span key={roleId} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                          {roleNames[roleId]}
-                        </span>
-                      ))}
-                      {form.allowedRoles.length > 2 && (
-                        <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">
-                          +{form.allowedRoles.length - 2}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {form.createdDate}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900" title="View">
-                        <FaEye size={16} />
-                      </button>
-                      <button 
-                        onClick={() => handleEditForm(form)}
-                        className="text-green-600 hover:text-green-900" 
-                        title="Edit"
-                      >
-                        <FaEdit size={16} />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteForm(form)}
-                        className="text-red-600 hover:text-red-900" 
-                        title="Delete"
-                      >
-                        <FaTrash size={16} />
-                      </button>
-                    </div>
-                  </td>
+        {/* Forms Table */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-[#1A3263]">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Form Details
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Responses
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Allowed Roles
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Created Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredForms.map((form) => (
+                  <tr key={form.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{form.title}</div>
+                        <div className="text-sm text-gray-500">{form.description}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        form.status === 'Active' ? 'bg-green-100 text-green-800' :
+                        form.status === 'Draft' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {form.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {form.responses}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-wrap gap-1">
+                        {form.allowedRoles.slice(0, 2).map(roleId => (
+                          <span key={roleId} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                            {roleNames[roleId]}
+                          </span>
+                        ))}
+                        {form.allowedRoles.length > 2 && (
+                          <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">
+                            +{form.allowedRoles.length - 2}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {form.createdDate}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2">
+                        <button className="text-blue-600 hover:text-blue-900" title="View">
+                          <FaEye size={16} />
+                        </button>
+                        <button 
+                          onClick={() => handleEditForm(form)}
+                          className="text-green-600 hover:text-green-900" 
+                          title="Edit"
+                        >
+                          <FaEdit size={16} />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteForm(form)}
+                          className="text-red-600 hover:text-red-900" 
+                          title="Delete"
+                        >
+                          <FaTrash size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

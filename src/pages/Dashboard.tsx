@@ -109,14 +109,23 @@ function Dashboard() {
 
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="!text-3xl font-bold text-gray-900">Owner Dashboard</h1>
-        <p className="text-gray-600 mt-1">Monitor your E-Visitors SaaS platform performance and revenue</p>
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0'>
+        <h1 className="!text-3xl py-1 font-bold text-gray-900">Owner Dashboard</h1>
+        <p className="text-gray-600">Monitor your E-Visitors SaaS platform performance and revenue</p>
       </div>
 
-      {/* Primary KPI Stats */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Primary KPI Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {primaryStats.map((stat, index) => {
           const Icon = stat.icon
@@ -262,19 +271,20 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Recent Business Activity */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Business Activity</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {businessActivity.map((activity) => (
-            <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-              <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${activity.color}`}></div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-700">{activity.message}</p>
-                <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+        {/* Recent Business Activity */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Business Activity</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {businessActivity.map((activity) => (
+              <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${activity.color}`}></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-700">{activity.message}</p>
+                  <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -36,8 +36,16 @@ function BusinessAnalytics() {
   ]
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0 flex justify-between items-center'>
         <div>
           <h1 className="!text-2xl font-bold text-gray-900">Business Analytics</h1>
           <p className="text-gray-600">Track your SaaS platform performance and growth metrics</p>
@@ -54,7 +62,9 @@ function BusinessAnalytics() {
         </select>
       </div>
 
-      {/* KPI Cards */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiMetrics.map((metric, index) => (
           <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -149,39 +159,40 @@ function BusinessAnalytics() {
         </div>
       </div>
 
-      {/* Business Insights */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Key Business Insights</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-              <IoMdTrendingUp  className="text-green-600" size={20} />
-              <div>
-                <p className="font-medium text-gray-900">Revenue Growth Accelerating</p>
-                <p className="text-sm text-gray-600">18.5% increase in monthly recurring revenue</p>
+        {/* Business Insights */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Key Business Insights</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                <IoMdTrendingUp  className="text-green-600" size={20} />
+                <div>
+                  <p className="font-medium text-gray-900">Revenue Growth Accelerating</p>
+                  <p className="text-sm text-gray-600">18.5% increase in monthly recurring revenue</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                <FaUsers className="text-blue-600" size={20} />
+                <div>
+                  <p className="font-medium text-gray-900">Customer Acquisition Strong</p>
+                  <p className="text-sm text-gray-600">12 new customers added this month</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <FaUsers className="text-blue-600" size={20} />
-              <div>
-                <p className="font-medium text-gray-900">Customer Acquisition Strong</p>
-                <p className="text-sm text-gray-600">12 new customers added this month</p>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
+                <FaBuilding className="text-purple-600" size={20} />
+                <div>
+                  <p className="font-medium text-gray-900">Enterprise Segment Leading</p>
+                  <p className="text-sm text-gray-600">60% of total revenue from Enterprise plans</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-              <FaBuilding className="text-purple-600" size={20} />
-              <div>
-                <p className="font-medium text-gray-900">Enterprise Segment Leading</p>
-                <p className="text-sm text-gray-600">60% of total revenue from Enterprise plans</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
-              <IoMdTrendingDown className="text-yellow-600" size={20} />
-              <div>
-                <p className="font-medium text-gray-900">Churn Rate Improving</p>
-                <p className="text-sm text-gray-600">Down to 2.1% from 2.9% last quarter</p>
+              <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
+                <IoMdTrendingDown className="text-yellow-600" size={20} />
+                <div>
+                  <p className="font-medium text-gray-900">Churn Rate Improving</p>
+                  <p className="text-sm text-gray-600">Down to 2.1% from 2.9% last quarter</p>
+                </div>
               </div>
             </div>
           </div>

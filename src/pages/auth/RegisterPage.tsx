@@ -209,7 +209,6 @@ function Register() {
                           className="w-4 h-3"
                         />
                         <span className="text-xs text-black">{countries.find(c => c.code === selectedCountry)?.name}</span>
-                        <span className="text-xs text-black">{selectedCountry}</span>
                         <FaChevronDown className={`text-xs transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
                       </button>
 
@@ -255,14 +254,19 @@ function Register() {
                         </div>
                       )}
                     </div>
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      placeholder="780000000"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      className="flex-1 px-4 py-3 bg-gray-50 border border-gray-400 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
-                    />
+                    <div className="flex-1 relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 font-medium">
+                        {selectedCountry}
+                      </span>
+                      <input
+                        type="tel"
+                        name="phoneNumber"
+                        placeholder="Enter your contact"
+                        value={formData.phoneNumber}
+                        onChange={handleInputChange}
+                        className="w-full pl-16 pr-4 py-3 bg-gray-50 border border-gray-400 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+                      />
+                    </div>
                   </div>
                 </div>
 

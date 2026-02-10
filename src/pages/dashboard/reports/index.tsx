@@ -100,17 +100,23 @@ function ReportsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="!text-2xl font-bold text-gray-900">Reports</h1>
-          <p className="text-gray-600 mt-1">Manage and create reports for your organization</p>
-        </div>
-
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0'>
+        <h1 className="!text-2xl font-bold text-gray-900">Reports</h1>
+        <p className="text-gray-600 mt-1">Manage and create reports for your organization</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <div className="flex items-center justify-between">
@@ -255,20 +261,21 @@ function ReportsPage() {
         </div>
       </div>
 
-      {filteredReports.length === 0 && (
-        <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
-          <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No reports found</h3>
-          <p className="text-gray-500 mb-4">Try adjusting your search or filter criteria</p>
-          <button 
-            onClick={() => navigate('/dashboard/reports/create')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Create Your First Report
-          </button>
-        </div>
-      )}
+        {filteredReports.length === 0 && (
+          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No reports found</h3>
+            <p className="text-gray-500 mb-4">Try adjusting your search or filter criteria</p>
+            <button 
+              onClick={() => navigate('/dashboard/reports/create')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Create Your First Report
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

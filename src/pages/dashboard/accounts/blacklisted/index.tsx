@@ -67,15 +67,23 @@ function BlacklistedCustomers() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="!text-2xl font-bold text-gray-900">Blacklisted Customers</h1>
-          <p className="text-gray-600">Manage permanently blocked customer accounts</p>
-        </div>
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0'>
+        <h1 className="!text-2xl font-bold text-gray-900">Blacklisted Customers</h1>
+        <p className="text-gray-600">Manage permanently blocked customer accounts</p>
       </div>
 
-      {/* Alert Banner */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Alert Banner */}
       <div className="bg-red-50 border-l-4 border-red-400 p-4">
         <div className="flex">
           <div className="flex-shrink-0">
@@ -270,15 +278,16 @@ function BlacklistedCustomers() {
         </div>
       </div>
 
-      {/* Security Notice */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <FaShieldAlt className="text-gray-600" size={16} />
-          <h3 className="text-sm font-medium text-gray-900">Security Notice</h3>
+        {/* Security Notice */}
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <FaShieldAlt className="text-gray-600" size={16} />
+            <h3 className="text-sm font-medium text-gray-900">Security Notice</h3>
+          </div>
+          <p className="text-xs text-gray-600">
+            All blacklisted accounts are monitored for attempted access. Any suspicious activity is automatically logged and reported to security team.
+          </p>
         </div>
-        <p className="text-xs text-gray-600">
-          All blacklisted accounts are monitored for attempted access. Any suspicious activity is automatically logged and reported to security team.
-        </p>
       </div>
 
       <ExportReportModal

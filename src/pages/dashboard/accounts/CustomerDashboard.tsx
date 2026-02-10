@@ -39,7 +39,7 @@ function CustomerDashboard() {
       
       {/* Header */}
       <div className="flex-shrink-0">
-        <h1 className="!text-4xl py-1 font-bold text-gray-900">Visitor Management Dashboard</h1>
+        <h1 className="!text-3xl py-1 font-bold text-gray-900">Visitor Management Dashboard</h1>
         <p className="text-gray-600">Monitor and manage your company's visitor activities</p>
       </div>
 

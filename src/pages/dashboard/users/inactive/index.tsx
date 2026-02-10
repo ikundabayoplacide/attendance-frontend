@@ -44,13 +44,21 @@ function InactiveUsers() {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
+       <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      <div className="flex-shrink-0">
         <div className="flex items-center gap-3 mb-2">
-          <FaUserTimes className="text-red-600" size={32} />
+          <FaUserTimes className="text-red-600" size={28} />
           <h1 className="!text-3xl font-bold text-gray-900">Inactive Users</h1>
         </div>
         <p className="text-gray-600">Manage all inactive users in the system</p>
       </div>
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -78,7 +86,7 @@ function InactiveUsers() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleExport('pdf')}
-              className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
               title="Export as PDF"
             >
               <FaFilePdf size={16} />
@@ -86,7 +94,7 @@ function InactiveUsers() {
             </button>
             <button
               onClick={() => handleExport('word')}
-              className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
               title="Export as Word"
             >
               <FaFileWord size={16} />
@@ -94,7 +102,7 @@ function InactiveUsers() {
             </button>
             <button
               onClick={() => handleExport('print')}
-              className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
               title="Print"
             >
               <FaPrint size={16} />
@@ -162,6 +170,7 @@ function InactiveUsers() {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
 
       <ExportReportModal

@@ -147,15 +147,15 @@ function InactiveCustomers() {
           </select>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => handleExport('pdf')} className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+            <button onClick={() => handleExport('pdf')} className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors">
               <FaFilePdf size={16} />
               <span className="hidden sm:inline">PDF</span>
             </button>
-            <button onClick={() => handleExport('word')} className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <button onClick={() => handleExport('word')} className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
               <FaFileWord size={16} />
               <span className="hidden sm:inline">Word</span>
             </button>
-            <button onClick={() => handleExport('print')} className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+            <button onClick={() => handleExport('print')} className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors">
               <FaPrint size={16} />
               <span className="hidden sm:inline">Print</span>
             </button>

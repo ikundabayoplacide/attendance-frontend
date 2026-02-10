@@ -62,8 +62,16 @@ function SystemHealthly() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+      {/* Header - Fixed */}
+      <div className='flex-shrink-0 flex justify-between items-center'>
         <div>
           <h1 className="!text-2xl font-bold text-gray-900">System Health</h1>
           <p className="text-gray-600">Monitor your E-Visitors platform infrastructure and performance</p>
@@ -79,7 +87,9 @@ function SystemHealthly() {
         </div>
       </div>
 
-      {/* Overall System Status */}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto space-y-6 mt-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {/* Overall System Status */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -176,36 +186,37 @@ function SystemHealthly() {
         </div>
       </div>
 
-      {/* Recent Alerts */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent System Alerts</h2>
-        <div className="space-y-3">
-          {recentAlerts.map((alert, index) => (
-            <div key={index} className={`flex items-center gap-4 p-4 rounded-lg border-l-4 ${
-              alert.type === 'error' ? 'bg-red-50 border-red-500' :
-              alert.type === 'warning' ? 'bg-yellow-50 border-yellow-500' :
-              'bg-blue-50 border-blue-500'
-            }`}>
-              <div className={`p-2 rounded-full ${
-                alert.type === 'error' ? 'bg-red-100' :
-                alert.type === 'warning' ? 'bg-yellow-100' :
-                'bg-blue-100'
+        {/* Recent Alerts */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent System Alerts</h2>
+          <div className="space-y-3">
+            {recentAlerts.map((alert, index) => (
+              <div key={index} className={`flex items-center gap-4 p-4 rounded-lg border-l-4 ${
+                alert.type === 'error' ? 'bg-red-50 border-red-500' :
+                alert.type === 'warning' ? 'bg-yellow-50 border-yellow-500' :
+                'bg-blue-50 border-blue-500'
               }`}>
-                {alert.type === 'error' && <FaExclamationTriangle className="text-red-600" size={16} />}
-                {alert.type === 'warning' && <FaExclamationTriangle className="text-yellow-600" size={16} />}
-                {alert.type === 'info' && <FaCheckCircle className="text-blue-600" size={16} />}
+                <div className={`p-2 rounded-full ${
+                  alert.type === 'error' ? 'bg-red-100' :
+                  alert.type === 'warning' ? 'bg-yellow-100' :
+                  'bg-blue-100'
+                }`}>
+                  {alert.type === 'error' && <FaExclamationTriangle className="text-red-600" size={16} />}
+                  {alert.type === 'warning' && <FaExclamationTriangle className="text-yellow-600" size={16} />}
+                  {alert.type === 'info' && <FaCheckCircle className="text-blue-600" size={16} />}
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-gray-900">{alert.message}</p>
+                  <p className="text-sm text-gray-500">{alert.time}</p>
+                </div>
+                {alert.resolved && (
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                    Resolved
+                  </span>
+                )}
               </div>
-              <div className="flex-1">
-                <p className="font-medium text-gray-900">{alert.message}</p>
-                <p className="text-sm text-gray-500">{alert.time}</p>
-              </div>
-              {alert.resolved && (
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                  Resolved
-                </span>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

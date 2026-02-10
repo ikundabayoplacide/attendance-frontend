@@ -140,7 +140,7 @@ function Users() {
       }} />
       {/* Header - Fixed */}
       <div className='flex-shrink-0'>
-        <h1 className="!text-4xl py-1 font-bold text-gray-900">Users & Roles</h1>
+        <h1 className="!text-3xl py-1 font-bold text-gray-900">Users & Roles</h1>
         <p className="text-gray-600">Manage system users, roles, and permissions</p>
       </div>
 
@@ -230,7 +230,7 @@ function Users() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleExport('pdf')}
-                  className="flex items-center gap-2 px-3 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
                   title="Export as PDF"
                 >
                   <FaFilePdf size={16} />
@@ -238,7 +238,7 @@ function Users() {
                 </button>
                 <button
                   onClick={() => handleExport('word')}
-                  className="flex items-center gap-2 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
                   title="Export as Word"
                 >
                   <FaFileWord size={16} />
@@ -246,7 +246,7 @@ function Users() {
                 </button>
                 <button
                   onClick={() => handleExport('print')}
-                  className="flex items-center gap-2 px-3 py-2 text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
                   title="Print"
                 >
                   <FaPrint size={16} />
