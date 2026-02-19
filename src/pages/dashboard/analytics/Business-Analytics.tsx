@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { FaChartLine, FaUsers, FaBuilding, FaArrowUp, FaArrowDown } from 'react-icons/fa'
-import { IoMdTrendingDown, IoMdTrendingUp } from 'react-icons/io'
+import { FaChartLine, FaArrowUp, FaArrowDown } from 'react-icons/fa'
+import AnalyticsLineChart from '../../../components/ui/AnalyticsLineChart'
 
 function BusinessAnalytics() {
   const [timeRange, setTimeRange] = useState('30d')
@@ -23,17 +23,39 @@ function BusinessAnalytics() {
     { company: 'TechCorp Solutions', revenue: 10800, plan: 'Enterprise', growth: '+15%' },
     { company: 'Global Industries', revenue: 8400, plan: 'Enterprise', growth: '+8%' },
     { company: 'StartupHub Inc', revenue: 2400, plan: 'Professional', growth: '+22%' },
-    { company: 'Digital Dynamics', revenue: 2400, plan: 'Professional', growth: '+5%' },
-    { company: 'Innovation Labs', revenue: 1800, plan: 'Professional', growth: '+12%' }
   ]
 
   const customerGrowth = [
-    { month: 'Jan', customers: 120, revenue: 48000 },
-    { month: 'Feb', customers: 135, revenue: 52000 },
-    { month: 'Mar', customers: 142, revenue: 55000 },
-    { month: 'Apr', customers: 148, revenue: 57000 },
-    { month: 'May', customers: 156, revenue: 62000 }
+    { month: 'Jan', customers: 12, revenue: 48000 },
+    { month: 'Feb', customers: 13, revenue: 52000 },
+    { month: 'Mar', customers: 14, revenue: 55000 },
+    { month: 'Apr', customers: 14, revenue: 57000 },
+    { month: 'May', customers: 15, revenue: 62000 }
   ]
+
+  // Generate data for analytics chart (last 50 days)
+  const generateAnalyticsData = () => {
+    const data = []
+    const today = new Date()
+    let value = 45000 // Starting revenue
+    
+    for (let i = 49; i >= 0; i--) {
+      const date = new Date(today)
+      date.setDate(date.getDate() - i)
+      date.setHours(0, 0, 0, 0)
+      
+      // Simulate growth with some randomness
+      value = value + Math.random() * 2000 - 500
+      
+      data.push({
+        date: date.getTime(),
+        value: Math.round(value)
+      })
+    }
+    return data
+  }
+
+  const analyticsData = generateAnalyticsData()
 
   return (
     <div className="flex flex-col h-full">
@@ -86,62 +108,73 @@ function BusinessAnalytics() {
                 </div>
               </div>
               <div className={`${metric.color} p-3 rounded-lg`}>
-                <FaChartLine className="text-white" size={24} />
+                <FaChartLine className="text-white" size={16} />
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue by Plan */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Subscription Plan</h2>
-          <div className="space-y-4">
-            {revenueByPlan.map((plan, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className={`w-3 h-3 rounded-full ${
-                    plan.plan === 'Enterprise' ? 'bg-blue-500' :
-                    plan.plan === 'Professional' ? 'bg-green-500' : 'bg-yellow-500'
-                  }`}></div>
-                  <div>
-                    <p className="font-medium text-gray-900">{plan.plan}</p>
-                    <p className="text-sm text-gray-500">{plan.customers} customers</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-gray-900">${plan.revenue.toLocaleString()}</p>
-                  <p className="text-sm text-gray-500">{plan.percentage}%</p>
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Revenue Growth Chart - Takes 2 columns */}
+        <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Growth Trend</h2>
+          <AnalyticsLineChart data={analyticsData} title="Daily Revenue" />
         </div>
 
-        {/* Top Customers */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Revenue Customers</h2>
-          <div className="space-y-3">
-            {topCustomers.map((customer, index) => (
-              <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900">{customer.company}</p>
-                  <p className="text-sm text-gray-500">{customer.plan} Plan</p>
+        {/* Right Side - Revenue by Plan and Top Customers stacked */}
+        <div className="space-y-6">
+          {/* Revenue by Plan */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Plan</h2>
+            <div className="space-y-3">
+              {revenueByPlan.map((plan, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${
+                      plan.plan === 'Enterprise' ? 'bg-blue-500' :
+                      plan.plan === 'Professional' ? 'bg-green-500' : 'bg-yellow-500'
+                    }`}></div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{plan.plan}</p>
+                      <p className="text-xs text-gray-500">{plan.customers} customers</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-gray-900">${(plan.revenue/1000).toFixed(0)}k</p>
+                    <p className="text-xs text-gray-500">{plan.percentage}%</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-gray-900">${customer.revenue}/mo</p>
-                  <p className="text-sm text-green-600">{customer.growth}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* Top Customers */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Customers</h2>
+            <div className="space-y-2">
+              {topCustomers.map((customer, index) => (
+                <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{customer.company}</p>
+                    <p className="text-xs text-gray-500">{customer.plan}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-gray-900">${customer.revenue}/mo</p>
+                    <p className="text-xs text-green-600">{customer.growth}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Customer Growth Chart */}
+
+
+      {/* Customer Growth Stats */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Customer & Revenue Growth</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Monthly Customer & Revenue Growth</h2>
         <div className="grid grid-cols-5 gap-4">
           {customerGrowth.map((data, index) => (
             <div key={index} className="text-center">
@@ -159,44 +192,7 @@ function BusinessAnalytics() {
         </div>
       </div>
 
-        {/* Business Insights */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Key Business Insights</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                <IoMdTrendingUp  className="text-green-600" size={20} />
-                <div>
-                  <p className="font-medium text-gray-900">Revenue Growth Accelerating</p>
-                  <p className="text-sm text-gray-600">18.5% increase in monthly recurring revenue</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                <FaUsers className="text-blue-600" size={20} />
-                <div>
-                  <p className="font-medium text-gray-900">Customer Acquisition Strong</p>
-                  <p className="text-sm text-gray-600">12 new customers added this month</p>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                <FaBuilding className="text-purple-600" size={20} />
-                <div>
-                  <p className="font-medium text-gray-900">Enterprise Segment Leading</p>
-                  <p className="text-sm text-gray-600">60% of total revenue from Enterprise plans</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
-                <IoMdTrendingDown className="text-yellow-600" size={20} />
-                <div>
-                  <p className="font-medium text-gray-900">Churn Rate Improving</p>
-                  <p className="text-sm text-gray-600">Down to 2.1% from 2.9% last quarter</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+   
       </div>
     </div>
   )

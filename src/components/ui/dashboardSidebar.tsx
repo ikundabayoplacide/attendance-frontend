@@ -17,7 +17,7 @@ interface MenuItem {
 interface DashboardSidebarProps {
   isOpen: boolean
   onClose: () => void
-  userRole?: 'owner' | 'customer'
+  userRole?: 'owner' | 'customer'|'helpdesk' | 'superadmin'
 }
 
 function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSidebarProps) {
@@ -37,7 +37,7 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
     { 
       path: '/dashboard/customers', 
       icon: FaUsers, 
-      label: 'Customer Management',
+      label: 'Customers',
       children: [
         {path: '/dashboard/customers', label: 'All Accounts' },
         { path: '/dashboard/customers/active', label: 'Active Accounts' },
@@ -46,7 +46,7 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
         { path: '/dashboard/customers/blacklisted', label: 'Blacklisted Accounts' }
       ]
     },
-    { path: '/dashboard/users', icon: FaUsers, label: 'User Management',
+    { path: '/dashboard/users', icon: FaUsers, label: 'Users',
       children:[
       {path:'/dashboard/users', label: 'All Users' },
       {path:'/dashboard/users/active', label: ' Active Users' },
@@ -74,9 +74,22 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
   ]
 
   // Customer menu items
-  const customerItems: MenuItem[] = [
-    { path: '/dashboard', icon: FaHome, label: 'Dashboard Overview', exact: true },
-    { path: '/dashboard/users', icon: FaUsers, label: 'User Management',
+  const superAdminItems: MenuItem[] = [
+    { path: '/dashboard', icon: FaHome, label: 'Dashboard', exact: true,
+      children:[
+        {path: '/dashboard', label: 'Overview' },
+        {path:'/dashboard/helpdesk', label: 'Help Desk' },
+        {path:'/dashboard/dataManager', label: 'Data Manager' },
+        {path:'/dashboard/teamLeader', label: 'Team Leader' },
+        {path:'/dashboard/staff', label: 'Staff'},
+        {path:'/dashboard/systemOffice',label: 'System Office'},
+        {path:'/dashboard/humanResource', label: 'Human Resource'},
+        {path:'/dashboard/protocals',label:'Protocals'},
+        {path:'/dashboard/checkPoint', label: 'Check Point'},
+
+      ]
+     },
+    { path: '/dashboard/users', icon: FaUsers, label: 'Users',
       children:[
         {path: '/dashboard/users', label: 'All Users' },
         {path: '/dashboard/users/active', label: ' Active Users' },
@@ -85,8 +98,8 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
       ]
      },
     { path: '/dashboard/scanning', icon: FaEye, label: 'Scanning' },
-    { path: '/dashboard/visitors', icon: FaUsers, label: 'Visitor Management' },
-    { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Host Management' },
+    { path: '/dashboard/visitors', icon: FaUsers, label: 'Visitors' },
+    { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Hosts' },
     { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments',
       children:[
         {path: '/dashboard/appointments', label: 'All Appointments' },
@@ -94,18 +107,26 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
       ]
      },
     {path:  '/dashboard/Events', icon: BsFillCalendar3EventFill, label: 'Events'},
-    {path:  '/dashboard/equipments', icon: FaServer, label: 'Equipment Management',
+    {path:  '/dashboard/equipments', icon: FaServer, label: 'Equipments',
       children: [
         { path: '/dashboard/equipments', label: 'All Equipments' },
         { path: '/dashboard/equipments/add', label: 'Add New Equipment' },
       ]
     },
-    {path:'/dashboard/handover', icon: FaUserCheck, label: 'Handover Management'},
+    {path:'/dashboard/handover', icon: FaUserCheck, label: 'Handover'},
     { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports & Analytics' },
     { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
   ]
 
-  const menuItems = userRole === 'owner' ? systemOwnerItems : customerItems
+  const helpDeskItems: MenuItem[] = [
+    { path: '/dashboard', icon: FaHome, label: 'Helpdesk', exact: true },
+    { path: '/dashboard/tickets', icon: FaUsers, label: 'Tickets' },
+    { path: '/dashboard/knowledge-base', icon: FaChartBar, label: 'Knowledge Base' },
+    { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
+    { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports' },
+  ]
+
+  const menuItems = userRole === 'owner' ? systemOwnerItems : userRole === 'helpdesk' ? helpDeskItems : superAdminItems
  
   const settingsItem = { path: '/dashboard/settings', icon: FaCog, label: 'Settings' }
 

@@ -141,7 +141,7 @@ function Security() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-red-500">
-              <FaExclamationTriangle className="text-white" size={24} />
+              <FaExclamationTriangle className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active Threats</p>
@@ -153,7 +153,7 @@ function Security() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-gray-500">
-              <FaBan className="text-white" size={24} />
+              <FaBan className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Blocked Devices</p>
@@ -165,7 +165,7 @@ function Security() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-orange-500">
-              <FaShieldAlt className="text-white" size={24} />
+              <FaShieldAlt className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Critical Alerts</p>
@@ -177,7 +177,7 @@ function Security() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-blue-500">
-              <FaEye className="text-white" size={24} />
+              <FaEye className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Under Monitoring</p>
@@ -316,8 +316,9 @@ function Security() {
                           Block
                         </button>
                       )}
-                      <button className="text-blue-600 hover:text-blue-900" title="View Details">
+                      <button className="text-blue-600 flex bg-blue-600 text-white rounded-lg px-3 py-1 hover:text-blue-900" title="View Details">
                         <FaEye size={16} />
+                        View
                       </button>
                     </div>
                   </td>

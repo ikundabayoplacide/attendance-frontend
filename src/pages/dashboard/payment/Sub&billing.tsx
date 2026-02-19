@@ -1,12 +1,49 @@
 import { useState } from 'react'
-import { FaUsers, FaDollarSign, FaSearch, FaEye, FaDownload, FaBan, FaCheck, FaExclamationTriangle, FaChartLine } from 'react-icons/fa'
+import { FaUsers, FaDollarSign, FaSearch, FaEye, FaDownload, FaCheck, FaExclamationTriangle, FaChartLine, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import MonthlyApexChart from '../../../components/ui/MontlyApexChart'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
 
 function SubBillingsPage() {
   const [activeTab, setActiveTab] = useState('overview')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [planFilter, setPlanFilter] = useState('all')
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+  const [openInvoiceDropdown, setOpenInvoiceDropdown] = useState<string | null>(null)
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const handleDownloadInvoice = (invoiceId: string, format: 'pdf' | 'word') => {
+    console.log(`Downloading invoice ${invoiceId} as ${format}`)
+    setOpenInvoiceDropdown(null)
+  }
+
+  const subscriptionFields = [
+    { id: 'company', label: 'Company' },
+    { id: 'email', label: 'Email' },
+    { id: 'plan', label: 'Plan' },
+    { id: 'price', label: 'Price' },
+    { id: 'users', label: 'Users' },
+    { id: 'status', label: 'Status' },
+    { id: 'nextBilling', label: 'Next Billing' },
+  ]
+
+  const invoiceFields = [
+    { id: 'invoiceId', label: 'Invoice ID' },
+    { id: 'company', label: 'Company' },
+    { id: 'amount', label: 'Amount' },
+    { id: 'date', label: 'Date' },
+    { id: 'dueDate', label: 'Due Date' },
+    { id: 'status', label: 'Status' },
+  ]
 
   const stats = [
     { title: 'Total Revenue', value: '$45,280', change: '+12.5%', icon: FaDollarSign, color: 'bg-green-500' },
@@ -82,21 +119,21 @@ function SubBillingsPage() {
     {
       name: 'Basic',
       price: '$29',
-      users: '5 users',
+      users: '5 Customers',
       features: ['Basic visitor management', 'Email notifications', 'Basic reports'],
       subscribers: 45
     },
     {
       name: 'Professional',
       price: '$99',
-      users: '25 users',
+      users: '25 Customers',
       features: ['Advanced visitor management', 'SMS notifications', 'Advanced reports', 'API access'],
       subscribers: 78
     },
     {
       name: 'Enterprise',
       price: '$299',
-      users: 'Unlimited users',
+      users: 'Unlimited Customers',
       features: ['Full feature access', 'Priority support', 'Custom integrations', 'White-label options'],
       subscribers: 33
     }
@@ -136,7 +173,7 @@ function SubBillingsPage() {
                     </p>
                   </div>
                   <div className={`${stat.color} p-3 rounded-lg`}>
-                    <Icon className="text-white" size={24} />
+                    <Icon className="text-white" size={18} />
                   </div>
                 </div>
               </div>
@@ -246,6 +283,33 @@ function SubBillingsPage() {
                   <option value="professional">Professional</option>
                   <option value="enterprise">Enterprise</option>
                 </select>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleExport('pdf')}
+                    className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                    title="Export as PDF"
+                  >
+                    <FaFilePdf size={16} />
+                    <span className="hidden sm:inline">PDF</span>
+                  </button>
+                  <button
+                    onClick={() => handleExport('word')}
+                    className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                    title="Export as Word"
+                  >
+                    <FaFileWord size={16} />
+                    <span className="hidden sm:inline">Word</span>
+                  </button>
+                  <button
+                    onClick={() => handleExport('print')}
+                    className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
+                    title="Print"
+                  >
+                    <FaPrint size={16} />
+                    <span className="hidden sm:inline">Print</span>
+                  </button>
+                </div>
               </div>
 
               {/* Subscriptions Table */}
@@ -254,7 +318,7 @@ function SubBillingsPage() {
                   <thead className='bg-[#1A3263] rounded'>
                     <tr className="border-b border-gray-200 rounded">
                       <th className="text-left py-3 px-4 font-medium text-white">Company</th>
-                      <th className="text-left py-3 px-4 font-medium text-white">Plan</th>
+                      <th className="text-left py-3 px-4 font-medium text-white">Categories</th>
                       <th className="text-left py-3 px-4 font-medium text-white">Users</th>
                       <th className="text-left py-3 px-4 font-medium text-white">Status</th>
                       <th className="text-left py-3 px-4 font-medium text-white">Next Billing</th>
@@ -287,12 +351,10 @@ function SubBillingsPage() {
                         <td className="py-4 px-4 text-gray-700">{sub.nextBilling}</td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2">
-                            <button className="p-2 text-gray-400 hover:text-blue-600" title="View Details">
-                              <FaEye size={14} />
+                            <button className="p-2 text-blue-600 hover:text-blue-900" title="View Details">
+                              <FaEye size={18} />
                             </button>
-                            <button className="p-2 text-gray-400 hover:text-red-600" title="Suspend">
-                              <FaBan size={14} />
-                            </button>
+                            
                           </div>
                         </td>
                       </tr>
@@ -306,6 +368,32 @@ function SubBillingsPage() {
           {/* Invoices Tab */}
           {activeTab === 'invoices' && (
             <div className="p-6">
+              <div className="flex items-center gap-2 mb-6 justify-end">
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                  title="Export as PDF"
+                >
+                  <FaFilePdf size={16} />
+                  <span className="hidden sm:inline">PDF</span>
+                </button>
+                <button
+                  onClick={() => handleExport('word')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                  title="Export as Word"
+                >
+                  <FaFileWord size={16} />
+                  <span className="hidden sm:inline">Word</span>
+                </button>
+                <button
+                  onClick={() => handleExport('print')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
+                  title="Print"
+                >
+                  <FaPrint size={16} />
+                  <span className="hidden sm:inline">Print</span>
+                </button>
+              </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className='bg-[#1A3263] rounded'>
@@ -336,12 +424,36 @@ function SubBillingsPage() {
                         </td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2">
-                            <button className="p-2 text-gray-400 hover:text-blue-600" title="View Invoice">
-                              <FaEye size={14} />
+                            <button className="p-2 text-blue-600 hover:text-blue-900" title="View Invoice">
+                              <FaEye size={18} />
                             </button>
-                            <button className="p-2 text-gray-400 hover:text-green-600" title="Download">
-                              <FaDownload size={14} />
-                            </button>
+                            <div className="relative">
+                              <button 
+                                className="p-2 text-gray-600 hover:text-green-900" 
+                                title="Download"
+                                onClick={() => setOpenInvoiceDropdown(openInvoiceDropdown === invoice.id ? null : invoice.id)}
+                              >
+                                <FaDownload size={14} />
+                              </button>
+                              {openInvoiceDropdown === invoice.id && (
+                                <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                  <button
+                                    onClick={() => handleDownloadInvoice(invoice.id, 'pdf')}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                  >
+                                    <FaFilePdf size={14} className="text-red-600" />
+                                    Export PDF
+                                  </button>
+                                  <button
+                                    onClick={() => handleDownloadInvoice(invoice.id, 'word')}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                  >
+                                    <FaFileWord size={14} className="text-blue-600" />
+                                    Export Word
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -391,6 +503,15 @@ function SubBillingsPage() {
           )}
         </div>
       </div>
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={activeTab === 'subscriptions' ? subscriptionFields : invoiceFields}
+        exportFormat={exportFormat}
+        title={activeTab === 'subscriptions' ? 'Export Subscriptions Report' : 'Export Invoices Report'}
+      />
     </div>
   )
 }

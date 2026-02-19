@@ -1,18 +1,28 @@
 import { useState } from 'react'
-import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaSearch, FaPlay, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaSearch, FaPlay, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import ExportReportModal from '../../../../components/modals/ExportReportModal'
+import EditCustomer from '../../../../components/modals/EditCustomer'
 
 function InactiveCustomers() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [planFilter, setPlanFilter] = useState('all')
+  const [showEditModal, setShowEditModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null)
   const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   const handleExport = (type: 'pdf' | 'word' | 'print') => {
     setExportFormat(type)
     setShowExportModal(true)
+  }
+
+
+  const handleEditCustomer = (customerData: any) => {
+    console.log('Updating customer:', customerData)
+    setShowEditModal(false)
+    setSelectedCustomer(null)
   }
 
   const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
@@ -161,10 +171,7 @@ function InactiveCustomers() {
             </button>
           </div>
 
-          <button className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center gap-2">
-            <FaPlay size={14} />
-            Reactivate Selected
-          </button>
+         
         </div>
       </div>
 
@@ -235,17 +242,19 @@ function InactiveCustomers() {
                         onClick={() => navigate(`/dashboard/customers/${customer.id}`)}
                         className="text-blue-600 hover:text-blue-900"
                       >
-                        <FaEye size={16} />
+                        <FaEye size={18} />
                       </button>
-                      <button className="text-orange-600 hover:text-orange-900" title="Reactivate">
-                        <FaPlay size={16} />
+                      <button className="text-green-600 hover:text-green-900" onClick={() => {
+                        setSelectedCustomer(customer)
+                        setShowEditModal(true)
+                      }}>
+                        <FaEdit size={18} />
                       </button>
-                      <button className="text-green-600 hover:text-green-900">
-                        <FaEdit size={16} />
+                      <button className="text-orange-600 hover:text-orange-900" title="Reactivate" onClick={() => window.alert("ACTIVATION WILL COME VERY SOON")}>
+                        <FaPlay size={18} />
                       </button>
-                      <button className="text-red-600 hover:text-red-900">
-                        <FaTrash size={16} />
-                      </button>
+                   
+                    
                     </div>
                   </td>
                 </tr>
@@ -262,6 +271,16 @@ function InactiveCustomers() {
         fields={exportFields}
         exportFormat={exportFormat}
         title="Export Inactive Customers Report"
+      />
+
+        <EditCustomer
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false)
+          setSelectedCustomer(null)
+        }}
+        onSubmit={handleEditCustomer}
+        customerData={selectedCustomer}
       />
     </div>
   )

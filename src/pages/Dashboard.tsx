@@ -1,6 +1,6 @@
 import { FaDollarSign, FaBuilding, FaChartLine, FaExclamationTriangle, FaCreditCard, FaServer, FaArrowUp, FaArrowDown } from 'react-icons/fa'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import CustomerDashboard from './dashboard/accounts/CustomerDashboard'
+import CustomerDashboard from './dashboard/Roles/superAdmin'
 
 function Dashboard() {
   const [searchParams] = useSearchParams()
@@ -18,7 +18,7 @@ function Dashboard() {
   // Primary Business Metrics
   const primaryStats = [
     {title:'Annual Revenue', value: '$574,200', icon: FaChartLine, color: 'bg-yellow-500', change: '+18.5%', trend: 'up' },
-    { title: 'Monthly Recurring Revenue', value: '$47,850', icon: FaDollarSign, color: 'bg-green-500', change: '+15.3%', trend: 'up' },
+    { title: 'Monthly Revenue', value: '$47,850', icon: FaDollarSign, color: 'bg-green-500', change: '+15.3%', trend: 'up' },
     { title: 'Total Customers', value: '156', icon: FaBuilding, color: 'bg-blue-500', change: '+8.2%', trend: 'up' },
     { title: 'Active Subscriptions', value: '142', icon: FaCreditCard, color: 'bg-purple-500', change: '+12.1%', trend: 'up' },
     { title: 'System Uptime', value: '99.8%', icon: FaServer, color: 'bg-indigo-500', change: '+0.2%', trend: 'up' }
@@ -119,7 +119,7 @@ function Dashboard() {
       }} />
       {/* Header - Fixed */}
       <div className='flex-shrink-0'>
-        <h1 className="!text-3xl py-1 font-bold text-gray-900">Owner Dashboard</h1>
+        <h1 className="!text-3xl py-1 font-bold text-gray-900">SAN TECH Dashboard</h1>
         <p className="text-gray-600">Monitor your E-Visitors SaaS platform performance and revenue</p>
       </div>
 
@@ -131,24 +131,25 @@ function Dashboard() {
           const Icon = stat.icon
           return (
             <div key={index} className="bg-white rounded-lg shadow-sm border p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className={`${stat.color} p-2.5 rounded-lg`}>
-                  <Icon className="text-white" size={18} />
+              <div className="flex items-center justify-centre gap-3 mb-3">
+                <div className={`${stat.color} p-2 rounded-lg`}>
+                  <Icon className="text-white" />
                 </div>
-               
+              <p className="text-medium font-bold text-gray-600 my-4 text-start">{stat.title}</p>
               </div>
-              <p className="text-sm text-gray-600 my-4">{stat.title}</p>
+              <div className='flex justify-between'>
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                <div className="flex items-center gap-1">
                   {stat.trend === 'up' ? (
-                    <FaArrowUp className="text-green-500" size={10} />
+                    <FaArrowUp className="text-green-500" size={12} />
                   ) : (
-                    <FaArrowDown className="text-red-500" size={10} />
+                    <FaArrowDown className="text-red-500" size={12} />
                   )}
-                  <span className={`text-xs mt-2 font-medium ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`text-lg mt-2 font-medium ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
                     {stat.change}
                   </span>
                 </div>
+            </div>
             </div>
           )
         })}

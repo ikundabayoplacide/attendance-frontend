@@ -72,11 +72,21 @@ function ReportsPage() {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'attendance': return <Clock className="w-4 h-4" />
-      case 'performance': return <TrendingUp className="w-4 h-4" />
-      case 'financial': return <BarChart3 className="w-4 h-4" />
-      case 'custom': return <FileText className="w-4 h-4" />
-      default: return <FileText className="w-4 h-4" />
+      case 'attendance': return <Clock className="w-4 h-4 text-blue-600" />
+      case 'performance': return <TrendingUp className="w-4 h-4 text-purple-600" />
+      case 'financial': return <BarChart3 className="w-4 h-4 text-green-600" />
+      case 'custom': return <FileText className="w-4 h-4 text-orange-600" />
+      default: return <FileText className="w-4 h-4 text-gray-600" />
+    }
+  }
+
+  const getTypeIconBg = (type: string) => {
+    switch (type) {
+      case 'attendance': return 'bg-blue-100'
+      case 'performance': return 'bg-purple-100'
+      case 'financial': return 'bg-green-100'
+      case 'custom': return 'bg-orange-100'
+      default: return 'bg-gray-100'
     }
   }
 
@@ -220,7 +230,7 @@ function ReportsPage() {
             <div key={report.id} className="p-6 hover:bg-gray-50 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-start space-x-4">
-                  <div className="p-2 bg-gray-100 rounded-lg">
+                  <div className={`p-2 ${getTypeIconBg(report.type)} rounded-lg`}>
                     {getTypeIcon(report.type)}
                   </div>
                   <div className="flex-1">

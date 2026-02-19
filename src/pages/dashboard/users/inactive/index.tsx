@@ -152,16 +152,16 @@ function InactiveUsers() {
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-2">
                       <button 
-                        className="p-2 text-gray-400 hover:text-blue-600"
+                        className="p-2 text-blue-600 hover:text-blue-900"
                         onClick={() => navigate(`/dashboard/users/${user.id}?role=${currentRole}`)}
                       >
-                        <FaEye size={14} />
+                        <FaEye size={18} />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-green-600">
-                        <FaEdit size={14} />
+                      <button className="p-2 text-green-600 hover:text-green-900">
+                        <FaEdit size={18} />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-red-600">
-                        <FaTrash size={14} />
+                      <button className="p-2 text-red-600 hover:text-red-900">
+                        <FaTrash size={18} />
                       </button>
                     </div>
                   </td>

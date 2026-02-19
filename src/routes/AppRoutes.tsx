@@ -39,6 +39,10 @@ import CreateReport from '../pages/dashboard/reports/createReport'
 import CalendarViewPage from '../pages/dashboard/appointment/viaCalender'
 import HandoverManagement from '../pages/dashboard/handover'
 import HandoverPage from '../pages/dashboard/handover'
+import HelpDeskDashboard from '../pages/dashboard/Roles/helpDesk'
+import DataManagerDashboard from '../pages/dashboard/Roles/dataManager'
+import TeamLeader from '../pages/dashboard/Roles/teamLeader'
+import CheckPoint from '../pages/dashboard/Roles/check point'
 
 
 function AppRoutes() {
@@ -88,12 +92,18 @@ function AppRoutes() {
         <Route path="reports" element={<ReportPage/>}/>
         <Route path="reports/create" element={<CreateReport/>}/>
         <Route path="handover" element={<HandoverPage/>}/>
+        <Route path="checkPoint" element={<CheckPoint/>}/>
 
+         {/* helper desk Routes */}
+        <Route path="helpdesk" element={<HelpDeskDashboard/>}/>
+        <Route path='dataManager' element={<DataManagerDashboard/>}/>
+        <Route path='teamLeader' element={<TeamLeader/>}/>
         
         {/* Shared Routes */}
         <Route path="Analytics" element={<BusinessAnalytics/>}/>
         <Route path="notifications" element={<Notifications/>}/>
         <Route path="settings" element={<Settings />}/>
+
       </Route>
     </Routes>
   )

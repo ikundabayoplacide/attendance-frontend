@@ -1,17 +1,13 @@
 import { useState } from 'react'
-import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEdit, FaBan, FaArrowLeft, FaSearch, FaPlus, FaTrash, FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning } from 'react-icons/fa'
+import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaArrowLeft, FaSearch, FaPlus, FaTrash, FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning } from 'react-icons/fa'
 import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
 import { useNavigate, useParams } from 'react-router-dom'
-import EditCustomer from '../../../components/modals/EditCustomer'
-import SuspendCustomer from '../../../components/modals/SuspendCustomer'
 
 function CustomerDetail() {
   const navigate = useNavigate()
   const { id } = useParams()
   const [activeTab, setActiveTab] = useState('profile')
   const [searchTerm, setSearchTerm] = useState('')
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showSuspendModal, setShowSuspendModal] = useState(false)
   const [blacklistedUsers, setBlacklistedUsers] = useState([
     { id: 1, name: 'John Doe', email: 'john@example.com', reason: 'Security violation', dateAdded: '2024-01-10' },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', reason: 'Inappropriate behavior', dateAdded: '2024-01-08' }
@@ -87,15 +83,6 @@ function CustomerDetail() {
     )
   }
 
-  const handleEditCustomer = (customerData: any) => {
-    console.log('Updating customer:', customerData)
-    setShowEditModal(false)
-  }
-
-  const handleSuspendCustomer = (reason: string) => {
-    console.log('Suspending customer:', customer.companyName, 'Reason:', reason)
-    setShowSuspendModal(false)
-  }
 
   const visitHistory = [
     { id: 1, visitor: 'Alice Johnson', purpose: 'Business Meeting', date: '2024-01-15', time: '09:00', status: 'Completed' },
@@ -152,22 +139,11 @@ function CustomerDetail() {
                   <h2 className="text-2xl font-bold text-gray-900">{customer.companyName}</h2>
                   <p className="text-gray-600">{customer.email}</p>
                 </div>
-                <div className="flex gap-2 mt-4 md:mt-0">
-                  <button 
-                    onClick={() => setShowEditModal(true)}
-                    className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
-                  >
-                    <FaEdit size={14} />
-                    Edit Customer
-                  </button>
-                  <button 
-                    onClick={() => setShowSuspendModal(true)}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2"
-                  >
-                    <FaBan size={14} />
-                    Suspend
-                  </button>
-                </div>
+               <div className='bg-[#1A3263] text-white rounded-full px-4 py-1 text-sm font-medium]'>
+                 <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    {customer.status}
+                  </span>
+               </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -524,20 +500,8 @@ function CustomerDetail() {
         </div>
       </div>
 
-      {/* Modals */}
-      <EditCustomer
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSubmit={handleEditCustomer}
-        customerData={customer}
-      />
-      
-      <SuspendCustomer
-        isOpen={showSuspendModal}
-        customerName={customer.companyName}
-        onClose={() => setShowSuspendModal(false)}
-        onSubmit={handleSuspendCustomer}
-      />
+   
+    
     </div>
   )
 }

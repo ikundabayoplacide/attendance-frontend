@@ -83,10 +83,11 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                 <input
                   type="text"
                   name="name"
+                  placeholder='san teck'
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
               </div>
 
@@ -97,10 +98,11 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                 <input
                   type="email"
                   name="email"
+                  placeholder='go@gmail.com'
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
               </div>
 
@@ -111,10 +113,11 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                 <input
                   type="tel"
                   name="phone"
+                  placeholder='+25078000000000'
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
               </div>
 
@@ -125,9 +128,10 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                 <input
                   type="text"
                   name="company"
+                  placeholder='san tech'
                   value={formData.company}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
               </div>
             </div>
@@ -145,7 +149,7 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                   value={formData.purpose}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 >
                   <option value="">Select Purpose</option>
                   <option value="Business Meeting">Business Meeting</option>
@@ -165,10 +169,11 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                 <input
                   type="text"
                   name="host"
+                  placeholder='mubano'
                   value={formData.host}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
               </div>
 
@@ -180,7 +185,7 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 >
                   <option value="">Select Department</option>
                   <option value="HR">Human Resources</option>
@@ -201,10 +206,11 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                   <input
                     type="date"
                     name="visitDate"
+                    placeholder=''
                     value={formData.visitDate}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                    className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                     style={{ colorScheme: 'light' }}
                   />
                 </div>
@@ -216,10 +222,11 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                   <input
                     type="time"
                     name="visitTime"
+                    placeholder=''
                     value={formData.visitTime}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                    className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                     style={{ colorScheme: 'light' }}
                   />
                 </div>
@@ -234,10 +241,11 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
                   name="expectedDuration"
                   value={formData.expectedDuration}
                   onChange={handleChange}
+                  placeholder='1120'
                   min="0.5"
                   max="8"
                   step="0.5"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
               </div>
             </div>
@@ -251,8 +259,9 @@ function AddVisitorModal({ isOpen, onClose, onSubmit }: AddVisitorModalProps) {
               name="notes"
               value={formData.notes}
               onChange={handleChange}
+              
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
               placeholder="Any additional information about the visit..."
             />
           </div>

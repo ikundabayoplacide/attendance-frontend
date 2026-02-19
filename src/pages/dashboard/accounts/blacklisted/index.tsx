@@ -1,13 +1,16 @@
 import { useState } from 'react'
-import { FaUsers, FaDollarSign, FaEye, FaEdit, FaTrash, FaSearch, FaShieldAlt, FaBan, FaExclamationCircle, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import { FaUsers, FaDollarSign, FaEye, FaEdit, FaSearch, FaShieldAlt, FaBan, FaExclamationCircle, FaFilePdf, FaFileWord, FaPrint, FaUndo } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import ExportReportModal from '../../../../components/modals/ExportReportModal'
+import EditCustomer from '../../../../components/modals/EditCustomer'
 
 function BlacklistedCustomers() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [reasonFilter, setReasonFilter] = useState('all')
+  const [showEditModal, setShowEditModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null)
   const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   // Mock blacklisted customer data
@@ -61,7 +64,11 @@ function BlacklistedCustomers() {
     setExportFormat(format)
     setShowExportModal(true)
   }
-
+  const handleEditCustomer = (customerData: any) => {
+    console.log('Updating customer:', customerData)
+    setShowEditModal(false)
+    setSelectedCustomer(null)
+  }
   const handleExportReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
     console.log('Generating report:', { format, fields: selectedFields, startDate, endDate })
   }
@@ -118,7 +125,7 @@ function BlacklistedCustomers() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Prevented Losses</p>
-              <p className="text-2xl font-bold text-gray-900">$15,400</p>
+              <p className="text-2xl font-bold text-gray-900">$1,540</p>
             </div>
           </div>
         </div>
@@ -130,7 +137,7 @@ function BlacklistedCustomers() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Blocked Users</p>
-              <p className="text-sm font-bold text-gray-900">456</p>
+              <p className="text-2xl font-bold text-gray-900">456</p>
             </div>
           </div>
         </div>
@@ -183,10 +190,7 @@ function BlacklistedCustomers() {
             <FaPrint size={14} />
             <span className="hidden sm:inline">Print</span>
           </button>
-          <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2">
-            <FaBan size={14} />
-            Export Blacklist
-          </button>
+         
         </div>
       </div>
 
@@ -261,13 +265,16 @@ function BlacklistedCustomers() {
                         className="text-blue-600 hover:text-blue-900"
                         title="View Details"
                       >
-                        <FaEye size={16} />
+                        <FaEye size={18} />
                       </button>
-                      <button className="text-orange-600 hover:text-orange-900" title="Edit Notes">
-                        <FaEdit size={16} />
+                      <button className="text-green-600 hover:text-green-900" onClick={() => {
+                          setSelectedCustomer(customer)
+                          setShowEditModal(true)
+                        }}>
+                        <FaEdit size={18} />
                       </button>
-                      <button className="text-red-600 hover:text-red-900" title="Permanent Delete">
-                        <FaTrash size={16} />
+                      <button className="text-red-600 hover:text-red-900" title="Undo Blacklist" onClick={()=>window.alert("This is preparation , it will come soon.")}>
+                        <FaUndo size={18} />
                       </button>
                     </div>
                   </td>
@@ -296,6 +303,16 @@ function BlacklistedCustomers() {
         onExport={handleExportReport}
         exportFormat={exportFormat}
         fields={exportFields}
+      />
+
+        <EditCustomer
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false)
+          setSelectedCustomer(null)
+        }}
+        onSubmit={handleEditCustomer}
+        customerData={selectedCustomer}
       />
     </div>
   )

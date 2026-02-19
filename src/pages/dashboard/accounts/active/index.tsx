@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaBuilding, FaUsers, FaDollarSign, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import { FaBuilding, FaUsers, FaCalendarAlt, FaEye, FaEdit, FaTrash, FaPlus, FaSearch, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AddCustomer from '../../../../components/modals/AddCustomer'
 import ExportReportModal from '../../../../components/modals/ExportReportModal'
@@ -104,7 +104,7 @@ function ActiveCustomers() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active Customers</p>
-              <p className="text-2xl font-bold text-gray-900">124</p>
+              <p className="text-2xl font-bold text-gray-900">12</p>
             </div>
           </div>
         </div>
@@ -112,11 +112,11 @@ function ActiveCustomers() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-green-500">
-              <FaDollarSign className="text-white" size={24} />
+              <FaBuilding className="text-white" size={24} />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">$42,300</p>
+              <p className="text-sm font-medium text-gray-600">Active Trials</p>
+              <p className="text-2xl font-bold text-gray-900">4</p>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@ function ActiveCustomers() {
               <FaUsers className="text-white" size={24} />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Users</p>
+              <p className="text-sm font-medium text-gray-600">Active Customer Users</p>
               <p className="text-2xl font-bold text-gray-900">2,847</p>
             </div>
           </div>
@@ -217,7 +217,7 @@ function ActiveCustomers() {
                     Contact Person
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                    Plan
+                    Categories
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                     Users
@@ -269,13 +269,13 @@ function ActiveCustomers() {
                           onClick={() => navigate(`/dashboard/customers/${customer.id}`)}
                           className="text-blue-600 hover:text-blue-900"
                         >
-                          <FaEye size={16} />
+                          <FaEye size={18} />
                         </button>
                         <button className="text-green-600 hover:text-green-900">
-                          <FaEdit size={16} />
+                          <FaEdit size={18} />
                         </button>
                         <button className="text-red-600 hover:text-red-900">
-                          <FaTrash size={16} />
+                          <FaTrash size={18} />
                         </button>
                       </div>
                     </td>

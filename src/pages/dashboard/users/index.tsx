@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FaUsers, FaUserShield, FaUserCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaToggleOn, FaToggleOff, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import { FaUsers, FaUserShield, FaUserCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaToggleOn, FaToggleOff, FaFilePdf, FaFileWord, FaPrint, FaBan } from 'react-icons/fa'
+import { HiDotsVertical } from 'react-icons/hi'
 import { AddUserModal, AddRoleModal } from '../../../components/modals'
 import DeleteUserModal from '../../../components/modals/DeleteUserModal'
+import SuspendModal from '../../../components/modals/SuspendModal'
+import EditUserModal from '../../../components/modals/EditUserModal'
 import ExportReportModal from '../../../components/modals/ExportReportModal'
 
 function Users() {
@@ -15,9 +18,13 @@ function Users() {
   const [showAddUserModal, setShowAddUserModal] = useState(false)
   const [showAddRoleModal, setShowAddRoleModal] = useState(false)
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false)
+  const [showSuspendModal, setShowSuspendModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
   const [userToDelete, setUserToDelete] = useState<{ id: number; name: string } | null>(null)
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null)
 
   // Get current role parameter
   const currentRole = searchParams.get('role') || 'owner'
@@ -25,6 +32,18 @@ function Users() {
   const handleAddUser = (userData: any) => {
     console.log('Adding user:', userData)
     // Add user logic here
+  }
+
+  const handleEditUser = (userData: any) => {
+    console.log('Updating user:', userData)
+    setShowEditModal(false)
+    setSelectedUser(null)
+  }
+
+  const handleSuspendUser = (reason: string) => {
+    console.log('Suspending user:', selectedUser?.name, 'Reason:', reason)
+    setShowSuspendModal(false)
+    setSelectedUser(null)
   }
 
   const handleAddRole = (roleData: any) => {
@@ -311,18 +330,56 @@ function Users() {
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-2">
                           <button 
-                            className="p-2 text-gray-400 hover:text-blue-600"
+                            className="p-2 text-blue-600 hover:text-blue-900"
                             onClick={() => navigate(`/dashboard/users/${user.id}?role=${currentRole}`)}
                             title="View Details"
                           >
-                            <FaEye size={14} />
+                            <FaEye size={18} />
                           </button>
-                          <button className="p-2 text-gray-400 hover:text-green-600">
-                            <FaEdit size={14} />
+                          <button 
+                            className="p-2 text-green-600 hover:text-green-900"
+                            onClick={() => {
+                              setSelectedUser(user)
+                              setShowEditModal(true)
+                            }}
+                            title="Edit User"
+                          >
+                            <FaEdit size={18} />
                           </button>
-                          <button className="p-2 text-gray-400 hover:text-red-600" onClick={() => handleDeleteUser({ id: user.id, name: user.name })}>
-                            <FaTrash size={14} />
-                          </button>
+                          <div className="relative">
+                            <button 
+                              className="p-2 text-gray-600 hover:text-gray-900"
+                              onClick={() => setOpenDropdownId(openDropdownId === user.id ? null : user.id)}
+                              title="More Actions"
+                            >
+                              <HiDotsVertical size={18} />
+                            </button>
+                            {openDropdownId === user.id && (
+                              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                <button
+                                  onClick={() => {
+                                    setSelectedUser(user)
+                                    setShowSuspendModal(true)
+                                    setOpenDropdownId(null)
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                >
+                                  <FaBan size={14} className="text-orange-600" />
+                                  Suspend User
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    handleDeleteUser({ id: user.id, name: user.name })
+                                    setOpenDropdownId(null)
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 border-t border-gray-200"
+                                >
+                                  <FaTrash size={14} className="text-red-600" />
+                                  Delete User
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -414,6 +471,28 @@ function Users() {
         isOpen={showAddRoleModal}
         onClose={() => setShowAddRoleModal(false)}
         onSubmit={handleAddRole}
+      />
+
+      {selectedUser && (
+        <EditUserModal
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false)
+            setSelectedUser(null)
+          }}
+          onSubmit={handleEditUser}
+          user={selectedUser}
+        />
+      )}
+
+      <SuspendModal
+        isOpen={showSuspendModal}
+        onClose={() => {
+          setShowSuspendModal(false)
+          setSelectedUser(null)
+        }}
+        onConfirm={handleSuspendUser}
+        userName={selectedUser?.name || ''}
       />
 
       <DeleteUserModal

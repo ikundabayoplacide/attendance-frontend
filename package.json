@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@amcharts/amcharts4-geodata": "^4.1.31",
-    "@amcharts/amcharts5": "^5.15.5",
+    "@amcharts/amcharts5": "^5.15.6",
     "@amcharts/amcharts5-geodata": "^5.1.5",
     "@tailwindcss/vite": "^4.1.18",
     "apexcharts": "^5.3.6",

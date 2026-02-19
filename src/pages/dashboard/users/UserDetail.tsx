@@ -1,15 +1,11 @@
 import { useState } from 'react'
-import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEye, FaEdit, FaBan, FaCheck, FaArrowLeft } from 'react-icons/fa'
+import { FaPhone, FaBuilding, FaCalendarAlt, FaShieldAlt, FaClock, FaEye, FaCheck, FaArrowLeft } from 'react-icons/fa'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import SuspendModal from '../../../components/modals/SuspendModal'
-import EditUserModal from '../../../components/modals/EditUserModal'
 
 function UserDetails() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState('profile')
-  const [showSuspendModal, setShowSuspendModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
 
   const currentRole = searchParams.get('role') || 'owner'
 
@@ -47,18 +43,6 @@ function UserDetails() {
     { id: 3, action: 'Generated report', timestamp: '2024-01-15 10:15', ip: '192.168.1.100' },
     { id: 4, action: 'Logged out', timestamp: '2024-01-15 17:30', ip: '192.168.1.100' }
   ]
-
-  const handleSuspendUser = (reason: string) => {
-    console.log('Suspending user:', user.name, 'Reason:', reason)
-    // Add suspend user logic here
-    setShowSuspendModal(false)
-  }
-
-  const handleEditUser = (userData: any) => {
-    console.log('Updating user:', userData)
-    // Add update user logic here
-    setShowEditModal(false)
-  }
 
   return (
     <div className="flex flex-col h-full">
@@ -104,22 +88,6 @@ function UserDetails() {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
                   <p className="text-gray-600">{user.email}</p>
-                </div>
-                <div className="flex gap-2 mt-4 md:mt-0">
-                  <button 
-                    onClick={() => setShowEditModal(true)}
-                    className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
-                  >
-                    <FaEdit size={14} />
-                    Edit User
-                  </button>
-                  <button 
-                    onClick={() => setShowSuspendModal(true)}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center gap-2"
-                  >
-                    <FaBan size={14} />
-                    Suspend
-                  </button>
                 </div>
               </div>
               
@@ -334,22 +302,6 @@ function UserDetails() {
           )}
         </div>
       </div>
-
-      {/* Suspend Modal */}
-      <SuspendModal
-        isOpen={showSuspendModal}
-        onClose={() => setShowSuspendModal(false)}
-        onConfirm={handleSuspendUser}
-        userName={user.name}
-      />
-
-      {/* Edit User Modal */}
-      <EditUserModal
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSubmit={handleEditUser}
-        user={user}
-      />
     </div>
   )
 }

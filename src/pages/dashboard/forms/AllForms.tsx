@@ -157,7 +157,7 @@ function AllForms() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-blue-500">
-              <FaFileWord className="text-white" size={24} />
+              <FaFileWord className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Forms</p>
@@ -169,7 +169,7 @@ function AllForms() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-green-500">
-              <FaClock className="text-white" size={24} />
+              <FaClock className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Active Forms</p>
@@ -181,7 +181,7 @@ function AllForms() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-purple-500">
-              <FaUsers className="text-white" size={24} />
+              <FaUsers className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Responses</p>
@@ -193,7 +193,7 @@ function AllForms() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-orange-500">
-              <FaEdit className="text-white" size={24} />
+              <FaEdit className="text-white" size={18} />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Draft Forms</p>
@@ -272,22 +272,22 @@ function AllForms() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#1A3263]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                     Form Details
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                     Responses
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                     Allowed Roles
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                     Created Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -333,21 +333,21 @@ function AllForms() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
                         <button className="text-blue-600 hover:text-blue-900" title="View">
-                          <FaEye size={16} />
+                          <FaEye size={18} />
                         </button>
                         <button 
                           onClick={() => handleEditForm(form)}
                           className="text-green-600 hover:text-green-900" 
                           title="Edit"
                         >
-                          <FaEdit size={16} />
+                          <FaEdit size={18} />
                         </button>
                         <button 
                           onClick={() => handleDeleteForm(form)}
                           className="text-red-600 hover:text-red-900" 
                           title="Delete"
                         >
-                          <FaTrash size={16} />
+                          <FaTrash size={18} />
                         </button>
                       </div>
                     </td>
