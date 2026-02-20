@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUsers, FaArrowRight, FaArrowDown, FaCalendarAlt, FaUserCheck, FaUser, FaSearch, FaEye, FaSync } from 'react-icons/fa'
 import VisitorPieChart from '../../../../components/ui/VisitorPieChart'
 import AttendModal from '../../../../components/modals/AttendModal'
@@ -6,9 +7,33 @@ import checkGif from '../../../../assets/images/click.gif'
 
 
 function CheckPoint() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const roleParam = searchParams.get('role')
+  
+  const navigateWithRole = (path: string) => {
+    navigate(roleParam ? `${path}?role=${roleParam}` : path)
+  }
+  
   const [activeTab, setActiveTab] = useState<'checkin' | 'checkout'>('checkin')
   const [searchTerm, setSearchTerm] = useState('')
   const [showAttendModal, setShowAttendModal] = useState(false)
+  const [filterType, setFilterType] = useState<'day' | 'time'>('day')
+  const [startDateTime, setStartDateTime] = useState('')
+  const [endDateTime, setEndDateTime] = useState('')
+  const [filterDepartment, setFilterDepartment] = useState('')
+  const [shouldFilter, setShouldFilter] = useState(false)
+
+  const departments = ['Sales', 'HR', 'Operations', 'Business Dev', 'Reception', 'Marketing']
+
+  // Trigger filtering only when both start and end are selected
+  useEffect(() => {
+    if (startDateTime && endDateTime) {
+      setShouldFilter(true)
+    } else if (!startDateTime && !endDateTime) {
+      setShouldFilter(false)
+    }
+  }, [startDateTime, endDateTime])
 
   const stats = {
     total: 1234,
@@ -17,23 +42,36 @@ function CheckPoint() {
   }
 
   const checkInVisitors = [
-    { id: 1, name: 'John Smith', company: 'TechCorp', email: 'john@techcorp.com', phone: '+1 555-0101', purpose: 'Business Meeting', host: 'Sarah Johnson', department: 'Sales', time: '09:30 AM', badge: 'V001' },
-    { id: 2, name: 'Alice Brown', company: 'StartupHub', email: 'alice@startuphub.com', phone: '+1 555-0102', purpose: 'Interview', host: 'Mike Davis', department: 'HR', time: '10:15 AM', badge: 'V002' },
-    { id: 3, name: 'Bob Wilson', company: 'Global Inc', email: 'bob@global.com', phone: '+1 555-0103', purpose: 'Consultation', host: 'Emma Wilson', department: 'Operations', time: '11:00 AM', badge: 'V003' }
+    { id: 1, name: 'John Smith', company: 'TechCorp', email: 'john@techcorp.com', phone: '+1 555-0101', purpose: 'Business Meeting', host: 'Sarah Johnson', department: 'Sales', time: '09:30 AM', date: '2024-01-15', badge: 'V001' },
+    { id: 2, name: 'Alice Brown', company: 'StartupHub', email: 'alice@startuphub.com', phone: '+1 555-0102', purpose: 'Interview', host: 'Mike Davis', department: 'HR', time: '10:15 AM', date: '2024-01-16', badge: 'V002' },
+    { id: 3, name: 'Bob Wilson', company: 'Global Inc', email: 'bob@global.com', phone: '+1 555-0103', purpose: 'Consultation', host: 'Emma Wilson', department: 'Operations', time: '11:00 AM', date: '2024-01-17', badge: 'V003' }
   ]
 
   const checkOutVisitors = [
-    { id: 4, name: 'Carol Davis', company: 'Innovation Labs', email: 'carol@innovation.com', phone: '+1 555-0104', purpose: 'Partnership', host: 'James Miller', department: 'Business Dev', time: '02:30 PM', badge: 'V004' },
-    { id: 5, name: 'David Lee', company: 'Tech Solutions', email: 'david@techsol.com', phone: '+1 555-0105', purpose: 'Delivery', host: 'Lisa Chen', department: 'Reception', time: '03:15 PM', badge: 'V005' },
-    { id: 6, name: 'Eva Martinez', company: 'Design Co', email: 'eva@design.com', phone: '+1 555-0106', purpose: 'Meeting', host: 'Tom Anderson', department: 'Marketing', time: '04:00 PM', badge: 'V006' }
+    { id: 4, name: 'Carol Davis', company: 'Innovation Labs', email: 'carol@innovation.com', phone: '+1 555-0104', purpose: 'Partnership', host: 'James Miller', department: 'Business Dev', time: '02:30 PM', date: '2024-01-15', badge: 'V004' },
+    { id: 5, name: 'David Lee', company: 'Tech Solutions', email: 'david@techsol.com', phone: '+1 555-0105', purpose: 'Delivery', host: 'Lisa Chen', department: 'Reception', time: '03:15 PM', date: '2024-01-16', badge: 'V005' },
+    { id: 6, name: 'Eva Martinez', company: 'Design Co', email: 'eva@design.com', phone: '+1 555-0106', purpose: 'Meeting', host: 'Tom Anderson', department: 'Marketing', time: '04:00 PM', date: '2024-01-17', badge: 'V006' }
   ]
 
   const currentVisitors = activeTab === 'checkin' ? checkInVisitors : checkOutVisitors
-  const filteredVisitors = currentVisitors.filter(visitor =>
-    visitor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    visitor.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    visitor.host.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredVisitors = currentVisitors.filter(visitor => {
+    const matchesSearch = visitor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      visitor.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      visitor.host.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesDepartment = !filterDepartment || visitor.department === filterDepartment
+    
+    let matchesDateTime = true
+    if (shouldFilter && startDateTime && endDateTime) {
+      if (filterType === 'day') {
+        matchesDateTime = visitor.date >= startDateTime && visitor.date <= endDateTime
+      } else {
+        matchesDateTime = visitor.time >= startDateTime && visitor.time <= endDateTime
+      }
+    }
+    
+    return matchesSearch && matchesDepartment && matchesDateTime
+  })
 
   return (
     <div className="flex flex-col h-full">
@@ -41,6 +79,12 @@ function CheckPoint() {
         __html: `
           .scrollbar-hide::-webkit-scrollbar {
             display: none;
+          }
+          input[type="date"]::-webkit-calendar-picker-indicator,
+          input[type="time"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 1;
+            filter: brightness(0) saturate(100%);
           }
         `
       }} />
@@ -58,14 +102,16 @@ function CheckPoint() {
       </div>
 
       {/* Attend Button - Centered */}
-      <div className="flex justify-center mt-[-30px]">
+      <div className="flex justify-center items-center mt-[-30px] mb-1">
         <button 
           onClick={() => setShowAttendModal(true)}
-          className="px-4 sm:px-8 py-2 sm:py-3 bg-[#1A3263] text-white rounded-lg hover:bg-[#1A3263]/90 transition-colors flex items-center gap-2 text-sm font-medium"
+          className="px-4 sm:px-8 py-2 sm:py-3 rounded-l-lg bg-[#1A3263] text-white hover:bg-[#1A3263]/90 transition-colors flex items-center gap-2 text-sm font-medium"
         >
-          <img src={checkGif} alt="Attend" className="w-5 h-5" />
           Attend
         </button>
+        <div className='bg-[#1A3263] rounded-r-lg '>
+        <img src={checkGif} alt="Attend" className="w-11 h-11 cursor-pointer"onClick={() => setShowAttendModal(true)}/>
+        </div>
       </div>
 
       {/* Attend Modal */}
@@ -129,19 +175,19 @@ function CheckPoint() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
               <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                <button className="w-full flex items-center gap-3 cursor-pointer p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/appointments")}>
                   <FaCalendarAlt className="text-blue-600" size={18} />
                   <div className="text-left">
                     <p className="font-medium text-gray-900 text-sm">Appointments</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                <button className="w-full flex items-center gap-3 cursor-pointer p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/handover")}>
                   <FaUserCheck className="text-green-600" size={18} />
                   <div className="text-left">
                     <p className="font-medium text-gray-900 text-sm">Handover</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                <button className="w-full flex items-center cursor-pointer gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/visitors")}>
                   <FaUser className="text-purple-600" size={18} />
                   <div className="text-left">
                     <p className="font-medium text-gray-900 text-sm">Visitors</p>
@@ -201,17 +247,60 @@ function CheckPoint() {
             </div>
           </div>
 
-          {/* Search */}
+          {/* Search and Filters */}
           <div className="p-6 border-b border-gray-200">
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <div className="flex flex-col md:flex-row gap-3">
+              {/* Search */}
+              <div className="relative flex-1">
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search visitors, companies, or hosts..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                />
+              </div>
+              
+              {/* Filter Type Selector */}
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="day">Day</option>
+                <option value="time">Time</option>
+              </select>
+              
+              {/* Start DateTime Input */}
               <input
-                type="text"
-                placeholder="Search visitors, companies, or hosts..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="Start"
+                value={startDateTime}
+                onChange={(e) => setStartDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
               />
+              
+              {/* End DateTime Input */}
+              <input
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="End"
+                value={endDateTime}
+                onChange={(e) => setEndDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              />
+              
+              {/* Department Filter Dropdown */}
+              <select
+                value={filterDepartment}
+                onChange={(e) => setFilterDepartment(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="">All Departments</option>
+                {departments.map(dept => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
+              </select>
             </div>
           </div>
 
