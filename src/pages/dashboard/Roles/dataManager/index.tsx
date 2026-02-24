@@ -18,7 +18,6 @@ function DataManagerDashboard() {
         { id: 1, action: 'Attendance data exported', user: 'System Admin', time: '10 mins ago', type: 'export' },
         { id: 2, action: 'Bulk user data imported', user: 'HR Manager', time: '25 mins ago', type: 'import' },
         { id: 3, action: 'Monthly report generated', user: 'Data Manager', time: '1 hour ago', type: 'report' },
-        { id: 4, action: 'Database backup completed', user: 'System', time: '2 hours ago', type: 'backup' }
     ]
 
     useEffect(() => {

@@ -98,7 +98,12 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
       ]
      },
     { path: '/dashboard/scanning', icon: FaEye, label: 'Scanning' },
-    { path: '/dashboard/visitors', icon: FaUsers, label: 'Visitors' },
+    { path: '/dashboard/attendance', icon: FaUsers, label: 'Attendances',
+      children:[
+        {path: '/dashboard/attendedUser', label: 'Users' },
+        {path: '/dashboard/visitor', label: 'Visitors' },
+      ]
+     },
     { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Hosts' },
     { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments',
       children:[

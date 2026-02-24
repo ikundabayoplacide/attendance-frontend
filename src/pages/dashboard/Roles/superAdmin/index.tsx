@@ -1,7 +1,17 @@
-import { FaUsers, FaCalendarCheck, FaChartLine, FaUserCheck, FaEye, FaArrowRight, FaArrowDown, FaCalendarAlt } from 'react-icons/fa'
+import { FaUsers, FaChartLine, FaUserCheck, FaEye, FaArrowRight, FaArrowDown, FaCalendarAlt } from 'react-icons/fa'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import MapChart from '../../../../components/ui/MapChart'
+import { FaListCheck } from 'react-icons/fa6'
+
 
 function CustomerDashboard() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const roleParam = searchParams.get('role')
+  
+  const navigateWithRole = (path: string) => {
+    navigate(roleParam ? `${path}?role=${roleParam}` : path)
+  }
   const stats = [
     { title: 'Total Visitors', value: '1,234', icon: FaUsers, color: 'bg-blue-500' },
     { title: 'Today\'s Check-ins', value: '89', icon: FaArrowRight, color: 'bg-green-500' },
@@ -15,6 +25,8 @@ function CustomerDashboard() {
     { id: 3, name: 'Bob Wilson', company: 'Global Inc', purpose: 'Consultation', time: '11:00 AM', status: 'Approved', host: 'Emma Wilson' },
     { id: 4, name: 'Carol Davis', company: 'Innovation Labs', purpose: 'Partnership', time: '02:30 PM', status: 'Checked Out', host: 'James Miller' }
   ]
+
+  
 
 
  
@@ -34,16 +46,16 @@ function CustomerDashboard() {
       <div className="flex-1 overflow-y-auto space-y-6  scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         
         {/* Stats Grid */}
-        <h4 className='text-black font-bold'>Super Admin Dashboard</h4>
+        <h4 className=' !text-lg text-black font-bold'>Super Admin Dashboard</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon
             return (
-              <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-2">
+              <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 px-3 py-1">
                 <div className="flex items-center justify-between">
-                  <div className='flex gap-1'>
-                    <p className="text-lg font-bold text-gray-900">{stat.value}</p>
+                  <div className='gap-1'>
                     <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                    <p className="text-lg font-bold text-gray-900">{stat.value}</p>
                   </div>
                   <div className={`${stat.color} p-1 rounded-lg`}>
                     <Icon className="text-white"  />
@@ -68,25 +80,25 @@ function CustomerDashboard() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
               <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                <button className="w-full flex items-center gap-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/appointments")}>
                   <FaCalendarAlt className="text-blue-600" size={18} />
                   <div className="text-left">
                     <p className="font-medium text-gray-900 text-sm">Appointments</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
-                  <FaCalendarCheck className="text-green-600" size={18} />
+                <button className="w-full flex items-center gap-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/attendance")}>
+                  <FaListCheck className="text-green-600" size={18} />
                   <div className="text-left">
-                    <p className="font-medium text-gray-900 text-sm">Schedule Meeting</p>
+                    <p className="font-medium text-gray-900 text-sm">Attendance</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                <button className="w-full flex items-center gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/scanning")}>
                   <FaEye className="text-purple-600" size={18} />
                   <div className="text-left">
                     <p className="font-medium text-gray-900 text-sm">Scanning</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center gap-3 p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
+                <button className="w-full flex items-center gap-3 p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/reports")}>
                   <FaChartLine className="text-orange-600" size={18} />
                   <div className="text-left">
                     <p className="font-medium text-gray-900 text-sm">View Reports</p>

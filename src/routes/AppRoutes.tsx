@@ -3,8 +3,6 @@ import Home from '../pages/dashboard/Home'
 
 import DashboardLayout from '../layouts/DashboardLayout'
 import Dashboard from '../pages/Dashboard'
-import Visitors from '../pages/dashboard/vistors'
-import Attendance from '../pages/dashboard/attendance/Attendance'
 import UserDetails from '../pages/dashboard/users/UserDetail'
 import ActiveUsers from '../pages/dashboard/users/active'
 import InactiveUsers from '../pages/dashboard/users/inactive'
@@ -27,7 +25,7 @@ import SubBillingsPage from '../pages/dashboard/payment/Sub&billing'
 import Users from '../pages/dashboard/users'
 import BusinessAnalytics from '../pages/dashboard/analytics/Business-Analytics'
 import ReportPage from '../pages/dashboard/reports'
-import ScanningPage from '../pages/dashboard/vistors/ScanningPage'
+import ScanningPage from '../pages/dashboard/attendance/ScanningPage'
 import EventsPage from '../pages/dashboard/events/Events'
 import Equipment from '../pages/dashboard/equipments/Equipment'
 import AddEquipmentPage from '../pages/dashboard/equipments/add'
@@ -43,6 +41,10 @@ import HelpDeskDashboard from '../pages/dashboard/Roles/helpDesk'
 import DataManagerDashboard from '../pages/dashboard/Roles/dataManager'
 import TeamLeader from '../pages/dashboard/Roles/teamLeader'
 import CheckPoint from '../pages/dashboard/Roles/check point'
+import Attendance from '../pages/dashboard/attendance'
+import AttendedUsers from '../pages/dashboard/attendance/AttendedUsers'
+import AttendedVisitors from '../pages/dashboard/attendance/AttendedVisitors'
+import Staff from '../pages/dashboard/Roles/staff'
 
 
 function AppRoutes() {
@@ -79,13 +81,16 @@ function AppRoutes() {
         <Route path="users/inactive" element={<InactiveUsers />} />
         <Route path="users/blacklisted" element={<BlacklistedUsers />} />
         <Route path="users/:id" element={<UserDetails />} />
-        <Route path="visitors" element={<Visitors />} />
         <Route path="attendance" element={<Attendance />} />
+        <Route path="visitor" element={<Attendance />} />
+        <Route path="attendedUser" element={<AttendedUsers />} />
+        <Route path="attendedVisitor" element={<AttendedVisitors />} />
         <Route path="scanning" element={<ScanningPage />} />
         <Route path="events" element={<EventsPage/>}/>
         <Route path='equipments' element={<Equipment/>}/>
         <Route path="equipments/add" element={<AddEquipmentPage/>}/>
         <Route path="handover" element={<HandoverManagement/>}/>
+        <Route path="staff" element={<Staff/>}/>
         <Route path="hosts" element={<Hostmanagement/>}/>
         <Route path="appointments" element={<AppointmentPage/>}/>
         <Route path="appointments/viaCalender" element={<CalendarViewPage/>}/>

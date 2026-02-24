@@ -1,15 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 // import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUsers, FaUserCheck, FaUserClock, FaUserTimes, FaPlus, FaSearch, FaEdit, FaEye } from 'react-icons/fa'
 import AddVisitorModal from '../../../components/modals/AddVisitorModal'
 
-function Visitors() {
+function Attendance() {
   // const navigate = useNavigate()
   // const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
   const [showAddVisitorModal, setShowAddVisitorModal] = useState(false)
+  const [filterType, setFilterType] = useState<'day' | 'time'>('day')
+  const [startDateTime, setStartDateTime] = useState('')
+  const [endDateTime, setEndDateTime] = useState('')
+  const [filterDepartment, setFilterDepartment] = useState('')
+  const [shouldFilter, setShouldFilter] = useState(false)
+
+  const departments = ['Sales', 'HR', 'Operations', 'Business Dev', 'Reception', 'Marketing']
+
+  // Trigger filtering only when both start and end are selected
+  useEffect(() => {
+    if (startDateTime && endDateTime) {
+      setShouldFilter(true)
+    } else if (!startDateTime && !endDateTime) {
+      setShouldFilter(false)
+    }
+  }, [startDateTime, endDateTime])
 
   const handleAddVisitor = (visitorData: any) => {
     console.log('Adding visitor:', visitorData)
@@ -95,7 +111,18 @@ function Visitors() {
                          visitor.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          visitor.host.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || visitor.status.toLowerCase().replace(' ', '_') === statusFilter
-    return matchesSearch && matchesStatus
+    const matchesDepartment = !filterDepartment || visitor.department === filterDepartment
+    
+    let matchesDateTime = true
+    if (shouldFilter && startDateTime && endDateTime) {
+      if (filterType === 'day') {
+        matchesDateTime = visitor.date >= startDateTime && visitor.date <= endDateTime
+      } else {
+        matchesDateTime = !!visitor.checkIn && visitor.checkIn >= startDateTime && visitor.checkIn <= endDateTime
+      }
+    }
+    
+    return matchesSearch && matchesStatus && matchesDepartment && matchesDateTime
   })
 
   const getStatusColor = (status: string) => {
@@ -113,6 +140,12 @@ function Visitors() {
         __html: `
           .scrollbar-hide::-webkit-scrollbar {
             display: none;
+          }
+          input[type="date"]::-webkit-calendar-picker-indicator,
+          input[type="time"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 1;
+            filter: brightness(0) saturate(100%);
           }
         `
       }} />
@@ -138,7 +171,7 @@ function Visitors() {
                     <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                   </div>
                   <div className={`${stat.color} p-3 rounded-lg`}>
-                    <Icon className="text-white" size={24} />
+                    <Icon className="text-white" size={18} />
                   </div>
                 </div>
               </div>
@@ -150,44 +183,86 @@ function Visitors() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Controls */}
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              <div className="flex-1 relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search visitors, companies, or hosts..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                />
+            <div className="flex flex-col gap-4">
+              {/* First Row: Search, Status, Date Filter, Add Button */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search visitors, companies, or hosts..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  />
+                </div>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                >
+                  <option value="all">All Status</option>
+                  <option value="checked_in">Checked In</option>
+                  <option value="checked_out">Checked Out</option>
+                  <option value="pending">Pending</option>
+                </select>
+                <select
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                >
+                  <option value="today">Today</option>
+                  <option value="yesterday">Yesterday</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                </select>
+                <button 
+                  onClick={() => setShowAddVisitorModal(true)}
+                  className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2 whitespace-nowrap"
+                >
+                  <FaPlus size={14} />
+                  Add Visitor
+                </button>
               </div>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-              >
-                <option value="all">All Status</option>
-                <option value="checked_in">Checked In</option>
-                <option value="checked_out">Checked Out</option>
-                <option value="pending">Pending</option>
-              </select>
-              <select
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-              >
-                <option value="today">Today</option>
-                <option value="yesterday">Yesterday</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-              </select>
-              <button 
-                onClick={() => setShowAddVisitorModal(true)}
-                className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
-              >
-                <FaPlus size={14} />
-                Add Visitor
-              </button>
+              
+              {/* Second Row: Filter Type, Start/End DateTime, Department */}
+              <div className="flex flex-col md:flex-row gap-3">
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
+                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                >
+                  <option value="day">Day</option>
+                  <option value="time">Time</option>
+                </select>
+                
+                <input
+                  type={filterType === 'day' ? 'date' : 'time'}
+                  placeholder="Start"
+                  value={startDateTime}
+                  onChange={(e) => setStartDateTime(e.target.value)}
+                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                />
+                
+                <input
+                  type={filterType === 'day' ? 'date' : 'time'}
+                  placeholder="End"
+                  value={endDateTime}
+                  onChange={(e) => setEndDateTime(e.target.value)}
+                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                />
+                
+                <select
+                  value={filterDepartment}
+                  onChange={(e) => setFilterDepartment(e.target.value)}
+                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                >
+                  <option value="">All Departments</option>
+                  {departments.map(dept => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
@@ -284,4 +359,4 @@ function Visitors() {
   )
 }
 
-export default Visitors
+export default Attendance

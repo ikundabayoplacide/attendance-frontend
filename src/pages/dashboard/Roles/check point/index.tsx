@@ -3,14 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUsers, FaArrowRight, FaArrowDown, FaCalendarAlt, FaUserCheck, FaUser, FaSearch, FaEye, FaSync } from 'react-icons/fa'
 import VisitorPieChart from '../../../../components/ui/VisitorPieChart'
 import AttendModal from '../../../../components/modals/AttendModal'
-import checkGif from '../../../../assets/images/click.gif'
+import checkGif from '../../../../assets/images/clicknow.gif'
 
 
 function CheckPoint() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const roleParam = searchParams.get('role')
-  
   const navigateWithRole = (path: string) => {
     navigate(roleParam ? `${path}?role=${roleParam}` : path)
   }
@@ -101,17 +100,14 @@ function CheckPoint() {
         </div>
       </div>
 
-      {/* Attend Button - Centered */}
-      <div className="flex justify-center items-center mt-[-30px] mb-1">
+       <div className="flex justify-center mt-[-30px] ">
         <button 
           onClick={() => setShowAttendModal(true)}
-          className="px-4 sm:px-8 py-2 sm:py-3 rounded-l-lg bg-[#1A3263] text-white hover:bg-[#1A3263]/90 transition-colors flex items-center gap-2 text-sm font-medium"
+          className="px-4 sm:px-8 py-2 sm:py-3 cursor-pointer bg-[#1A3263] text-white rounded-lg hover:bg-[#1A3263]/90 transition-colors flex items-center gap-2 text-lg font-bold"
         >
           Attend
+          <img src={checkGif} alt="Attend" className="w-10 h-8" />
         </button>
-        <div className='bg-[#1A3263] rounded-r-lg '>
-        <img src={checkGif} alt="Attend" className="w-11 h-11 cursor-pointer"onClick={() => setShowAttendModal(true)}/>
-        </div>
       </div>
 
       {/* Attend Modal */}
@@ -187,10 +183,10 @@ function CheckPoint() {
                     <p className="font-medium text-gray-900 text-sm">Handover</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center cursor-pointer gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/visitors")}>
+                <button className="w-full flex items-center cursor-pointer gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/attendance")}>
                   <FaUser className="text-purple-600" size={18} />
                   <div className="text-left">
-                    <p className="font-medium text-gray-900 text-sm">Visitors</p>
+                    <p className="font-medium text-gray-900 text-sm">Attendance</p>
                   </div>
                 </button>
               </div>

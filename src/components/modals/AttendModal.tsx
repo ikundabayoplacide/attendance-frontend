@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning, FaCamera, FaRedo, FaSave, FaTimes } from 'react-icons/fa'
+import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning, FaCamera, FaRedo, FaSave, FaTimes, FaSearch } from 'react-icons/fa'
 import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
 
 interface AttendModalProps {
@@ -37,6 +37,7 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
   const [selectedMode, setSelectedMode] = useState<string>('')
   const [isScanning, setIsScanning] = useState(false)
   const [isFirstTime] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
   const [visitorForm, setVisitorForm] = useState<VisitorForm>({
     mobile: '',
     email: '',
@@ -136,7 +137,19 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
           <div className="p-6">
             {/* Verification Methods */}
             <div className="bg-gray-50 rounded-lg p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Select Verification Method</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-800">Select Verification Method</h2>
+                <div className="relative w-64">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search visitor by name..."
+                    className="w-full pl-10 pr-4 py-2 text-sm text-gray-800 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                </div>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {verificationModes.map((mode) => {
                   const Icon = mode.icon
@@ -266,12 +279,12 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Purpose</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
                     <textarea
                       value={visitorForm.purpose}
                       onChange={(e) => handleInputChange('purpose', e.target.value)}
                       className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Purpose of visit"
+                      placeholder="Reason for visiting"
                       rows={3}
                     />
                   </div>
