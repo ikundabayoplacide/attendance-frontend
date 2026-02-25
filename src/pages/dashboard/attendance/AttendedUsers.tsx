@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { FaUsers, FaUserCheck, FaUserClock, FaSearch, FaEye, FaEdit } from 'react-icons/fa'
+import { FaUsers, FaUserCheck, FaUserClock, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
 
 function AttendedUsers() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -9,8 +10,29 @@ function AttendedUsers() {
   const [endDateTime, setEndDateTime] = useState('')
   const [filterDepartment, setFilterDepartment] = useState('')
   const [shouldFilter, setShouldFilter] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Operations', 'Finance']
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const exportFields = [
+    { id: 'name', label: 'Name' },
+    { id: 'email', label: 'Email' },
+    { id: 'department', label: 'Department' },
+    { id: 'checkIn', label: 'Check In Time' },
+    { id: 'checkOut', label: 'Check Out Time' },
+    { id: 'status', label: 'Status' },
+    { id: 'badge', label: 'Badge ID' },
+  ]
 
   useEffect(() => {
     if (startDateTime && endDateTime) {
@@ -94,65 +116,83 @@ function AttendedUsers() {
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                  />
-                </div>
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                >
-                  <option value="all">All Status</option>
-                  <option value="checked_in">Checked In</option>
-                  <option value="checked_out">Checked Out</option>
-                </select>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex-1 min-w-[200px] relative">
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                />
               </div>
-              
-              <div className="flex flex-col md:flex-row gap-3">
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="all">All Status</option>
+                <option value="checked_in">Checked In</option>
+                <option value="checked_out">Checked Out</option>
+              </select>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="day">Day</option>
+                <option value="time">Time</option>
+              </select>
+              <input
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="Start"
+                value={startDateTime}
+                onChange={(e) => setStartDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              />
+              <input
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="End"
+                value={endDateTime}
+                onChange={(e) => setEndDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              />
+              <select
+                value={filterDepartment}
+                onChange={(e) => setFilterDepartment(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="">All Departments</option>
+                {departments.map(dept => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
+              </select>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                  title="Export as PDF"
                 >
-                  <option value="day">Day</option>
-                  <option value="time">Time</option>
-                </select>
-                
-                <input
-                  type={filterType === 'day' ? 'date' : 'time'}
-                  placeholder="Start"
-                  value={startDateTime}
-                  onChange={(e) => setStartDateTime(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                />
-                
-                <input
-                  type={filterType === 'day' ? 'date' : 'time'}
-                  placeholder="End"
-                  value={endDateTime}
-                  onChange={(e) => setEndDateTime(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                />
-                
-                <select
-                  value={filterDepartment}
-                  onChange={(e) => setFilterDepartment(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  <FaFilePdf size={16} />
+                  <span className="hidden sm:inline">PDF</span>
+                </button>
+                <button
+                  onClick={() => handleExport('word')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                  title="Export as Word"
                 >
-                  <option value="">All Departments</option>
-                  {departments.map(dept => (
-                    <option key={dept} value={dept}>{dept}</option>
-                  ))}
-                </select>
+                  <FaFileWord size={16} />
+                  <span className="hidden sm:inline">Word</span>
+                </button>
+                <button
+                  onClick={() => handleExport('print')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
+                  title="Print"
+                >
+                  <FaPrint size={16} />
+                  <span className="hidden sm:inline">Print</span>
+                </button>
               </div>
             </div>
           </div>
@@ -209,6 +249,15 @@ function AttendedUsers() {
           </div>
         </div>
       </div>
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Attended Users Report"
+      />
     </div>
   )
 }

@@ -45,6 +45,7 @@ import Attendance from '../pages/dashboard/attendance'
 import AttendedUsers from '../pages/dashboard/attendance/AttendedUsers'
 import AttendedVisitors from '../pages/dashboard/attendance/AttendedVisitors'
 import Staff from '../pages/dashboard/Roles/staff'
+import ProtocalPage from '../pages/dashboard/protocals'
 
 
 function AppRoutes() {
@@ -87,6 +88,7 @@ function AppRoutes() {
         <Route path="attendedVisitor" element={<AttendedVisitors />} />
         <Route path="scanning" element={<ScanningPage />} />
         <Route path="events" element={<EventsPage/>}/>
+        <Route path='protocals' element={<ProtocalPage/>}/>
         <Route path='equipments' element={<Equipment/>}/>
         <Route path="equipments/add" element={<AddEquipmentPage/>}/>
         <Route path="handover" element={<HandoverManagement/>}/>

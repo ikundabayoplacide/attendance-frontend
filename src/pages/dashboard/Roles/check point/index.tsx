@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FaUsers, FaArrowRight, FaArrowDown, FaCalendarAlt, FaUserCheck, FaUser, FaSearch, FaEye, FaSync } from 'react-icons/fa'
+import { FaUsers, FaArrowRight, FaArrowDown, FaCalendarAlt, FaUserCheck, FaSync } from 'react-icons/fa'
 import VisitorPieChart from '../../../../components/ui/VisitorPieChart'
-import AttendModal from '../../../../components/modals/AttendModal'
-import checkGif from '../../../../assets/images/clicknow.gif'
+// import AttendModal from '../../../../components/modals/AttendModal'
+// import checkGif from '../../../../assets/images/clicknow.gif'
+import { IoScanCircle } from 'react-icons/io5'
 
 
 function CheckPoint() {
@@ -14,25 +15,19 @@ function CheckPoint() {
     navigate(roleParam ? `${path}?role=${roleParam}` : path)
   }
   
-  const [activeTab, setActiveTab] = useState<'checkin' | 'checkout'>('checkin')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [showAttendModal, setShowAttendModal] = useState(false)
-  const [filterType, setFilterType] = useState<'day' | 'time'>('day')
-  const [startDateTime, setStartDateTime] = useState('')
-  const [endDateTime, setEndDateTime] = useState('')
-  const [filterDepartment, setFilterDepartment] = useState('')
-  const [shouldFilter, setShouldFilter] = useState(false)
+  const [activeTab] = useState<'checkin' | 'checkout'>('checkin')
+  // const [searchTerm, setSearchTerm] = useState('')
+  // const [showAttendModal, setShowAttendModal] = useState(false)
+  // const [filterType, setFilterType] = useState<'day' | 'time'>('day')
+  // const [startDateTime, setStartDateTime] = useState('')
+  // const [endDateTime, setEndDateTime] = useState('')
+  // const [filterDepartment, setFilterDepartment] = useState('')
+  // const [shouldFilter, setShouldFilter] = useState(false)
 
-  const departments = ['Sales', 'HR', 'Operations', 'Business Dev', 'Reception', 'Marketing']
+  // const departments = ['Sales', 'HR', 'Operations', 'Business Dev', 'Reception', 'Marketing']
 
   // Trigger filtering only when both start and end are selected
-  useEffect(() => {
-    if (startDateTime && endDateTime) {
-      setShouldFilter(true)
-    } else if (!startDateTime && !endDateTime) {
-      setShouldFilter(false)
-    }
-  }, [startDateTime, endDateTime])
+
 
   const stats = {
     total: 1234,
@@ -43,7 +38,6 @@ function CheckPoint() {
   const checkInVisitors = [
     { id: 1, name: 'John Smith', company: 'TechCorp', email: 'john@techcorp.com', phone: '+1 555-0101', purpose: 'Business Meeting', host: 'Sarah Johnson', department: 'Sales', time: '09:30 AM', date: '2024-01-15', badge: 'V001' },
     { id: 2, name: 'Alice Brown', company: 'StartupHub', email: 'alice@startuphub.com', phone: '+1 555-0102', purpose: 'Interview', host: 'Mike Davis', department: 'HR', time: '10:15 AM', date: '2024-01-16', badge: 'V002' },
-    { id: 3, name: 'Bob Wilson', company: 'Global Inc', email: 'bob@global.com', phone: '+1 555-0103', purpose: 'Consultation', host: 'Emma Wilson', department: 'Operations', time: '11:00 AM', date: '2024-01-17', badge: 'V003' }
   ]
 
   const checkOutVisitors = [
@@ -53,24 +47,6 @@ function CheckPoint() {
   ]
 
   const currentVisitors = activeTab === 'checkin' ? checkInVisitors : checkOutVisitors
-  const filteredVisitors = currentVisitors.filter(visitor => {
-    const matchesSearch = visitor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      visitor.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      visitor.host.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesDepartment = !filterDepartment || visitor.department === filterDepartment
-    
-    let matchesDateTime = true
-    if (shouldFilter && startDateTime && endDateTime) {
-      if (filterType === 'day') {
-        matchesDateTime = visitor.date >= startDateTime && visitor.date <= endDateTime
-      } else {
-        matchesDateTime = visitor.time >= startDateTime && visitor.time <= endDateTime
-      }
-    }
-    
-    return matchesSearch && matchesDepartment && matchesDateTime
-  })
 
   return (
     <div className="flex flex-col h-full">
@@ -100,7 +76,7 @@ function CheckPoint() {
         </div>
       </div>
 
-       <div className="flex justify-center mt-[-30px] ">
+       {/* <div className="flex justify-center mt-[-30px] ">
         <button 
           onClick={() => setShowAttendModal(true)}
           className="px-4 sm:px-8 py-2 sm:py-3 cursor-pointer bg-[#1A3263] text-white rounded-lg hover:bg-[#1A3263]/90 transition-colors flex items-center gap-2 text-lg font-bold"
@@ -108,10 +84,10 @@ function CheckPoint() {
           Attend
           <img src={checkGif} alt="Attend" className="w-10 h-8" />
         </button>
-      </div>
+      </div> */}
 
       {/* Attend Modal */}
-      <AttendModal isOpen={showAttendModal} onClose={() => setShowAttendModal(false)} />
+      {/* <AttendModal isOpen={showAttendModal} onClose={() => setShowAttendModal(false)} /> */}
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto space-y-6 mt-1 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
@@ -183,10 +159,10 @@ function CheckPoint() {
                     <p className="font-medium text-gray-900 text-sm">Handover</p>
                   </div>
                 </button>
-                <button className="w-full flex items-center cursor-pointer gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/attendance")}>
-                  <FaUser className="text-purple-600" size={18} />
+                <button className="w-full flex items-center cursor-pointer gap-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors" onClick={()=>navigateWithRole("/dashboard/scanning")}>
+                  <IoScanCircle className="text-purple-600" size={18} />
                   <div className="text-left">
-                    <p className="font-medium text-gray-900 text-sm">Attendance</p>
+                    <p className="font-medium text-gray-900 text-sm">Scanning</p>
                   </div>
                 </button>
               </div>
@@ -218,7 +194,7 @@ function CheckPoint() {
         {/* Full Width Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Tabs */}
-          <div className="p-6 border-b border-gray-200">
+          {/* <div className="p-6 border-b border-gray-200">
             <div className="flex gap-4">
               <button
                 onClick={() => setActiveTab('checkin')}
@@ -241,13 +217,13 @@ function CheckPoint() {
                 Check Out
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Search and Filters */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex flex-col md:flex-row gap-3">
               {/* Search */}
-              <div className="relative flex-1">
+              {/* <div className="relative flex-1">
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
@@ -256,38 +232,38 @@ function CheckPoint() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
-              </div>
+              </div> */}
               
               {/* Filter Type Selector */}
-              <select
+              {/* <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
                 className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
               >
                 <option value="day">Day</option>
                 <option value="time">Time</option>
-              </select>
+              </select> */}
               
               {/* Start DateTime Input */}
-              <input
+              {/* <input
                 type={filterType === 'day' ? 'date' : 'time'}
                 placeholder="Start"
                 value={startDateTime}
                 onChange={(e) => setStartDateTime(e.target.value)}
                 className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-              />
+              /> */}
               
               {/* End DateTime Input */}
-              <input
+              {/* <input
                 type={filterType === 'day' ? 'date' : 'time'}
                 placeholder="End"
                 value={endDateTime}
                 onChange={(e) => setEndDateTime(e.target.value)}
                 className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-              />
+              /> */}
               
               {/* Department Filter Dropdown */}
-              <select
+              {/* <select
                 value={filterDepartment}
                 onChange={(e) => setFilterDepartment(e.target.value)}
                 className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
@@ -296,12 +272,12 @@ function CheckPoint() {
                 {departments.map(dept => (
                   <option key={dept} value={dept}>{dept}</option>
                 ))}
-              </select>
+              </select> */}
             </div>
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
+          {/* <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead className='bg-[#1A3263]'>
                 <tr className="border-b border-gray-200">
@@ -347,7 +323,7 @@ function CheckPoint() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

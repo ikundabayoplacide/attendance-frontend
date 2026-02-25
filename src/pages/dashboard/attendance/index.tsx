@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react'
 // import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FaUsers, FaUserCheck, FaUserClock, FaUserTimes, FaPlus, FaSearch, FaEdit, FaEye } from 'react-icons/fa'
+import { FaUsers, FaUserCheck, FaUserClock, FaUserTimes, FaSearch, FaEdit, FaEye, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
 import AddVisitorModal from '../../../components/modals/AddVisitorModal'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
 
 function Attendance() {
   // const navigate = useNavigate()
   // const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [dateFilter, setDateFilter] = useState('today')
   const [showAddVisitorModal, setShowAddVisitorModal] = useState(false)
   const [filterType, setFilterType] = useState<'day' | 'time'>('day')
   const [startDateTime, setStartDateTime] = useState('')
   const [endDateTime, setEndDateTime] = useState('')
   const [filterDepartment, setFilterDepartment] = useState('')
   const [shouldFilter, setShouldFilter] = useState(false)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
 
   const departments = ['Sales', 'HR', 'Operations', 'Business Dev', 'Reception', 'Marketing']
 
@@ -32,6 +34,28 @@ function Attendance() {
     // Add visitor logic here
     setShowAddVisitorModal(false)
   }
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const exportFields = [
+    { id: 'name', label: 'Visitor Name' },
+    { id: 'email', label: 'Email' },
+    { id: 'company', label: 'Company' },
+    { id: 'purpose', label: 'Purpose' },
+    { id: 'host', label: 'Host' },
+    { id: 'department', label: 'Department' },
+    { id: 'checkIn', label: 'Check In Time' },
+    { id: 'checkOut', label: 'Check Out Time' },
+    { id: 'status', label: 'Status' },
+    { id: 'badge', label: 'Badge ID' },
+  ]
 
   // Get current role parameter
   // const currentRole = searchParams.get('role') || 'customer'
@@ -183,86 +207,83 @@ function Attendance() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Controls */}
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col gap-4">
-              {/* First Row: Search, Status, Date Filter, Add Button */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search visitors, companies, or hosts..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                  />
-                </div>
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                >
-                  <option value="all">All Status</option>
-                  <option value="checked_in">Checked In</option>
-                  <option value="checked_out">Checked Out</option>
-                  <option value="pending">Pending</option>
-                </select>
-                <select
-                  value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                >
-                  <option value="today">Today</option>
-                  <option value="yesterday">Yesterday</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                </select>
-                <button 
-                  onClick={() => setShowAddVisitorModal(true)}
-                  className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2 whitespace-nowrap"
-                >
-                  <FaPlus size={14} />
-                  Add Visitor
-                </button>
-              </div>
-              
-              {/* Second Row: Filter Type, Start/End DateTime, Department */}
-              <div className="flex flex-col md:flex-row gap-3">
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                >
-                  <option value="day">Day</option>
-                  <option value="time">Time</option>
-                </select>
-                
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative">
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
-                  type={filterType === 'day' ? 'date' : 'time'}
-                  placeholder="Start"
-                  value={startDateTime}
-                  onChange={(e) => setStartDateTime(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                  type="text"
+                  placeholder="Search ..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-48 pl-10 pr-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
                 />
-                
-                <input
-                  type={filterType === 'day' ? 'date' : 'time'}
-                  placeholder="End"
-                  value={endDateTime}
-                  onChange={(e) => setEndDateTime(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                />
-                
-                <select
-                  value={filterDepartment}
-                  onChange={(e) => setFilterDepartment(e.target.value)}
-                  className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
-                >
-                  <option value="">All Departments</option>
-                  {departments.map(dept => (
-                    <option key={dept} value={dept}>{dept}</option>
-                  ))}
-                </select>
               </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="all">All Status</option>
+                <option value="checked_in">Checked In</option>
+                <option value="checked_out">Checked Out</option>
+                <option value="pending">Pending</option>
+              </select>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="day">Day</option>
+                <option value="time">Time</option>
+              </select>
+              <input
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="Start"
+                value={startDateTime}
+                onChange={(e) => setStartDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              />
+              <input
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="End"
+                value={endDateTime}
+                onChange={(e) => setEndDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              />
+              <select
+                value={filterDepartment}
+                onChange={(e) => setFilterDepartment(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="">All Departments</option>
+                {departments.map(dept => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => handleExport('pdf')}
+                className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                title="Export as PDF"
+              >
+                <FaFilePdf size={16} />
+                <span className="hidden sm:inline">PDF</span>
+              </button>
+              <button
+                onClick={() => handleExport('word')}
+                className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                title="Export as Word"
+              >
+                <FaFileWord size={16} />
+                <span className="hidden sm:inline">Word</span>
+              </button>
+              <button
+                onClick={() => handleExport('print')}
+                className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
+                title="Print"
+              >
+                <FaPrint size={16} />
+                <span className="hidden sm:inline">Print</span>
+              </button>
             </div>
           </div>
 
@@ -354,6 +375,16 @@ function Attendance() {
         isOpen={showAddVisitorModal}
         onClose={() => setShowAddVisitorModal(false)}
         onSubmit={handleAddVisitor}
+      />
+
+      {/* Export Report Modal */}
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Visitor Report"
       />
     </div>
   )

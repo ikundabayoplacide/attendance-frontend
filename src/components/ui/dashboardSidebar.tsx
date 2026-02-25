@@ -111,7 +111,12 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
         {path: '/dashboard/appointments/viaCalender', label: 'Calendar View' },
       ]
      },
-    {path:  '/dashboard/Events', icon: BsFillCalendar3EventFill, label: 'Events'},
+    {path:  '/dashboard/Events', icon: BsFillCalendar3EventFill, label: 'Events',
+      children: [
+        { path: '/dashboard/events', label: 'All Events' },
+        { path: '/dashboard/protocals', label: 'Protocals' },
+      ]
+    },
     {path:  '/dashboard/equipments', icon: FaServer, label: 'Equipments',
       children: [
         { path: '/dashboard/equipments', label: 'All Equipments' },

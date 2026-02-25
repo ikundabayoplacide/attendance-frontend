@@ -1,9 +1,33 @@
 import { useState } from 'react'
-import { FaUsers, FaUserCheck, FaUserTimes, FaSearch, FaEye, FaEdit } from 'react-icons/fa'
+import { FaUsers, FaUserCheck, FaUserTimes, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import ExportReportModal from '../../../components/modals/ExportReportModal'
 
 function AttendedVisitors() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+
+  const handleExport = (type: 'pdf' | 'word' | 'print') => {
+    setExportFormat(type)
+    setShowExportModal(true)
+  }
+
+  const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
+    console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const exportFields = [
+    { id: 'name', label: 'Visitor Name' },
+    { id: 'email', label: 'Email' },
+    { id: 'company', label: 'Company' },
+    { id: 'purpose', label: 'Purpose' },
+    { id: 'host', label: 'Host' },
+    { id: 'checkIn', label: 'Check In Time' },
+    { id: 'checkOut', label: 'Check Out Time' },
+    { id: 'status', label: 'Status' },
+    { id: 'badge', label: 'Badge ID' },
+  ]
 
   const stats = [
     { title: 'Total Visitors Today', value: '24', icon: FaUsers, color: 'bg-blue-500' },
@@ -58,8 +82,8 @@ function AttendedVisitors() {
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex-1 min-w-[200px] relative">
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
@@ -78,6 +102,32 @@ function AttendedVisitors() {
                 <option value="checked_in">Checked In</option>
                 <option value="checked_out">Checked Out</option>
               </select>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                  title="Export as PDF"
+                >
+                  <FaFilePdf size={16} />
+                  <span className="hidden sm:inline">PDF</span>
+                </button>
+                <button
+                  onClick={() => handleExport('word')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                  title="Export as Word"
+                >
+                  <FaFileWord size={16} />
+                  <span className="hidden sm:inline">Word</span>
+                </button>
+                <button
+                  onClick={() => handleExport('print')}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
+                  title="Print"
+                >
+                  <FaPrint size={16} />
+                  <span className="hidden sm:inline">Print</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -137,6 +187,15 @@ function AttendedVisitors() {
           </div>
         </div>
       </div>
+
+      <ExportReportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleGenerateReport}
+        fields={exportFields}
+        exportFormat={exportFormat}
+        title="Export Attended Visitors Report"
+      />
     </div>
   )
 }

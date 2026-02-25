@@ -1,6 +1,14 @@
 import { useState } from 'react'
-import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning, FaCamera, FaRedo, FaSave } from 'react-icons/fa'
+import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning, FaCamera, FaSearch, FaSync } from 'react-icons/fa'
 import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
+import avatimage from '/src/assets/images/avartImage.avif'
+import EquipmentModal from '../../../components/modals/EquipmentModal'
+import AppointmentModal from '../../../components/modals/AppointmentModal'
+
+interface Equipment {
+  type: string
+  id: string
+}
 
 interface VerificationMode {
   id: string
@@ -25,12 +33,39 @@ interface VisitorForm {
   profilePhoto: string
   idProofType: string
   idNumber: string
+  status: string
+  docType: string
+  hasEquipment: boolean
 }
+
+interface RecentTap {
+  no: number
+  names: string
+  documentType: string
+  phoneNumber: string
+  entryTime: string
+  exitTime: string
+  department: string
+}
+
+const mockRecentTaps: RecentTap[] = [
+  { no: 1, names: 'NSHUTI Ngabo', documentType: 'Personal ID', phoneNumber: '+250782471145', entryTime: '2026-02-20 09:35:00', exitTime: '_', department: 'SAN TECH' },
+  { no: 2, names: 'KEZA Shania', documentType: 'Personal ID', phoneNumber: '+250785490284', entryTime: '2026-02-20 09:18:02', exitTime: '_', department: 'SAN TECH' },
+]
 
 function ScanningPage() {
   const [selectedMode, setSelectedMode] = useState<string>('')
   const [isScanning, setIsScanning] = useState(false)
-  const [isFirstTime] = useState(true)
+  const [searchName, setSearchName] = useState('')
+  const [appointments] = useState(0)
+  const [hasAppointment, setHasAppointment] = useState(false)
+  const [searchType, setSearchType] = useState<'name' | 'phone' | 'voice'>('name')
+  const [showSearchOptions, setShowSearchOptions] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
+  const [showEquipmentModal, setShowEquipmentModal] = useState(false)
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false)
+  const [equipmentList, setEquipmentList] = useState<Equipment[]>([])
+  const [appointmentDetails, setAppointmentDetails] = useState<any>(null)
   const [visitorForm, setVisitorForm] = useState<VisitorForm>({
     mobile: '',
     email: '',
@@ -42,12 +77,15 @@ function ScanningPage() {
     whenToMeet: '',
     date: '',
     time: '',
-    department: '',
+    department: 'ICT',
     duration: '',
     hostName: '',
     profilePhoto: '',
     idProofType: 'National ID',
-    idNumber: ''
+    idNumber: '',
+    status: 'Employee',
+    docType: 'Personal ID',
+    hasEquipment: false
   })
 
   const verificationModes: VerificationMode[] = [
@@ -62,13 +100,18 @@ function ScanningPage() {
     { id: 'pupil', name: 'Pupil', icon: MdVisibility }
   ]
 
+  const isMethodVerified = (modeId: string) => {
+    if (modeId === 'face' && visitorForm.profilePhoto) return true
+    if ((modeId === 'id-passport' || modeId === 'igipande') && visitorForm.idNumber) return true
+    if (modeId === 'ocr' && visitorForm.fullName && visitorForm.mobile) return true
+    return false
+  }
+
   const handleModeSelect = (modeId: string) => {
     setSelectedMode(modeId)
     setIsScanning(true)
-    
     setTimeout(() => {
       setIsScanning(false)
-      // Simulate data population after scan
       setVisitorForm(prev => ({
         ...prev,
         fullName: 'John Doe',
@@ -77,321 +120,433 @@ function ScanningPage() {
         visitorCompany: 'Tech Solutions Ltd',
         idNumber: 'ID123456789'
       }))
+      // Simulate appointment check
+      const hasAppt = Math.random() > 0.5
+      setHasAppointment(hasAppt)
+      if (hasAppt) {
+        const isInCompany = Math.random() > 0.3
+        const isInOffice = isInCompany ? Math.random() > 0.5 : false
+        setAppointmentDetails({
+          visitorName: 'John Doe',
+          hostName: 'Jane Smith',
+          hostStatus: isInCompany ? 'in' : 'out',
+          hostAvailability: isInOffice ? 'available' : 'not-available',
+          appointmentTime: '2:00 PM - 3:00 PM',
+          purpose: 'Business meeting to discuss project proposal',
+          department: 'ICT Department'
+        })
+      }
     }, 2000)
   }
 
   const handleInputChange = (field: keyof VisitorForm, value: string) => {
     setVisitorForm(prev => ({ ...prev, [field]: value }))
   }
-  const handleCancel = () => {
+
+  const handleSubmit = () => {
+    console.log('Submitting visitor:', visitorForm)
+  }
+
+  const handleReset = () => {
     setVisitorForm({
-      mobile: '',
-      email: '',
-      fullName: '',
-      passType: 'Visitor',
-      visitorCompany: '',
-      purpose: '',
-      badgeId: '',
-      whenToMeet: '',
-      date: '',
-      time: '',
-      department: '',
-      duration: '',
-      hostName: '',
-      profilePhoto: '',
-      idProofType: 'National ID',
-      idNumber: ''
+      mobile: '', email: '', fullName: '', passType: 'Visitor', visitorCompany: '',
+      purpose: '', badgeId: '', whenToMeet: '', date: '', time: '', department: 'ICT',
+      duration: '', hostName: '', profilePhoto: '', idProofType: 'National ID', idNumber: '',
+      status: 'Employee', docType: 'Personal ID', hasEquipment: false
     })
     setSelectedMode('')
     setIsScanning(false)
   }
 
-  const handleSave = () => {
-    console.log('Saving visitor:', visitorForm)
-    // Handle save logic
+  const handleVoiceSearch = () => {
+    setSearchType('voice')
+    setShowSearchOptions(false)
+    setIsRecording(true)
+    setTimeout(() => setIsRecording(false), 3000)
   }
 
+
+  const filteredTaps = mockRecentTaps.filter(t =>
+    t.names.toLowerCase().includes(searchName.toLowerCase())
+  )
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Verification Methods - Horizontal */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Select Verification Method</h2>
-              {/*we are going to add search which will allow user to enter the name of visitors */}
-          <div className="flex flex-wrap gap-4 justify-center">
-            {verificationModes.map((mode) => {
-              const Icon = mode.icon
-              return (
-                <button
-                  key={mode.id}
-                  onClick={() => handleModeSelect(mode.id)}
-                  disabled={isScanning}
-                  className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all hover:shadow-md min-w-[100px] ${
-                    selectedMode === mode.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  } ${isScanning ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  <Icon 
-                    size={24} 
-                    className={`mb-2 ${
-                      selectedMode === mode.id ? 'text-blue-600' : 'text-gray-600'
-                    }`} 
-                  />
-                  <span className="text-sm font-medium text-gray-800">{mode.name}</span>
-                </button>
-              )
-            })}
-          </div>
+    <div className="min-h-screen bg-gray-100 font-sans">
+      {/* Equipment Modal */}
+      <EquipmentModal
+        isOpen={showEquipmentModal}
+        onClose={() => {
+          setShowEquipmentModal(false)
+          if (equipmentList.length === 0) {
+            handleInputChange('hasEquipment', 'false')
+          }
+        }}
+        equipmentList={equipmentList}
+        setEquipmentList={setEquipmentList}
+      />
+
+      {/* Appointment Modal */}
+      <AppointmentModal
+        isOpen={showAppointmentModal}
+        onClose={() => setShowAppointmentModal(false)}
+        appointment={appointmentDetails}
+      />
+      {/* Top Scanning Area Bar */}
+      <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center gap-4">
+        <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">Scanning Area</span>
+        <input
+          type="text"
+          className="flex-1 max-w-xl px-3 py-1.5 border-2 border-orange-400 rounded text-sm focus:outline-none focus:border-orange-500 text-black"
+          placeholder="Scan or enter ID..."
+        />
+        {/* adding appointment indicator. */}
+        {/* adding equipement option */}
+        <div className="ml-auto flex items-center gap-4">
+          {/* Appointment Indicator - Only show when has appointment */}
+          {hasAppointment && (
+            <button
+              onClick={() => setShowAppointmentModal(true)}
+              className="flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-300 rounded hover:bg-green-100 transition-colors cursor-pointer"
+            >
+              <span className="text-green-600 text-lg">✓</span>
+              <span className="text-sm font-medium text-green-700">Has Appointment</span>
+            </button>
+          )}
+
+          {/* Equipment Checkbox */}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={visitorForm.hasEquipment}
+              onChange={(e) => {
+                handleInputChange('hasEquipment', e.target.checked.toString())
+                if (e.target.checked) setShowEquipmentModal(true)
+              }}
+              className="w-4 h-4 cursor-pointer"
+            />
+            <span className="text-sm text-gray-600">Equipment</span>
+          </label>
+          {visitorForm.hasEquipment && equipmentList.length > 0 && (
+            <button
+              onClick={() => setShowEquipmentModal(true)}
+              className="text-xs text-blue-600 hover:text-blue-800 underline"
+            >
+              ({equipmentList.length} items)
+            </button>
+          )}
         </div>
+      </div>
 
-        {/* Scanning Status Header */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              {isScanning ? (
-                <div className="flex items-center gap-3">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span className="text-gray-700">Scanning with {verificationModes.find(m => m.id === selectedMode)?.name}...</span>
-                </div>
-              ) : (
-                <span className="text-lg font-medium text-gray-800">
-                  {isFirstTime ? '🆕 First Time Visitor' : '🔄 Returning Visitor'}
-                </span>
-              )}
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 flex gap-1 py-2 bg-[#1A3263] text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-               <FaSave className='mt-1'/> Save Visitor
-              </button>
-            </div>
-          </div>
-        </div>
 
-        {/* Main Form */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Personal Details */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal Details</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input
-                  type="text"
-                  value={visitorForm.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter full name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mobile</label>
-                <input
-                  type="tel"
-                  value={visitorForm.mobile}
-                  onChange={(e) => handleInputChange('mobile', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="+250 xxx xxx xxx"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={visitorForm.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="email@example.com"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pass Type</label>
-                <select
-                  value={visitorForm.passType}
-                  onChange={(e) => handleInputChange('passType', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="Visitor">Visitor</option>
-                  <option value="Employee">Employee</option>
-                  <option value="Contractor">Contractor</option>
-                  <option value="VIP">VIP</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Visitor Company</label>
-                <input
-                  type="text"
-                  value={visitorForm.visitorCompany}
-                  onChange={(e) => handleInputChange('visitorCompany', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Company name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-                <textarea
-                  value={visitorForm.purpose}
-                  onChange={(e) => handleInputChange('purpose', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Reason for visiting"
-                  rows={3}
-                />
-              </div>
-            </div>
-          </div>
+      {/* Main Content */}
+      <div className="p-4">
+        {/* Three Column Grid */}
+        <div className="grid grid-cols-3 gap-4 bg-white rounded-lg shadow-sm p-4 mb-4">
 
-          {/* Visit Details */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Visit Details</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Badge ID</label>
-                <input
-                  type="text"
-                  value={visitorForm.badgeId}
-                  onChange={(e) => handleInputChange('badgeId', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Badge ID"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Host Name</label>
-                <input
-                  type="text"
-                  value={visitorForm.hostName}
-                  onChange={(e) => handleInputChange('hostName', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Person to meet"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                <input
-                  type="date"
-                  value={visitorForm.date}
-                  onChange={(e) => handleInputChange('date', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                <input
-                  type="time"
-                  value={visitorForm.time}
-                  onChange={(e) => handleInputChange('time', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+          {/* Col 1: Form Fields */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <label className="w-24 text-sm text-gray-600 text-right shrink-0">Names</label>
+              <input
+                type="text"
+                value={visitorForm.fullName}
+                onChange={(e) => handleInputChange('fullName', e.target.value)}
+                className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="w-24 text-sm text-gray-600 text-right shrink-0">Id No</label>
+              <input
+                type="text"
+                value={visitorForm.idNumber}
+                onChange={(e) => handleInputChange('idNumber', e.target.value)}
+                className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="w-24 text-sm text-gray-600 text-right shrink-0">Department</label>
+              <div className="flex-1 relative">
                 <select
                   value={visitorForm.department}
                   onChange={(e) => handleInputChange('department', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none appearance-none text-black bg-white pr-8"
                 >
-                  <option value="">Select Department</option>
-                  <option value="IT">IT</option>
-                  <option value="HR">HR</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Marketing">Marketing</option>
-                  <option value="Operations">Operations</option>
+                  <option>ICT</option>
+                  <option>HR</option>
+                  <option>Finance</option>
+                  <option>Operations</option>
                 </select>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <div className="w-5 h-5 bg-orange-400 rounded flex items-center justify-center">
+                    <span className="text-white text-xs">▼</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="w-24 text-sm text-gray-600 text-right shrink-0">Status</label>
+              <div className="flex-1 relative">
                 <select
-                  value={visitorForm.duration}
-                  onChange={(e) => handleInputChange('duration', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={visitorForm.status}
+                  onChange={(e) => handleInputChange('status', e.target.value)}
+                  className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none appearance-none text-black bg-white pr-8"
                 >
-                  <option value="">Select Duration</option>
-                  <option value="30 minutes">30 minutes</option>
-                  <option value="1 hour">1 hour</option>
-                  <option value="2 hours">2 hours</option>
-                  <option value="Half day">Half day</option>
-                  <option value="Full day">Full day</option>
+                  <option>Employee</option>
+                  <option>Visitor</option>
+                  <option>Contractor</option>
+                  <option>VIP</option>
                 </select>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <div className="w-5 h-5 bg-orange-400 rounded flex items-center justify-center">
+                    <span className="text-white text-xs">▼</span>
+                  </div>
+                </div>
               </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="w-24 text-sm text-gray-600 text-right shrink-0">Doc Type</label>
+              <input
+                type="text"
+                value={visitorForm.docType}
+                onChange={(e) => handleInputChange('docType', e.target.value)}
+                className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="w-24 text-sm text-gray-600 text-right shrink-0">Phone No</label>
+              <div className="flex gap-2 flex-1">
+                <div className="flex items-center gap-1 border border-gray-300 rounded px-2 py-1.5">
+                  <span className="text-sm text-black">Rwanda</span>
+                  <div className="w-4 h-4 bg-orange-400 rounded flex items-center justify-center ml-1">
+                    <span className="text-white text-xs leading-none">▲▼</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 flex-1">
+                  <input
+                    type="tel"
+                    value={visitorForm.mobile}
+                    onChange={(e) => handleInputChange('mobile', e.target.value)}
+                    placeholder="+250"
+                    className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
+                  />
+                  {visitorForm.mobile && (
+                    <span className="text-green-500 text-lg">✔</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-2 justify-center">
+              <button
+                onClick={handleSubmit}
+                className="px-8 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded border border-gray-300 transition-colors"
+              >
+                Submit
+              </button>
             </div>
           </div>
 
-          {/* Profile & ID Proof */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex gap-2 items-center justify-center w-full">
-                <button className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  <FaCamera size={16} />
-                </button>
-                <button className="p-2 bg-blue-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                  <FaRedo size={16} />
-                </button>
+          {/* Col 2: Profile Photo + Capture */}
+          <div className="flex flex-col items-center justify-start gap-3 border-gray-300 border rounded">
+            {/* Avatar */}
+            <div className="w-44 h-44 rounded-full bg-gradient-to-b from-blue-400 to-blue-600 flex items-center justify-center overflow-hidden border-4 border-gray-200 shadow">
+              {visitorForm.profilePhoto ? (
+                <img src={visitorForm.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <img src={avatimage} alt='ProfileImage' className="w-full h-full object-cover"/>
+              )}
+            </div>
+            {/* Capture / Retake */}
+            <div className="flex gap-2">
+              <button className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 rounded border border-gray-300 transition-colors">
+                <FaCamera size={13} /> Start/Stop
+              </button>
+              <button className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 rounded border border-gray-300 transition-colors">
+                <FaCamera size={13} /> Capture
+              </button>
+            </div>
+          </div>
+
+          {/* Col 3: Verification Methods (top) + ID Scan Preview (bottom) */}
+          <div className="space-y-3">
+        
+
+            {/* Verification Methods Grid 3x3 */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2 tracking-wide">Verification Methods</h3>
+              <div className="grid grid-cols-3 gap-1.5">
+                {verificationModes.map((mode) => {
+                  const Icon = mode.icon
+                  const isVerified = isMethodVerified(mode.id)
+                  return (
+                    <button
+                      key={mode.id}
+                      onClick={() => handleModeSelect(mode.id)}
+                      disabled={isScanning}
+                      className={`relative flex flex-col items-center justify-center gap-1 py-2 px-1 rounded border text-center transition-all ${
+                        selectedMode === mode.id
+                          ? 'border-blue-500 bg-blue-50'
+                          : isVerified
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50'
+                      } ${isScanning ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                      {isVerified && (
+                        <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">✓</span>
+                      )}
+                      {isScanning && selectedMode === mode.id && (
+                        <span className="absolute -top-1 -right-1 bg-blue-500 rounded-full w-4 h-4 animate-pulse" />
+                      )}
+                      <Icon
+                        size={18}
+                        className={
+                          selectedMode === mode.id ? 'text-blue-600' :
+                          isVerified ? 'text-green-600' : 'text-gray-500'
+                        }
+                      />
+                      <span className="text-xs text-gray-700 font-medium leading-tight">{mode.name}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
+            {/* ID Scan Preview */}
+            <div className="border-2 border-gray-300 rounded bg-gray-50 h-28 flex items-center justify-center">
+              <span className="text-gray-400 text-sm">Card Scan Preview</span>
+            </div>
+          </div>
+        </div>
 
-            <div className="space-y-4">
-              {/* Profile Photo */}
-              <div className="text-center">
-                <div className="w-46 h-46 mx-auto rounded-lg bg-gray-200 flex items-center justify-center mb-4 overflow-hidden">
-                  {visitorForm.profilePhoto ? (
-                    <img src={visitorForm.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <FaUser size={48} className="text-gray-500" />
-                  )}
-                </div>
-            
-              </div>
+        {/* Bottom Action Row */}
+        <div className="flex items-center gap-3 mb-3">
+          <button className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded hover:bg-gray-50 transition-colors">
+            Appointments
+            <span className="bg-orange-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold">({appointments})</span>
+          </button>
+          <button className="px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded hover:bg-gray-50 transition-colors">
+            Non ID
+          </button>
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded hover:bg-gray-50 transition-colors"
+          >
+            <FaSync size={12} /> Refresh
+          </button>
+        </div>
 
-              {/* ID Proof */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Proof Type</label>
-                <select
-                  value={visitorForm.idProofType}
-                  onChange={(e) => handleInputChange('idProofType', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="National ID">National ID</option>
-                  <option value="Passport">Passport</option>
-                  <option value="Driving License">Driving License</option>
-                  <option value="Igipande">Igipande</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Number</label>
+        {/* Recent Taps Table */}
+        <div className="bg-white rounded-lg shadow-sm overflow-visible">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
+            <button className="px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded">
+              Recent Taps
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="relative z-50">
+                {/* Voice Recording Indicator */}
+                {searchType === 'voice' && (
+                  <div className="absolute bottom-full mb-2 left-0 bg-white border border-gray-300 rounded-lg shadow-xl p-3 w-64 z-50">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setIsRecording(!isRecording)}
+                        className={`p-2 rounded-full transition-colors ${
+                          isRecording ? 'bg-red-500 animate-pulse' : 'bg-blue-600 hover:bg-blue-700'
+                        }`}
+                      >
+                        <FaMicrophone size={16} className="text-white" />
+                      </button>
+                      <div className="flex-1">
+                        <div className="text-xs text-gray-600 mb-1">
+                          {isRecording ? 'Recording...' : 'Click to record'}
+                        </div>
+                        <div className="flex gap-1 h-6 items-end">
+                          {[...Array(20)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`flex-1 rounded-t transition-all ${
+                                isRecording
+                                  ? 'bg-red-500 animate-pulse'
+                                  : 'bg-gray-300'
+                              }`}
+                              style={{
+                                height: isRecording ? `${Math.random() * 100}%` : '20%',
+                                animationDelay: `${i * 50}ms`
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 <input
                   type="text"
-                  value={visitorForm.idNumber}
-                  onChange={(e) => handleInputChange('idNumber', e.target.value)}
-                  className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter ID number"
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  placeholder={`Search by ${searchType === 'name' ? 'Name' : searchType === 'phone' ? 'Phone' : 'Voice'}...`}
+                  className="pl-3 pr-24 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 w-64 text-black"
                 />
-              </div>
-
-              {/* ID Photo Upload */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">ID Photo</label>
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                  />
-                  <div className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center hover:border-blue-500 transition-colors">
-                    <FaCamera size={24} className="mx-auto mb-2 text-gray-400" />
-                    <span className="text-sm text-gray-600">Upload ID Photo</span>
-                  </div>
-                </label>
+                <div className="absolute right-0 top-0 h-full flex items-center">
+                  {showSearchOptions && (
+                    <div className="flex gap-1 mr-1">
+                      <button
+                        onClick={() => { setSearchType('name'); setShowSearchOptions(false); }}
+                        className={`p-1.5 rounded transition-colors ${searchType === 'name' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                        title="Search by Name"
+                      >
+                        <FaUser size={12} />
+                      </button>
+                      <button
+                        onClick={() => { setSearchType('phone'); setShowSearchOptions(false); }}
+                        className={`p-1.5 rounded transition-colors ${searchType === 'phone' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                        title="Search by Phone"
+                      >
+                        <FaIdCard size={12} />
+                      </button>
+                      <button
+                        onClick={handleVoiceSearch}
+                        className={`p-1.5 rounded transition-colors ${searchType === 'voice' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                        title="Search by Voice"
+                      >
+                        <FaMicrophone size={12} />
+                      </button>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setShowSearchOptions(!showSearchOptions)}
+                    className="h-full px-3 bg-blue-700 text-white rounded-r-lg hover:bg-blue-800 transition-colors"
+                  >
+                    <FaSearch size={12} />
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  {['No', 'Names', 'Document Type', 'Phone Number', 'Entry Time', 'Exit Time', 'Department'].map(h => (
+                    <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-600">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTaps.map((tap, idx) => (
+                  <tr key={tap.no} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="px-4 py-2 text-gray-700">{tap.no}</td>
+                    <td className="px-4 py-2 text-gray-800 font-medium">{tap.names}</td>
+                    <td className="px-4 py-2 text-gray-600">{tap.documentType}</td>
+                    <td className="px-4 py-2 text-gray-600">{tap.phoneNumber}</td>
+                    <td className="px-4 py-2 text-gray-600">{tap.entryTime}</td>
+                    <td className="px-4 py-2 text-gray-600">{tap.exitTime}</td>
+                    <td className="px-4 py-2 text-gray-600">{tap.department}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
