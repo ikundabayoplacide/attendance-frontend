@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { FaUsers, FaArrowRight, FaArrowDown, FaChartLine, FaEye, FaCalendarAlt, FaUserCheck, FaSync, FaSearch } from 'react-icons/fa'
 import VisitorPieChart from '../../../../components/ui/VisitorPieChart'
 import AttendModal from '../../../../components/modals/AttendModal'
-import checkGif from '../../../../assets/images/clicknow.gif'
+// import checkGif from '../../../../assets/images/clicknow.gif'
 import { useNavigate,useSearchParams } from 'react-router-dom'
 
 
@@ -37,13 +37,11 @@ function HelpDeskDashboard() {
   const checkInVisitors = [
     { id: 1, name: 'John Smith', company: 'TechCorp', email: 'john@techcorp.com', phone: '+1 555-0101', purpose: 'Business Meeting', host: 'Sarah Johnson', department: 'Sales', time: '09:30 AM', date: '2024-01-15', badge: 'V001' },
     { id: 2, name: 'Alice Brown', company: 'StartupHub', email: 'alice@startuphub.com', phone: '+1 555-0102', purpose: 'Interview', host: 'Mike Davis', department: 'HR', time: '10:15 AM', date: '2024-01-16', badge: 'V002' },
-    { id: 3, name: 'Bob Wilson', company: 'Global Inc', email: 'bob@global.com', phone: '+1 555-0103', purpose: 'Consultation', host: 'Emma Wilson', department: 'Operations', time: '11:00 AM', date: '2024-01-17', badge: 'V003' }
   ]
 
   const checkOutVisitors = [
     { id: 4, name: 'Carol Davis', company: 'Innovation Labs', email: 'carol@innovation.com', phone: '+1 555-0104', purpose: 'Partnership', host: 'James Miller', department: 'Business Dev', time: '02:30 PM', date: '2024-01-15', badge: 'V004' },
     { id: 5, name: 'David Lee', company: 'Tech Solutions', email: 'david@techsol.com', phone: '+1 555-0105', purpose: 'Delivery', host: 'Lisa Chen', department: 'Reception', time: '03:15 PM', date: '2024-01-16', badge: 'V005' },
-    { id: 6, name: 'Eva Martinez', company: 'Design Co', email: 'eva@design.com', phone: '+1 555-0106', purpose: 'Meeting', host: 'Tom Anderson', department: 'Marketing', time: '04:00 PM', date: '2024-01-17', badge: 'V006' }
   ]
 
   const currentVisitors = activeTab === 'checkin' ? checkInVisitors : checkOutVisitors
@@ -101,7 +99,7 @@ function HelpDeskDashboard() {
       </div>
 
       {/* Attend Button - Centered */}
-      <div className="flex justify-center mt-[-30px] ">
+      {/* <div className="flex justify-center mt-[-30px] ">
         <button 
           onClick={() => setShowAttendModal(true)}
           className="px-4 sm:px-8 py-2 sm:py-3 cursor-pointer bg-[#1A3263] text-white rounded-lg hover:bg-[#1A3263]/90 transition-colors flex items-center gap-2 text-lg font-bold"
@@ -109,7 +107,7 @@ function HelpDeskDashboard() {
           Attend
           <img src={checkGif} alt="Attend" className="w-10 h-8" />
         </button>
-      </div>
+      </div> */}
 
       {/* Attend Modal */}
       <AttendModal isOpen={showAttendModal} onClose={() => setShowAttendModal(false)} />
