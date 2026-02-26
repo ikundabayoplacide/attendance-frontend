@@ -196,7 +196,7 @@ function ScanningPage() {
         <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">Scanning Area</span>
         <input
           type="text"
-          className="flex-1 max-w-xl px-3 py-1.5 border-2 border-orange-400 rounded text-sm focus:outline-none focus:border-orange-500 text-black"
+          className="flex-1 max-w-xl px-3 py-1.5 border-2 border-[#1A3263] rounded text-sm focus:outline-none focus:border-orange-500 text-black"
           placeholder="Scan or enter ID..."
         />
         {/* adding appointment indicator. */}
@@ -277,7 +277,7 @@ function ScanningPage() {
                   <option>Operations</option>
                 </select>
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <div className="w-5 h-5 bg-orange-400 rounded flex items-center justify-center">
+                  <div className="w-5 h-5 bg-[#1A3263] rounded flex items-center justify-center">
                     <span className="text-white text-xs">▼</span>
                   </div>
                 </div>
@@ -297,7 +297,7 @@ function ScanningPage() {
                   <option>VIP</option>
                 </select>
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <div className="w-5 h-5 bg-orange-400 rounded flex items-center justify-center">
+                  <div className="w-5 h-5 bg-[#1A3263] rounded flex items-center justify-center">
                     <span className="text-white text-xs">▼</span>
                   </div>
                 </div>
@@ -317,8 +317,8 @@ function ScanningPage() {
               <div className="flex gap-2 flex-1">
                 <div className="flex items-center gap-1 border border-gray-300 rounded px-2 py-1.5">
                   <span className="text-sm text-black">Rwanda</span>
-                  <div className="w-4 h-4 bg-orange-400 rounded flex items-center justify-center ml-1">
-                    <span className="text-white text-xs leading-none">▲▼</span>
+                  <div className="w-4 h-4 bg-[#1A3263] rounded flex items-center justify-center ml-1">
+                    <span className="text-white text-xs leading-none">▼</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 flex-1">
@@ -340,7 +340,7 @@ function ScanningPage() {
             <div className="flex gap-2 pt-2 justify-center">
               <button
                 onClick={handleSubmit}
-                className="px-8 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded border border-gray-300 transition-colors"
+                className="px-8 py-1.5 bg-white hover:bg-gray-100 text-[#1A3263] text-sm font-bold cursor-pointer rounded border border-[#1A3263] transition-colors"
               >
                 Submit
               </button>
@@ -423,7 +423,7 @@ function ScanningPage() {
         <div className="flex items-center gap-3 mb-3">
           <button className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded hover:bg-gray-50 transition-colors">
             Appointments
-            <span className="bg-orange-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold">({appointments})</span>
+            <span className="bg-[#1A3263] text-white text-xs rounded-full px-1.5 py-0.5 font-bold">({appointments})</span>
           </button>
           <button className="px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded hover:bg-gray-50 transition-colors">
             Non ID
@@ -488,7 +488,7 @@ function ScanningPage() {
                   placeholder={`Search by ${searchType === 'name' ? 'Name' : searchType === 'phone' ? 'Phone' : 'Voice'}...`}
                   className="pl-3 pr-24 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 w-64 text-black"
                 />
-                <div className="absolute right-0 top-0 h-full flex items-center">
+                <div className="absolute right-0 top-0 h-full flex items-center bg-gray-300 pl-1 transtion rounded-sm">
                   {showSearchOptions && (
                     <div className="flex gap-1 mr-1">
                       <button
