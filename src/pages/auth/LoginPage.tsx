@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import { FaFacebookF, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaInstagram } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
 import backgroundImage from '../../assets/images/chartImagenow.png'
 import borderImage from '../../assets/images/design.png'
 import Button from '../../components/ui/Button'
 import LoginNavbar from '../../components/ui/loginNavbar'
 import { FaXTwitter } from 'react-icons/fa6'
+import { useAuth } from '../../hooks/useAuth'
+import { toast } from 'react-toastify'
 
 
 function Login() {
-  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [loginType, setLoginType] = useState('email') // 'email' or 'phone'
@@ -20,6 +21,7 @@ function Login() {
   const [isCountryOpen, setIsCountryOpen] = useState(false)
   const [countrySearch, setCountrySearch] = useState('')
   const [password, setPassword] = useState('')
+  const { login, isLoading } = useAuth()
 
   const countries = [
     { code: '+250', name: 'Rwanda', flag: 'RW' },
@@ -36,11 +38,37 @@ function Login() {
     country.code.includes(countrySearch)
   )
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log('Login submitted', { loginType, loginValue, password, rememberMe })
-  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      const sanitizedPhone = loginType === 'phone' 
+        ? `${selectedCountry}${loginValue.replace(/\D/g, '')}` 
+        : undefined;
+
+      const loginData = {
+        type: loginType as 'email' | 'phone',
+        phone: sanitizedPhone,
+        email: loginType === 'email' ? loginValue : '',
+        password: password
+      };
+
+      await login(loginData);
+    } catch (error: any) {
+      console.error('❌ Login form error:', error);
+      toast.error('An unexpected error occurred. Please try again.', { 
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+    }
+  };
+
 
   return (
     <div
@@ -309,10 +337,11 @@ function Login() {
 
                 {/* Sign in button */}
                 <Button
+                  type="submit"
                   className="w-full bg-[#1A3263] hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition-colors duration-200 mb-6"
-                  onClick={()=>navigate('/dashboard?role=owner')}
+                  disabled={isLoading}
                 >
-                  Sign in
+                  {isLoading ? 'Signing in...' : 'Sign in'}
                 </Button>
 
                 {/* Divider */}
@@ -325,8 +354,8 @@ function Login() {
                 {/* Google Sign In */}
                 <button
                   type="button"
-                  onClick={()=>navigate('/dashboard?role=customer')}
                   className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 mb-4"
+                  disabled
                 >
                   <FcGoogle size={20} />
                   <span className="text-gray-700 font-medium">Sign in with Google</span>
@@ -335,7 +364,7 @@ function Login() {
                 {/* Sign up link */}
                 <p className="text-center mb-2 text-sm text-gray-600">
                   Don't have an account?{' '}
-                  <Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
+                  <Link to="/auth/register" className="text-blue-600 hover:text-blue-800 font-medium">
                     Sign up
                   </Link>
                 </p>

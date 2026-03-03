@@ -37,7 +37,7 @@ function RegisterNavbar() {
 
       {/* Right */}
       <div className='flex items-center gap-4 text-white'>
-        <Link to="/login" className='rounded-xl bg-white bg-[#1A3263] px-2 py-1 text-lg flex items-center gap-1 font-bold hover:bg-gray-100 transition-colors'>
+        <Link to="/auth/login" className='rounded-xl bg-white bg-[#1A3263] px-2 py-1 text-lg flex items-center gap-1 font-bold hover:bg-gray-100 transition-colors'>
           <FaSignInAlt size={12} />
           Login
         </Link>

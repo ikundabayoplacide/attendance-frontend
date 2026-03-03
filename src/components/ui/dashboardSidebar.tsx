@@ -5,11 +5,13 @@ import { BsFillCalendar3EventFill } from 'react-icons/bs'
 import { FaFileWaveform } from "react-icons/fa6";
 import { useState } from 'react'
 import { MdOutlineSecurity } from 'react-icons/md'
+import { checkPermissions } from '../../utils/helper';
+import type { User } from '../../api/auth';
 
 interface MenuItem {
   path: string
   icon: React.ComponentType<{ size?: number; className?: string }>
-  label: string
+  label?: string
   exact?: boolean
   children?: { path: string; label: string }[]
 }
@@ -17,10 +19,21 @@ interface MenuItem {
 interface DashboardSidebarProps {
   isOpen: boolean
   onClose: () => void
-  userRole?: 'owner' | 'customer'|'helpdesk' | 'superadmin'
+  userRole?: string
+  user?: User
 }
 
-function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSidebarProps) {
+const dashboardRoleMap: Record<string, { path: string; label: string }> = {
+  help_desk: { path: '/dashboard/helpdesk', label: 'Help Desk' },
+  data_manager: { path: '/dashboard/dataManager', label: 'Data Manager' },
+  team_leader: { path: '/dashboard/teamLeader', label: 'Team Leader' },
+  staff: { path: '/dashboard/staff', label: 'Staff' },
+  system_office: { path: '/dashboard/systemOffice', label: 'System Office' },
+  human_resource: { path: '/dashboard/humanResource', label: 'Human Resource' },
+  protocals: { path: '/dashboard/protocals', label: 'Protocals' },
+  check_point: { path: '/dashboard/checkPoint', label: 'Check Point' },
+}
+function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: DashboardSidebarProps) {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const [expandedItems, setExpandedItems] = useState<string[]>([])
@@ -31,10 +44,10 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
     return roleParam ? `${path}?role=${roleParam}` : path
   }
 
-  // System Owner menu items
-  const systemOwnerItems: MenuItem[] = [
-    { path: '/dashboard', icon: FaHome, label: 'Ouner Dashboard', exact: true },
-    { 
+  // Owner menu items (System Owner)
+  const ownerItems: MenuItem[] = [
+    { path: '/dashboard', icon: FaHome, label: 'Owner Dashboard', exact: true },
+    ...(user && checkPermissions(user, 'customer:list') ? [{
       path: '/dashboard/customers', 
       icon: FaUsers, 
       label: 'Customers',
@@ -45,98 +58,178 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
         { path: '/dashboard/customers/suspended', label: 'Suspended Accounts' },
         { path: '/dashboard/customers/blacklisted', label: 'Blacklisted Accounts' }
       ]
-    },
-    { path: '/dashboard/users', icon: FaUsers, label: 'Users',
+    }] : []),
+    ...(user && checkPermissions(user, 'user:list') ? [{ 
+      path: '/dashboard/users', 
+      icon: FaUsers, 
+      label: 'Users',
       children:[
-      {path:'/dashboard/users', label: 'All Users' },
-      {path:'/dashboard/users/active', label: ' Active Users' },
-      {path:'/dashboard/users/inactive', label: 'Inactive Users' },
-      {path:'/dashboard/users/blacklisted', label: 'Blacklisted Users' },
+        {path:'/dashboard/users', label: 'All Users' },
+        {path:'/dashboard/users/active', label: ' Active Users' },
+        {path:'/dashboard/users/inactive', label: 'Inactive Users' },
+        {path:'/dashboard/users/blacklisted', label: 'Blacklisted Users' },
       ]
-     },
-    { path: '/dashboard/billings', icon: FaCreditCard, label: 'Billing & Revenue' },
-    { path: '/dashboard/Analytics', icon: IoMdAnalytics, label: 'Business Analytics' },
-    { path: '/dashboard/forms', icon: FaFileWaveform, label: 'Form Management',
+    }] : []),
+    ...(user && checkPermissions(user, 'billing:list') ? [{
+      path: '/dashboard/billings', 
+      icon: FaCreditCard, 
+      label: 'Billing & Revenue'
+    }] : []),
+    ...(user && checkPermissions(user, 'analytics:read') ? [{
+      path: '/dashboard/Analytics', 
+      icon: IoMdAnalytics, 
+      label: 'Business Analytics'
+    }] : []),
+    ...(user && checkPermissions(user, 'form:list') ? [{
+      path: '/dashboard/forms', 
+      icon: FaFileWaveform, 
+      label: 'Form Management',
       children: [
         { path: '/dashboard/forms', label: 'All Forms' },
         { path: '/dashboard/forms/create', label: 'Create New Form' },
       ]
-    },
-    { path: '/dashboard/system-reports', icon: FaChartBar, label: 'System Reports',
+    }] : []),
+    ...(user && checkPermissions(user, 'report:list') ? [{
+      path: '/dashboard/system-reports', 
+      icon: FaChartBar, 
+      label: 'System Reports',
       children: [
         { path: '/dashboard/system-reports', label: 'System Reports' },
         { path: '/dashboard/system-reports/createReport', label: 'Create Report' },
       ]
-     },
-    { path: '/dashboard/system-health', icon: FaServer, label: 'System Health' },
-    {path:  '/dashboard/security', icon: MdOutlineSecurity, label: 'Security Control'},
-
+    }] : []),
+    ...(user && checkPermissions(user, 'system_healthy:read') ? [{
+      path: '/dashboard/system-health', 
+      icon: FaServer, 
+      label: 'System Health'
+    }] : []),
+    ...(user && checkPermissions(user, 'security:control') ? [{
+      path: '/dashboard/security', 
+      icon: MdOutlineSecurity, 
+      label: 'Security Control'
+    }] : []),
   ]
 
-  // Customer menu items
-  const superAdminItems: MenuItem[] = [
-    { path: '/dashboard', icon: FaHome, label: 'Dashboard', exact: true,
-      children:[
-        {path: '/dashboard', label: 'Overview' },
-        {path:'/dashboard/helpdesk', label: 'Help Desk' },
-        {path:'/dashboard/dataManager', label: 'Data Manager' },
-        {path:'/dashboard/teamLeader', label: 'Team Leader' },
-        {path:'/dashboard/staff', label: 'Staff'},
-        {path:'/dashboard/systemOffice',label: 'System Office'},
-        {path:'/dashboard/humanResource', label: 'Human Resource'},
-        {path:'/dashboard/protocals',label:'Protocals'},
-        {path:'/dashboard/checkPoint', label: 'Check Point'},
+  // Get dashboard children based on user role
+  const getDashboardChildren = () => {
+    if (userRole === 'owner') {
+      return [{ path: '/dashboard' }]
+    }
 
-      ]
-     },
-    { path: '/dashboard/users', icon: FaUsers, label: 'Users',
+    // Normalize role names to be resilient to backend formatting
+    const normalizedRole = (userRole ?? '').toString().toLowerCase().replace(/[^a-z0-9]/g, '')
+
+    // Find matching role entry by normalizing dashboardRoleMap keys
+    const entry = Object.entries(dashboardRoleMap).find(([key]) => {
+      const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '')
+      return normalizedKey === normalizedRole
+    })
+
+    if (entry) {
+      return [entry[1]]
+    }
+
+    return [{ path: '/dashboard', label: 'Overview' }]
+  }
+
+  // Role-specific menu items
+  const getRoleBasedDashboardItem = (): MenuItem => {
+    const dashboardChildren = getDashboardChildren()
+    if (dashboardChildren.length > 0 && dashboardChildren[0].path !== '/dashboard') {
+      return {
+        path: dashboardChildren[0].path,
+        icon: FaHome,
+        exact: true,
+        label: 'Dashboard',
+      }
+    }
+    return {
+      path: '/dashboard',
+      icon: FaHome,
+      label: 'Dashboard',
+      exact: true,
+    }
+  }
+
+  // Client menu items (Customer/Role-based)
+  const clientItems: MenuItem[] = [
+    getRoleBasedDashboardItem(),
+    ...(user && checkPermissions(user, 'user:list') ? [{
+      path: '/dashboard/users', 
+      icon: FaUsers, 
+      label: 'Users',
       children:[
         {path: '/dashboard/users', label: 'All Users' },
         {path: '/dashboard/users/active', label: ' Active Users' },
         {path:'/dashboard/users/inactive', label: ' Inactive Users' },
         {path:'/dashboard/users/blacklisted', label: ' BlackListed Users' },
       ]
-     },
-    { path: '/dashboard/scanning', icon: FaEye, label: 'Scanning' },
-    { path: '/dashboard/attendance', icon: FaUsers, label: 'Attendances',
+    }] : []),
+    ...(user && checkPermissions(user, 'visitor:read') ? [{
+      path: '/dashboard/scanning', 
+      icon: FaEye, 
+      label: 'Scanning'
+    }] : []),
+    ...(user && checkPermissions(user, 'attendance:list') ? [{
+      path: '/dashboard/attendance', 
+      icon: FaUsers, 
+      label: 'Attendances',
       children:[
         {path: '/dashboard/attendedUser', label: 'Users' },
         {path: '/dashboard/visitor', label: 'Visitors' },
       ]
-     },
-    { path: '/dashboard/hosts', icon: FaUserCheck, label: 'Hosts' },
-    { path: '/dashboard/appointments', icon: FaCalendarAlt, label: 'Appointments',
+    }] : []),
+    ...(user && checkPermissions(user, 'visitor:list') ? [{
+      path: '/dashboard/hosts', 
+      icon: FaUserCheck, 
+      label: 'Hosts'
+    }] : []),
+    ...(user && checkPermissions(user, 'appointment:list') ? [{
+      path: '/dashboard/appointments', 
+      icon: FaCalendarAlt, 
+      label: 'Appointments',
       children:[
         {path: '/dashboard/appointments', label: 'All Appointments' },
         {path: '/dashboard/appointments/viaCalender', label: 'Calendar View' },
       ]
-     },
-    {path:  '/dashboard/Events', icon: BsFillCalendar3EventFill, label: 'Events',
+    }] : []),
+    ...(user && checkPermissions(user, 'event:list') ? [{
+      path: '/dashboard/Events', 
+      icon: BsFillCalendar3EventFill, 
+      label: 'Events',
       children: [
         { path: '/dashboard/events', label: 'All Events' },
         { path: '/dashboard/protocals', label: 'Protocals' },
       ]
-    },
-    {path:  '/dashboard/equipments', icon: FaServer, label: 'Equipments',
+    }] : []),
+    ...(user && checkPermissions(user, 'equipement:list') ? [{
+      path: '/dashboard/equipments', 
+      icon: FaServer, 
+      label: 'Equipments',
       children: [
         { path: '/dashboard/equipments', label: 'All Equipments' },
         { path: '/dashboard/equipments/add', label: 'Add New Equipment' },
       ]
-    },
-    {path:'/dashboard/handover', icon: FaUserCheck, label: 'Handover'},
-    { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports & Analytics' },
-    { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
+    }] : []),
+    ...(user && checkPermissions(user, 'handover:list') ? [{
+      path:'/dashboard/handover', 
+      icon: FaUserCheck, 
+      label: 'Handover'
+    }] : []),
+    ...(user && checkPermissions(user, 'report:list') ? [{
+      path: '/dashboard/reports', 
+      icon: FaChartBar, 
+      label: 'Reports & Analytics'
+    }] : []),
+    ...(user && checkPermissions(user, 'announcement:read') ? [{
+      path: '/dashboard/notifications', 
+      icon: FaBell, 
+      label: 'Notifications'
+    }] : []),
   ]
 
-  const helpDeskItems: MenuItem[] = [
-    { path: '/dashboard', icon: FaHome, label: 'Helpdesk', exact: true },
-    { path: '/dashboard/tickets', icon: FaUsers, label: 'Tickets' },
-    { path: '/dashboard/knowledge-base', icon: FaChartBar, label: 'Knowledge Base' },
-    { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' },
-    { path: '/dashboard/reports', icon: FaChartBar, label: 'Reports' },
-  ]
-
-  const menuItems = userRole === 'owner' ? systemOwnerItems : userRole === 'helpdesk' ? helpDeskItems : superAdminItems
+  const menuItems = userRole === 'owner' ? ownerItems : clientItems
+  
  
   const settingsItem = { path: '/dashboard/settings', icon: FaCog, label: 'Settings' }
 
@@ -254,19 +347,21 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner' }: DashboardSide
         </div>
         
         {/* Settings at bottom */}
-        <div className="flex-shrink border-t border-white/20 ">
-          <Link
-            to={addRoleParam(settingsItem.path)}
-            className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-              isActive(settingsItem.path)
-                ? 'bg-white text-[#1A3263] font-medium'
-                : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
-            }`}
-          >
-            <settingsItem.icon size={18} className={isActive(settingsItem.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
-            <span className={`font-bold ${isActive(settingsItem.path) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{settingsItem.label}</span>
-          </Link>
-        </div>
+        {user && checkPermissions(user, 'setting:read') && (
+          <div className="flex-shrink border-t border-white/20 ">
+            <Link
+              to={addRoleParam(settingsItem.path)}
+              className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
+                isActive(settingsItem.path)
+                  ? 'bg-white text-[#1A3263] font-medium'
+                  : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
+              }`}
+            >
+              <settingsItem.icon size={18} className={isActive(settingsItem.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
+              <span className={`font-bold ${isActive(settingsItem.path) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{settingsItem.label}</span>
+            </Link>
+          </div>
+        )}
       </nav>
     </aside>
     </>

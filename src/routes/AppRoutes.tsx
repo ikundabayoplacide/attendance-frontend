@@ -46,6 +46,7 @@ import AttendedUsers from '../pages/dashboard/attendance/AttendedUsers'
 import AttendedVisitors from '../pages/dashboard/attendance/AttendedVisitors'
 import Staff from '../pages/dashboard/Roles/staff'
 import ProtocalPage from '../pages/dashboard/protocals'
+import ApprovalPending from '../pages/auth/approval_required'
 
 
 function AppRoutes() {
@@ -53,9 +54,10 @@ function AppRoutes() {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/register" element={<Register />} />
+      <Route path="/auth/reset-password" element={<ResetPassword />} />
+      <Route path='/auth/approval_required' element={<ApprovalPending/>}/>
       
       {/* Dashboard Routes - Role-based routing handled by URL params */}
       <Route path="/dashboard" element={<DashboardLayout />}>
