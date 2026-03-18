@@ -1,25 +1,23 @@
 import { useState, useEffect, useRef } from 'react'
-import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaSearch, FaSync, FaSignature, FaArrowDown, FaArrowUp } from 'react-icons/fa'
+import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaSignature } from 'react-icons/fa'
 import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
 import EquipmentModal from '../../../components/modals/EquipmentModal'
 import AppointmentModal from '../../../components/modals/UserHasAppointmentModal'
 import AppointmentsModal from '../../../components/modals/AppointmentsModal'
+import RecentAttendee from '../../../components/ui/recentAttendee'
 import { checkPermissions } from '../../../utils/helper'
 import { useAuth } from '../../../hooks/useAuth'
 import { CreateUser } from '../../../hooks/useUser'
+import { useAttendanceList } from '../../../hooks/useAttendance'
 
 const avatimage = '/images/avartImage.avif'
-const mockRecentTaps = [
-  { no: 1, names: 'NSHUTI Ngabo', documentType: 'Personal ID', phoneNumber: '+250782471145', entryTime: '2026-02-20 09:35:00', exitTime: '_', department: 'SAN TECH' },
-  { no: 2, names: 'KEZA Shania', documentType: 'Personal ID', phoneNumber: '+250785490284', entryTime: '2026-02-20 09:18:02', exitTime: '_', department: 'SAN TECH' },
-]
 
 function ScanningPage() {
   const { currentUser } = useAuth()
+  const { data: attendees, isLoading, isError, refetch } = useAttendanceList()
   const inputRef = useRef<HTMLInputElement>(null)
   const [state, setState] = useState({
-    selectedMode: '', isScanning: false, searchName: '', hasAppointment: false,
-    searchType: 'name' as 'name' | 'phone' | 'voice', showSearchOptions: false, isRecording: false,
+    selectedMode: '', isScanning: false, hasAppointment: false,
     showEquipmentModal: false, showAppointmentModal: false, showAppointmentsModal: false,
     rawScannedId: '', verificationStatus: 'idle' as 'idle' | 'verifying' | 'success' | 'error',
     selectedDocType: 'national-id' as 'driving-license' | 'national-id' | 'passport' | 'others',
@@ -30,7 +28,7 @@ function ScanningPage() {
   const [selectedCountry, setSelectedCountry] = useState({ code: '+250', flag: '🇷🇼', name: 'Rwanda' })
 
   // Destructure state for easier access
-  const { selectedMode, isScanning, searchName, hasAppointment, searchType, showSearchOptions, isRecording, showEquipmentModal, showAppointmentModal, showAppointmentsModal, rawScannedId, verificationStatus, selectedDocType, showCountryDropdown, appointments, checkInCount, checkOutCount } = state
+  const { selectedMode, isScanning, hasAppointment, showEquipmentModal, showAppointmentModal, showAppointmentsModal, rawScannedId, verificationStatus, selectedDocType, showCountryDropdown, appointments } = state
   
   // Helper functions to update state
   const setRawScannedId = (value: string) => setState(s => ({ ...s, rawScannedId: value }))
@@ -39,10 +37,6 @@ function ScanningPage() {
   const setShowAppointmentModal = (value: boolean) => setState(s => ({ ...s, showAppointmentModal: value }))
   const setShowCountryDropdown = (value: boolean) => setState(s => ({ ...s, showCountryDropdown: value }))
   const setSelectedDocType = (value: string) => setState(s => ({ ...s, selectedDocType: value as any }))
-  const setSearchName = (value: string) => setState(s => ({ ...s, searchName: value }))
-  const setSearchType = (value: 'name' | 'phone' | 'voice') => setState(s => ({ ...s, searchType: value }))
-  const setShowSearchOptions = (value: boolean) => setState(s => ({ ...s, showSearchOptions: value }))
-  const setIsRecording = (value: boolean) => setState(s => ({ ...s, isRecording: value }))
 
   const countries = [
     { code: '+250', flag: '🇷🇼', name: 'Rwanda' }, { code: '+256', flag: '🇺🇬', name: 'Uganda' },
@@ -175,11 +169,7 @@ function ScanningPage() {
       hasEquipment: false
     })
     setState(s => ({ ...s, rawScannedId: '', selectedMode: '', isScanning: false }))
-  }
-
-  const handleVoiceSearch = () => {
-    setState(s => ({ ...s, searchType: 'voice', showSearchOptions: false, isRecording: true }))
-    setTimeout(() => setState(s => ({ ...s, isRecording: false })), 3000)
+    refetch() // Refresh attendance data
   }
 
   const parseCardString = (cardString: string) => {
@@ -235,8 +225,6 @@ function ScanningPage() {
     }, 2000)
   }
 
-
-  const filteredTaps = mockRecentTaps.filter(t => t.names.toLowerCase().includes(state.searchName.toLowerCase()))
 
   // Focus input on component mount and when returning to page
   useEffect(() => {
@@ -679,130 +667,14 @@ function ScanningPage() {
         </div>
 
         {/* Recent Taps Table */}
-        <div className="bg-white rounded-lg shadow-sm overflow-visible">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
-            <div className='flex gap-2'>
-              <button className="px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded">
-                Recent Taps
-              </button>
-              <button
-                onClick={handleReset}
-                className="flex items-center hover:text-[#1A3263] gap-1.5 px-4 py-1.5 bg-[#1A3263] border border-gray-300 text-sm text-white rounded hover:bg-gray-50 transition-colors"
-              >
-                <FaSync size={12} /> Refresh
-              </button>
-              <div className='flex gap-5 ml-2'>
-                <p className='text-green-500 flex text-2xl '>
-                  <FaArrowDown size={20} className='mt-1' /> ({checkInCount})
-                </p>
-                <p className='text-red-500 flex text-2xl'>
-                  <FaArrowUp size={20} className='mt-1' /> ({checkOutCount})
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="relative z-50">
-                {/* Voice Recording Indicator */}
-                {searchType === 'voice' && (
-                  <div className="absolute bottom-full mb-2 left-0 bg-white border border-gray-300 rounded-lg shadow-xl p-3 w-64 z-50">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setIsRecording(!isRecording)}
-                        className={`p-2 rounded-full transition-colors ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-blue-600 hover:bg-blue-700'
-                          }`}
-                      >
-                        <FaMicrophone size={16} className="text-white" />
-                      </button>
-                      <div className="flex-1">
-                        <div className="text-xs text-gray-600 mb-1">
-                          {isRecording ? 'Recording...' : 'Click to record'}
-                        </div>
-                        <div className="flex gap-1 h-6 items-end">
-                          {[...Array(20)].map((_, i) => (
-                            <div
-                              key={i}
-                              className={`flex-1 rounded-t transition-all ${isRecording
-                                ? 'bg-red-500 animate-pulse'
-                                : 'bg-gray-300'
-                                }`}
-                              style={{
-                                height: isRecording ? `${Math.random() * 100}%` : '20%',
-                                animationDelay: `${i * 50}ms`
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <input
-                  type="text"
-                  value={searchName}
-                  onChange={(e) => setSearchName(e.target.value)}
-                  placeholder={`Search by ${searchType === 'name' ? 'Name' : searchType === 'phone' ? 'Phone' : 'Voice'}...`}
-                  className="pl-3 pr-24 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 w-64 text-black"
-                />
-                <div className="absolute right-0 top-0 h-full flex items-center bg-gray-300 pl-1 transtion rounded-sm">
-                  {showSearchOptions && (
-                    <div className="flex gap-1 mr-1">
-                      <button
-                        onClick={() => { setSearchType('name'); setShowSearchOptions(false); }}
-                        className={`p-1.5 rounded transition-colors ${searchType === 'name' ? 'bg-[#1A3263] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                        title="Search by Name"
-                      >
-                        <FaUser size={12} />
-                      </button>
-                      <button
-                        onClick={() => { setSearchType('phone'); setShowSearchOptions(false); }}
-                        className={`p-1.5 rounded transition-colors ${searchType === 'phone' ? 'bg-[#1A3263] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                        title="Search by Phone"
-                      >
-                        <FaIdCard size={12} />
-                      </button>
-                      <button
-                        onClick={handleVoiceSearch}
-                        className={`p-1.5 rounded transition-colors ${searchType === 'voice' ? 'bg-[#1A3263] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                        title="Search by Voice"
-                      >
-                        <FaMicrophone size={12} />
-                      </button>
-                    </div>
-                  )}
-                  <button
-                    onClick={() => setShowSearchOptions(!showSearchOptions)}
-                    className="h-full px-3 bg-[#1A3263] text-white rounded-r-lg hover:bg-[#1A3263]/90 transition-colors"
-                  >
-                    <FaSearch size={12} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  {['No', 'Names', 'Phone Number', 'Entry Time', 'Exit Time'].map(h => (
-                    <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-600">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTaps.map((tap, idx) => (
-                  <tr key={tap.no} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-2 text-gray-700">{tap.no}</td>
-                    <td className="px-4 py-2 text-gray-800 font-medium">{tap.names}</td>
-                    <td className="px-4 py-2 text-gray-600">{tap.phoneNumber}</td>
-                    <td className="px-4 py-2 text-gray-600">{tap.entryTime}</td>
-                    <td className="px-4 py-2 text-gray-600">{tap.exitTime}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <RecentAttendee 
+          taps={attendees?.result || []}
+          onRefresh={handleReset}
+          checkInCount={attendees?.result?.filter(record => record.checkIn && !record.checkOut).length || 0}
+          checkOutCount={attendees?.result?.filter(record => record.checkOut).length || 0}
+          isLoading={isLoading}
+          isError={isError}
+        />
       </div>
     </div>
   )

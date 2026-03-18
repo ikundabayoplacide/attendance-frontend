@@ -31,7 +31,7 @@ export type AttendanceRecord={
         fullName: string;
         email: string;
         department: string;
-        nationalId: string;
+        scannedId: string;
         category: string;
     };
     createdAt?: Date;
