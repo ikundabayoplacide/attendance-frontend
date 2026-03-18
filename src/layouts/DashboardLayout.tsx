@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import DashboardHeader from '../components/ui/dashboardHeader'
 import DashboardSidebar from '../components/ui/dashboardSidebar'
-import borderImage from '../assets/images/design.png'
+const borderImage = '/images/design.png'
 import { useAuth } from '../hooks/useAuth'
 
 function DashboardLayout() {

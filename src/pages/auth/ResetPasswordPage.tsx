@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { FaChevronDown, FaFacebookF, FaLinkedinIn, FaInstagram } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
-import backgroundImage from '../../assets/images/chartImagenow.png'
-import borderImage from '../../assets/images/kf.png'
 import RegisterNavbar from '../../components/ui/registerNavbar'
 import { FaXTwitter } from 'react-icons/fa6'
 
 function ResetPassword() {
+  const backgroundImage = '/images/chartImagenow.png'
+  const borderImage = '/images/kf.png'
   const [resetType, setResetType] = useState('email')
   const [resetValue, setResetValue] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('+250')

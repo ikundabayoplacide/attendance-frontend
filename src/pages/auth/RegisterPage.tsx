@@ -3,21 +3,21 @@ import { FaFacebookF, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaInstagra
 import { FcGoogle } from 'react-icons/fc'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
-import backgroundImage from '../../assets/images/chartImagenow.png'
-import borderImage from '../../assets/images/design.png'
 import Button from '../../components/ui/Button'
 import RegisterNavbar from '../../components/ui/registerNavbar'
 import { FaXTwitter } from 'react-icons/fa6'
 import { useAuth } from '../../hooks/useAuth'
 
 function Register() {
+  const backgroundImage = '/images/chartImagenow.png'
+  const borderImage = '/images/design.png'
   const { signup, isLoading } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [selectedCountry, setSelectedCountry] = useState('+250')
   const [isCountryOpen, setIsCountryOpen] = useState(false)
   const [countrySearch, setCountrySearch] = useState('')
-  const [formData, setFormData] = useState({fullName: '',email: '',phoneNumber: '',password: '',roleType: ''})
+  const [formData, setFormData] = useState({ fullName: '', email: '', phoneNumber: '', password: '', roleType: '' })
 
   const countries = [
     { code: '+250', name: 'Rwanda', flag: 'RW' },

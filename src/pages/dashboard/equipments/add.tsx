@@ -2,6 +2,8 @@ import { useState } from "react"
 import { FaPlus, FaEdit, FaTrash, FaCheckCircle, FaTimesCircle } from "react-icons/fa"
 import Button from "../../../components/ui/Button"
 import AddEquipment from "../../../components/modals/addEquipment"
+import { checkPermissions } from "../../../utils/helper"
+import { useAuth } from "../../../hooks/useAuth"
 
 interface Equipment {
   id: number
@@ -55,7 +57,7 @@ function addEquipmentPage() {
       location: "Office 3"
     }
   ])
-
+  const { currentUser } = useAuth()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null)
 
@@ -106,9 +108,11 @@ const handleEdit = (id: number) => {
       {/* Header */}
       <div className="flex flex-row items-center justify-between mb-6">
         <h1 className="!text-2xl font-bold text-black">Equipment Management</h1>
-        <Button onClick={() => setIsModalOpen(true)} className="flex bg-[#1A3263] text-white rounded-lg hover:bg-blue-800 px-4 py-2">
-          <FaPlus className="mr-2" /> Add Equipment
-        </Button>
+      {currentUser && checkPermissions(currentUser, 'equipment:create') && (
+          <Button onClick={() => setIsModalOpen(true)} className="flex bg-[#1A3263] text-white rounded-lg hover:bg-blue-800 px-4 py-2">
+            <FaPlus className="mr-2" /> Add Equipment
+          </Button>
+        )}
       </div>
 
       {/* Grid */}
@@ -161,24 +165,30 @@ const handleEdit = (id: number) => {
 
               {/* Actions */}
               <div className="border-t pt-4 flex gap-2">
+               {currentUser && checkPermissions(currentUser, 'equipment:update') &&(
                 <button
                   onClick={() => handleEdit(equipment.id)}
                   className="flex-1 flex items-center justify-center gap-2 bg-[#1A3263] text-white py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
                 >
                   <FaEdit size={14} /> Edit
                 </button>
+               )}
+             {currentUser && checkPermissions(currentUser, 'equipment:update') && (
                 <button
                   onClick={() => toggleStatus(equipment.id)}
                   className="flex-1 flex items-center justify-center gap-2 bg-yellow-800 text-white py-2 rounded-lg hover:bg-yellow-600 transition-colors text-sm font-medium"
                 >
                   {equipment.status === "active" ? "Remove" : "Activate"}
                 </button>
+              )}
+              {currentUser && checkPermissions(currentUser, 'equipment:delete') && (
                 <button
                   onClick={() => handleDelete(equipment.id)}
                   className="flex-1 flex items-center justify-center gap-2 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
                 >
                   <FaTrash size={14} /> Delete
                 </button>
+              )}
               </div>
             </div>
 

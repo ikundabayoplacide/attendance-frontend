@@ -1,12 +1,22 @@
-import { useState } from 'react'
-import { FaUsers, FaUserCheck, FaUserTimes, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import { useState, useMemo } from 'react'
+import { FaUsers, FaUserCheck, FaUserTimes, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint, FaUserClock, FaTrash } from 'react-icons/fa'
 import ExportReportModal from '../../../components/modals/ExportReportModal'
+import { useAttendanceList, useCheckout, useDeleteAttendance } from '../../../hooks/useAttendance'
+import { checkPermissions } from '../../../utils/helper'
+import { useAuth } from '../../../hooks/useAuth'
+import { toast } from 'react-toastify'
 
 function AttendedVisitors() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+  const { currentUser } = useAuth()
+
+  // Fetch attendance data
+  const { data: attendanceData, isLoading, error } = useAttendanceList()
+  const checkoutMutation = useCheckout()
+  const deleteMutation = useDeleteAttendance()
 
   const handleExport = (type: 'pdf' | 'word' | 'print') => {
     setExportFormat(type)
@@ -15,6 +25,26 @@ function AttendedVisitors() {
 
   const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
     console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const handleCheckout = async (attendanceId: string, visitorName: string) => {
+    try {
+      await checkoutMutation.mutateAsync({ id: attendanceId })
+      toast.success(`${visitorName} checked out successfully`)
+    } catch (error) {
+      toast.error('Failed to checkout visitor')
+    }
+  }
+
+  const handleDelete = async (attendanceId: string, visitorName: string) => {
+    if (window.confirm(`Are you sure you want to delete ${visitorName}'s attendance record?`)) {
+      try {
+        await deleteMutation.mutateAsync(attendanceId)
+        toast.success('Attendance record deleted successfully')
+      } catch (error) {
+        toast.error('Failed to delete attendance record')
+      }
+    }
   }
 
   const exportFields = [
@@ -29,28 +59,72 @@ function AttendedVisitors() {
     { id: 'badge', label: 'Badge ID' },
   ]
 
-  const stats = [
-    { title: 'Total Visitors Today', value: '24', icon: FaUsers, color: 'bg-blue-500' },
-    { title: 'Checked In', value: '18', icon: FaUserCheck, color: 'bg-green-500' },
-    { title: 'Checked Out', value: '6', icon: FaUserTimes, color: 'bg-gray-500' }
-  ]
+  // Filter attendance records for visitors only
+  const attendedVisitors = useMemo(() => {
+    if (!attendanceData?.result) return []
+    
+    return attendanceData.result.filter(record => {
+      const category = record.user?.category?.toLowerCase()?.trim()
+      return category === 'visitor'
+    })
+  }, [attendanceData])
 
-  const attendedVisitors = [
-    { id: 1, name: 'John Smith', company: 'TechCorp', email: 'john@techcorp.com', purpose: 'Meeting', host: 'Sarah Johnson', checkIn: '09:30', checkOut: null, status: 'Checked In', badge: 'V001' },
-    { id: 2, name: 'Alice Brown', company: 'Design Studio', email: 'alice@design.com', purpose: 'Interview', host: 'Mike Davis', checkIn: '10:15', checkOut: '12:00', status: 'Checked Out', badge: 'V002' },
-    { id: 3, name: 'Robert Wilson', company: 'Consulting', email: 'robert@consulting.com', purpose: 'Consultation', host: 'Emily Chen', checkIn: '08:45', checkOut: null, status: 'Checked In', badge: 'V003' }
-  ]
+  // Calculate stats
+  const stats = useMemo(() => {
+    const total = attendedVisitors.length
+    const checkedIn = attendedVisitors.filter(visitor => !visitor.checkOut).length
+    const checkedOut = attendedVisitors.filter(visitor => visitor.checkOut).length
 
-  const filteredVisitors = attendedVisitors.filter(visitor => {
-    const matchesSearch = visitor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         visitor.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         visitor.host.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || visitor.status.toLowerCase().replace(' ', '_') === statusFilter
-    return matchesSearch && matchesStatus
-  })
+    return [
+      { title: 'Total Visitors Today', value: total.toString(), icon: FaUsers, color: 'bg-blue-500' },
+      { title: 'Checked In', value: checkedIn.toString(), icon: FaUserCheck, color: 'bg-green-500' },
+      { title: 'Checked Out', value: checkedOut.toString(), icon: FaUserTimes, color: 'bg-gray-500' }
+    ]
+  }, [attendedVisitors])
 
-  const getStatusColor = (status: string) => {
-    return status === 'Checked In' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+  const filteredVisitors = useMemo(() => {
+    return attendedVisitors.filter(record => {
+      const user = record.user
+      if (!user) return false
+
+      const matchesSearch = user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           record.hoster?.toLowerCase().includes(searchTerm.toLowerCase())
+      
+      const status = record.checkOut ? 'checked_out' : 'checked_in'
+      const matchesStatus = statusFilter === 'all' || status === statusFilter
+      
+      return matchesSearch && matchesStatus
+    })
+  }, [attendedVisitors, searchTerm, statusFilter])
+
+  const getStatusColor = (hasCheckOut: boolean) => {
+    return hasCheckOut ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800'
+  }
+
+  const formatTime = (dateTime: Date | string) => {
+    return new Date(dateTime).toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    })
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1A3263]"></div>
+        <span className="ml-2 text-gray-600">Loading attendance data...</span>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-red-600">Error loading attendance data. Please try again.</div>
+      </div>
+    )
   }
 
   return (
@@ -147,41 +221,78 @@ function AttendedVisitors() {
                 </tr>
               </thead>
               <tbody>
-                {filteredVisitors.map((visitor) => (
-                  <tr key={visitor.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="font-medium text-gray-900">{visitor.name}</p>
-                        <p className="text-sm text-gray-500">{visitor.email}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-700">{visitor.company}</td>
-                    <td className="py-4 px-4 text-gray-700">{visitor.purpose}</td>
-                    <td className="py-4 px-4 text-gray-700">{visitor.host}</td>
-                    <td className="py-4 px-4 text-gray-700">{visitor.checkIn}</td>
-                    <td className="py-4 px-4 text-gray-700">{visitor.checkOut || '-'}</td>
-                    <td className="py-4 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(visitor.status)}`}>
-                        {visitor.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                        {visitor.badge}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 text-gray-400 hover:text-blue-600" title="View Details">
-                          <FaEye size={14} />
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-green-600" title="Edit">
-                          <FaEdit size={14} />
-                        </button>
-                      </div>
+                {filteredVisitors.map((record) => {
+                  const user = record.user
+                  if (!user) return null
+                  
+                  const isCheckedOut = !!record.checkOut
+                  const status = isCheckedOut ? 'Checked Out' : 'Checked In'
+                  
+                  return (
+                    <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-4 px-4">
+                        <div>
+                          <p className="font-medium text-gray-900">{user.fullName}</p>
+                          <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-700">{user.department || 'N/A'}</td>
+                      <td className="py-4 px-4 text-gray-700">{record.note || 'General Visit'}</td>
+                      <td className="py-4 px-4 text-gray-700">{record.hoster || 'N/A'}</td>
+                      <td className="py-4 px-4 text-gray-700">{formatTime(record.checkIn)}</td>
+                      <td className="py-4 px-4 text-gray-700">{record.checkOut ? formatTime(record.checkOut) : '-'}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(isCheckedOut)}`}>
+                          {status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                          {record.badge || user.nationalId || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <button className="p-2 text-gray-400 hover:text-blue-600" title="View Details">
+                            <FaEye size={14} />
+                          </button>
+                          {currentUser && checkPermissions(currentUser, 'attendance:update') && (
+                            <button className="p-2 text-gray-400 hover:text-green-600" title="Edit">
+                              <FaEdit size={14} />
+                            </button>
+                          )}
+                          {!isCheckedOut && currentUser && checkPermissions(currentUser, 'attendance:update') && (
+                            <button 
+                              className="p-2 text-gray-400 hover:text-orange-600" 
+                              title="Check Out"
+                              onClick={() => handleCheckout(record.id, user.fullName)}
+                              disabled={checkoutMutation.isPending}
+                            >
+                              <FaUserClock size={14} />
+                            </button>
+                          )}
+                          {currentUser && checkPermissions(currentUser, 'attendance:delete') && (
+                            <button 
+                              className="p-2 text-red-400 hover:text-red-600" 
+                              title="Delete"
+                              onClick={() => handleDelete(record.id, user.fullName)}
+                              disabled={deleteMutation.isPending}
+                            >
+                              <FaTrash size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+                {filteredVisitors.length === 0 && (
+                  <tr>
+                    <td colSpan={9} className="py-8 text-center text-gray-500">
+                      {isLoading ? 'Loading...' : 'No attended visitors found'}
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

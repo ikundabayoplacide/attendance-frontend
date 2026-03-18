@@ -3,8 +3,6 @@ import { FaFacebookF, FaLinkedinIn, FaEye, FaEyeSlash, FaChevronDown, FaInstagra
 import { FcGoogle } from 'react-icons/fc'
 import { Link } from 'react-router-dom'
 import evsLogo from '../../assets/logos/evs.png'
-import backgroundImage from '../../assets/images/chartImagenow.png'
-import borderImage from '../../assets/images/design.png'
 import Button from '../../components/ui/Button'
 import LoginNavbar from '../../components/ui/loginNavbar'
 import { FaXTwitter } from 'react-icons/fa6'
@@ -13,6 +11,8 @@ import { toast } from 'react-toastify'
 
 
 function Login() {
+  const backgroundImage = '/images/chartImagenow.png'
+  const borderImage = '/images/design.png'
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [loginType, setLoginType] = useState('email') // 'email' or 'phone'

@@ -66,10 +66,15 @@ export type User = {
     id: number;
     fullName: string;
     email: string;
-    phone?: string;
+    phoneNumber?: string;
+    category?:string;
+    department?:string;
+    blacklistedAt?:string
+    campany?:string;
     roleType?: string;
     isActive: boolean;
     isVerified: boolean;
+    status: 'active' | 'inactive' | 'pending' | 'blacklisted'|'suspended';
     createdAt: string;
     updatedAt: string;
     roles: Array<{

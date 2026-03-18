@@ -84,35 +84,87 @@ export function useAuth() {
     const signupMutation = useMutation({
         mutationFn: authApi.signup,
         onSuccess: (data: AuthResponse) => {
-            if (data?.result?.accessToken) {
-                tokenManager.saveToken(data.result.accessToken, true);
-            }
-            
-            // Determine the redirect path based on user role
             const user = data?.result?.user;
-            const roleType = user?.roleType;
-            const firstRole = user?.roles?.[0]?.name;
+            const userStatus = user?.status;
             
-            // Determine dashboard path
-            let dashboardPath = '/dashboard';
-            if (roleType === 'owner') {
-                dashboardPath = '/dashboard';
-            } else if (firstRole) {
-                // Map role names to their dashboard paths
-                const rolePathMap: Record<string, string> = {
-                    'help_desk': '/dashboard/helpdesk',
-                    'data_manager': '/dashboard/dataManager',
-                    'team_leader': '/dashboard/teamLeader',
-                    'staff': '/dashboard/staff',
-                    'system_office': '/dashboard/systemOffice',
-                    'human_resource': '/dashboard/humanResource',
-                    'protocals': '/dashboard/protocals',
-                    'check_point': '/dashboard/checkPoint',
-                };
-                dashboardPath = rolePathMap[firstRole] || '/dashboard';
+            if (userStatus === 'pending') {
+                // Show success message for pending accounts
+                toast.warning('Registration successful! wait for approval. You will be notified once approved.', {
+                    autoClose: 8000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true
+                });
+                // Redirect to login page since approval_required page doesn't exist
+                navigate('/auth/login');
+            } else if (userStatus === 'inactive') {
+                // Show warning message for inactive accounts and stay on register page
+                toast.warning('Your account is inactive. Please contact administrator for assistance.', {
+                    autoClose: 8000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true
+                });
+                // Stay on register page - no navigation
+            } else if(userStatus === 'blacklisted'){
+                toast.warning('Your account has been blacklisted. Please contact Support team or Admin for help.',{
+                    autoClose: 8000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true
+                })
+                // Stay on register page - no navigation
             }
-            
-            navigate(dashboardPath);
+             else if (data?.result?.accessToken && userStatus === 'active') {
+                // Only save token and redirect to dashboard if account is active
+                tokenManager.saveToken(data.result.accessToken, true);
+                
+                toast.success('Registration successful! Welcome to EVS.', {
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true
+                });
+                
+                // Determine the redirect path based on user role
+                const roleType = user?.roleType;
+                const firstRole = user?.roles?.[0]?.name;
+                
+                // Determine dashboard path
+                let dashboardPath = '/dashboard';
+                if (roleType === 'owner') {
+                    dashboardPath = '/dashboard';
+                } else if (firstRole) {
+                    // Map role names to their dashboard paths
+                    const rolePathMap: Record<string, string> = {
+                        'help_desk': '/dashboard/helpdesk',
+                        'data_manager': '/dashboard/dataManager',
+                        'team_leader': '/dashboard/teamLeader',
+                        'staff': '/dashboard/staff',
+                        'system_office': '/dashboard/systemOffice',
+                        'human_resource': '/dashboard/humanResource',
+                        'protocals': '/dashboard/protocals',
+                        'check_point': '/dashboard/checkPoint',
+                    };
+                    dashboardPath = rolePathMap[firstRole] || '/dashboard';
+                }
+                
+                navigate(dashboardPath);
+            } else {
+                // Fallback: show info message and redirect to login page
+                toast.info('Registration completed. Please login to continue.', {
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true
+                });
+                navigate('/auth/login');
+            }
         },
         onError: (error: any) => {
             const errorMessage = error?.response?.data?.message || 'Signup failed';

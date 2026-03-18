@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react'
-import { FaUsers, FaUserCheck, FaUserClock, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint } from 'react-icons/fa'
+import { useState, useEffect, useMemo } from 'react'
+import { FaUsers, FaUserCheck, FaUserClock, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint, FaTrash } from 'react-icons/fa'
 import ExportReportModal from '../../../components/modals/ExportReportModal'
+import { checkPermissions } from '../../../utils/helper'
+import { useAuth } from '../../../hooks/useAuth'
+import { useAttendanceList, useCheckout, useDeleteAttendance } from '../../../hooks/useAttendance'
+import { toast } from 'react-toastify'
 
 function AttendedUsers() {
   const [searchTerm, setSearchTerm] = useState('')
+  const { currentUser } = useAuth()
   const [statusFilter, setStatusFilter] = useState('all')
   const [filterType, setFilterType] = useState<'day' | 'time'>('day')
   const [startDateTime, setStartDateTime] = useState('')
@@ -12,6 +17,11 @@ function AttendedUsers() {
   const [shouldFilter, setShouldFilter] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+
+  // Fetch attendance data
+  const { data: attendanceData, isLoading, error } = useAttendanceList()
+  const checkoutMutation = useCheckout()
+  const deleteMutation = useDeleteAttendance()
 
   const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Operations', 'Finance']
 
@@ -22,6 +32,26 @@ function AttendedUsers() {
 
   const handleGenerateReport = (selectedFields: string[], startDate: string, endDate: string, format: 'pdf' | 'word' | 'print') => {
     console.log('Generating report:', { selectedFields, startDate, endDate, format })
+  }
+
+  const handleCheckout = async (attendanceId: string, userName: string) => {
+    try {
+      await checkoutMutation.mutateAsync({ id: attendanceId })
+      toast.success(`${userName} checked out successfully`)
+    } catch (error) {
+      toast.error('Failed to checkout user')
+    }
+  }
+
+  const handleDelete = async (attendanceId: string, userName: string) => {
+    if (window.confirm(`Are you sure you want to delete ${userName}'s attendance record?`)) {
+      try {
+        await deleteMutation.mutateAsync(attendanceId)
+        toast.success('Attendance record deleted successfully')
+      } catch (error) {
+        toast.error('Failed to delete attendance record')
+      }
+    }
   }
 
   const exportFields = [
@@ -42,39 +72,84 @@ function AttendedUsers() {
     }
   }, [startDateTime, endDateTime])
 
-  const stats = [
-    { title: 'Total Users Today', value: '45', icon: FaUsers, color: 'bg-blue-500' },
-    { title: 'Checked In', value: '38', icon: FaUserCheck, color: 'bg-green-500' },
-    { title: 'Checked Out', value: '7', icon: FaUserClock, color: 'bg-gray-500' }
-  ]
-
-  const attendedUsers = [
-    { id: 1, name: 'John Doe', email: 'john@company.com', department: 'Engineering', checkIn: '08:30', checkOut: null, date: '2024-01-15', status: 'Checked In', badge: 'U001' },
-    { id: 2, name: 'Jane Smith', email: 'jane@company.com', department: 'Marketing', checkIn: '09:00', checkOut: '17:30', date: '2024-01-15', status: 'Checked Out', badge: 'U002' },
-    { id: 3, name: 'Mike Johnson', email: 'mike@company.com', department: 'Sales', checkIn: '08:45', checkOut: null, date: '2024-01-16', status: 'Checked In', badge: 'U003' }
-  ]
-
-  const filteredUsers = attendedUsers.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.department.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || user.status.toLowerCase().replace(' ', '_') === statusFilter
-    const matchesDepartment = !filterDepartment || user.department === filterDepartment
+  // Filter attendance records for non-visitor users
+  const attendedUsers = useMemo(() => {
+    if (!attendanceData?.result) return []
     
-    let matchesDateTime = true
-    if (shouldFilter && startDateTime && endDateTime) {
-      if (filterType === 'day') {
-        matchesDateTime = user.date >= startDateTime && user.date <= endDateTime
-      } else {
-        matchesDateTime = user.checkIn >= startDateTime && user.checkIn <= endDateTime
+    return attendanceData.result.filter(record => {
+      const category = record.user?.category?.toLowerCase()?.trim()
+      return category && category !== 'visitor'
+    })
+  }, [attendanceData])
+
+  // Calculate stats
+  const stats = useMemo(() => {
+    const total = attendedUsers.length
+    const checkedIn = attendedUsers.filter(user => !user.checkOut).length
+    const checkedOut = attendedUsers.filter(user => user.checkOut).length
+
+    return [
+      { title: 'Total Users Today', value: total.toString(), icon: FaUsers, color: 'bg-blue-500' },
+      { title: 'Checked In', value: checkedIn.toString(), icon: FaUserCheck, color: 'bg-green-500' },
+      { title: 'Checked Out', value: checkedOut.toString(), icon: FaUserClock, color: 'bg-gray-500' }
+    ]
+  }, [attendedUsers])
+
+  const filteredUsers = useMemo(() => {
+    return attendedUsers.filter(record => {
+      const user = record.user
+      if (!user) return false
+
+      const matchesSearch = user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.department?.toLowerCase().includes(searchTerm.toLowerCase())
+      
+      const status = record.checkOut ? 'checked_out' : 'checked_in'
+      const matchesStatus = statusFilter === 'all' || status === statusFilter
+      
+      const matchesDepartment = !filterDepartment || user.department === filterDepartment
+      
+      let matchesDateTime = true
+      if (shouldFilter && startDateTime && endDateTime) {
+        if (filterType === 'day') {
+          matchesDateTime = record.date >= startDateTime && record.date <= endDateTime
+        } else {
+          const checkInTime = new Date(record.checkIn).toTimeString().slice(0, 5)
+          matchesDateTime = checkInTime >= startDateTime && checkInTime <= endDateTime
+        }
       }
-    }
-    
-    return matchesSearch && matchesStatus && matchesDepartment && matchesDateTime
-  })
+      
+      return matchesSearch && matchesStatus && matchesDepartment && matchesDateTime
+    })
+  }, [attendedUsers, searchTerm, statusFilter, filterDepartment, shouldFilter, startDateTime, endDateTime, filterType])
 
-  const getStatusColor = (status: string) => {
-    return status === 'Checked In' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+  const getStatusColor = (hasCheckOut: boolean) => {
+    return hasCheckOut ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800'
+  }
+
+  const formatTime = (dateTime: Date | string) => {
+    return new Date(dateTime).toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    })
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1A3263]"></div>
+        <span className="ml-2 text-gray-600">Loading attendance data...</span>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-red-600">Error loading attendance data. Please try again.</div>
+      </div>
+    )
   }
 
   return (
@@ -90,7 +165,7 @@ function AttendedUsers() {
         `
       }} />
       <div className="flex-shrink-0 mb-6">
-        <h1 className="!text-3xl font-bold text-gray-900">Attended Users</h1>
+        <h1 className="!text-2xl font-bold text-gray-900">Attended Users</h1>
         <p className="text-gray-600">Track employee attendance in real-time</p>
       </div>
 
@@ -211,39 +286,76 @@ function AttendedUsers() {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((user) => (
-                  <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-700">{user.department}</td>
-                    <td className="py-4 px-4 text-gray-700">{user.checkIn}</td>
-                    <td className="py-4 px-4 text-gray-700">{user.checkOut || '-'}</td>
-                    <td className="py-4 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
-                        {user.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                        {user.badge}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 text-gray-400 hover:text-blue-600" title="View Details">
-                          <FaEye size={14} />
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-green-600" title="Edit">
-                          <FaEdit size={14} />
-                        </button>
-                      </div>
+                {filteredUsers.map((record) => {
+                  const user = record.user
+                  if (!user) return null
+                  
+                  const isCheckedOut = !!record.checkOut
+                  const status = isCheckedOut ? 'Checked Out' : 'Checked In'
+                  
+                  return (
+                    <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-4 px-4">
+                        <div>
+                          <p className="font-medium text-gray-900">{user.fullName}</p>
+                          <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-700">{user.department || 'N/A'}</td>
+                      <td className="py-4 px-4 text-gray-700">{formatTime(record.checkIn)}</td>
+                      <td className="py-4 px-4 text-gray-700">{record.checkOut ? formatTime(record.checkOut) : '-'}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(isCheckedOut)}`}>
+                          {status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                          {record.badge || user.nationalId || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <button className="p-2 text-gray-400 hover:text-blue-600" title="View Details">
+                            <FaEye size={14} />
+                          </button>
+                          {currentUser && checkPermissions(currentUser, 'attendance:update') && (
+                            <button className="p-2 text-gray-400 hover:text-green-600" title="Edit">
+                              <FaEdit size={14} />
+                            </button>
+                          )}
+                          {!isCheckedOut && currentUser && checkPermissions(currentUser, 'attendance:update') && (
+                            <button 
+                              className="p-2 text-gray-400 hover:text-orange-600" 
+                              title="Check Out"
+                              onClick={() => handleCheckout(record.id, user.fullName)}
+                              disabled={checkoutMutation.isPending}
+                            >
+                              <FaUserClock size={14} />
+                            </button>
+                          )}
+                          {currentUser && checkPermissions(currentUser, 'attendance:delete') && (
+                            <button 
+                              className="p-2 text-red-400 hover:text-red-600" 
+                              title="Delete"
+                              onClick={() => handleDelete(record.id, user.fullName)}
+                              disabled={deleteMutation.isPending}
+                            >
+                              <FaTrash size={14} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+                {filteredUsers.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-gray-500">
+                      {isLoading ? 'Loading...' : 'No attended users found'}
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

@@ -1,24 +1,33 @@
 import { useState } from 'react'
 import { FaExclamationTriangle, FaTimes } from 'react-icons/fa'
+import { DeleteUser } from '../../hooks/useUser'
 
 interface DeleteUserModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: () => void
-  userName: string
+  fullName: string
+  userId:string
 }
 
-export default function DeleteUserModal({ isOpen, onClose, onConfirm, userName }: DeleteUserModalProps) {
+export default function DeleteUserModal({ isOpen, onClose, onConfirm, fullName,userId }: DeleteUserModalProps) {
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState('')
+  const deleteUser=DeleteUser();
 
-  const handleConfirm = () => {
-    if (inputValue !== userName) {
+  const handleConfirm = async() => {
+    if (inputValue !== fullName) {
       setError('Username does not match')
       return
     }
+    try {
+    await deleteUser.mutateAsync(userId);
     onConfirm()
     handleClose()
+    } catch (error) {
+      console.error('Error deleting user:', error),
+      setError('Failed to suspend user. Please try again.')
+    }
   }
 
   const handleClose = () => {
@@ -49,7 +58,7 @@ export default function DeleteUserModal({ isOpen, onClose, onConfirm, userName }
             This action cannot be undone. This will permanently delete the user account and remove all associated data.
           </p>
           <p className="text-sm text-gray-500 mb-4">
-            Please type <span className="font-semibold text-gray-900">{userName}</span> to confirm:
+            Please type <span className="font-semibold text-gray-900">{fullName}</span> to confirm:
           </p>
           <input
             type="text"
