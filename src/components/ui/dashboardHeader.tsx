@@ -4,6 +4,7 @@ import { IoMdLogOut } from 'react-icons/io'
 import { useState, useEffect, useRef } from 'react'
 import evsLogo from '../../assets/logos/evs.png'
 import { useAuth } from '../../hooks/useAuth'
+import ThemeSwitcher from './ThemeSwitcher'
 
 interface DashboardHeaderProps {
   onMenuClick: () => void
@@ -44,6 +45,7 @@ function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
       {/* Right side */}
       <div className="flex items-center gap-4">
+        <ThemeSwitcher />
         <button className="p-2 text-gray-600 hover:text-[#1A3263] hover:bg-gray-100 rounded-lg transition-colors">
           <FaBell size={18} />
         </button>

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Plus, FileText, Download, Search, BarChart3, TrendingUp, Users, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { checkPermissions } from '../../../utils/helper'
+import { useAuth } from '../../../hooks/useAuth'
 
 interface Report {
   id: string
@@ -16,6 +18,7 @@ interface Report {
 function ReportsPage() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
+  const { currentUser } = useAuth()
   const [filterType, setFilterType] = useState('all')
   const [filterStatus, setFilterStatus] = useState('all')
 
@@ -209,6 +212,7 @@ function ReportsPage() {
               <option value="draft">Draft</option>
               <option value="archived">Archived</option>
             </select>
+         {currentUser && checkPermissions(currentUser, 'report:create') && (
             <button 
               onClick={() => navigate('/dashboard/reports/create')}
               className="bg-[#1A3263] hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
@@ -216,6 +220,7 @@ function ReportsPage() {
               <Plus className="w-4 h-4" />
               Create New Report
             </button>
+         )}
           </div>
         </div>
       </div>
@@ -258,12 +263,16 @@ function ReportsPage() {
                   <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                     <Download className="w-4 h-4" />
                   </button>
-                  <button className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium">
-                    View
-                  </button>
-                  <button className="px-3 py-1 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors text-sm font-medium">
-                    Edit
-                  </button>
+                 {currentUser && checkPermissions(currentUser, 'report:edit') && (
+                    <button className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium">
+                      View
+                    </button>
+                  )}
+                  {currentUser && checkPermissions(currentUser, 'report:edit') && (
+                    <button className="px-3 py-1 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors text-sm font-medium">
+                      Edit
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

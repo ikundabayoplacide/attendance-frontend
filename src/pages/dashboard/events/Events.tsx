@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaClock, FaUsers } from 'react-icons/fa';
 import MapChart from '../../../components/ui/MapChart';
 import AddEventModal from '../../../components/modals/AddEventModal';
+import { checkPermissions } from '../../../utils/helper';
+import { useAuth } from '../../../hooks/useAuth';
 
 function EventsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { currentUser } = useAuth();
 
     const handleSaveEvent = (eventData: any) => {
         console.log('New event:', eventData);
@@ -26,12 +29,14 @@ function EventsPage() {
         <div className="p-6 space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="!text-2xl font-bold text-gray-800">Events & Activities</h1>
-                <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-blue-800"
-                >
-                    Create Event
-                </button>
+               {currentUser && checkPermissions(currentUser, 'event:create') && (
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-blue-800"
+                    >
+                        Create Event
+                    </button>
+                )}
             </div>
 
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">

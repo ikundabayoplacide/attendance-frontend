@@ -10,7 +10,7 @@ import BlacklistedUsers from '../pages/dashboard/users/blacklisted'
 
 import SystemHealthly from '../pages/dashboard/healthly'
 import Notifications from '../pages/dashboard/notifications/Notification'
-import Settings from '../pages/dashboard/settings/Setting'
+import Settings from '../pages/dashboard/settings'
 import Login from '../pages/auth/LoginPage'
 import Register from '../pages/auth/RegisterPage'
 import ResetPassword from '../pages/auth/ResetPasswordPage'
@@ -32,7 +32,7 @@ import AddEquipmentPage from '../pages/dashboard/equipments/add'
 import AppointmentPage from '../pages/dashboard/appointment/Appointment'
 import FormPage from '../pages/dashboard/forms'
 import CreateForm from '../pages/dashboard/forms/createForm'
-import Security from '../pages/dashboard/security'
+import Security from '../pages/dashboard/accounts/securite'
 import CreateReport from '../pages/dashboard/reports/createReport'
 import CalendarViewPage from '../pages/dashboard/appointment/viaCalender'
 import HandoverManagement from '../pages/dashboard/handover'
@@ -41,12 +41,12 @@ import HelpDeskDashboard from '../pages/dashboard/Roles/helpDesk'
 import DataManagerDashboard from '../pages/dashboard/Roles/dataManager'
 import TeamLeader from '../pages/dashboard/Roles/teamLeader'
 import CheckPoint from '../pages/dashboard/Roles/check point'
-import Attendance from '../pages/dashboard/attendance'
 import AttendedUsers from '../pages/dashboard/attendance/AttendedUsers'
 import AttendedVisitors from '../pages/dashboard/attendance/AttendedVisitors'
 import Staff from '../pages/dashboard/Roles/staff'
 import ProtocalPage from '../pages/dashboard/protocals'
 import ApprovalPending from '../pages/auth/approval_required'
+import EditRole from '../pages/dashboard/settings/edit_role'
 
 
 function AppRoutes() {
@@ -84,8 +84,6 @@ function AppRoutes() {
         <Route path="users/inactive" element={<InactiveUsers />} />
         <Route path="users/blacklisted" element={<BlacklistedUsers />} />
         <Route path="users/:id" element={<UserDetails />} />
-        <Route path="attendance" element={<Attendance />} />
-        <Route path="visitor" element={<Attendance />} />
         <Route path="attendedUser" element={<AttendedUsers />} />
         <Route path="attendedVisitor" element={<AttendedVisitors />} />
         <Route path="scanning" element={<ScanningPage />} />
@@ -107,11 +105,13 @@ function AppRoutes() {
         <Route path="helpdesk" element={<HelpDeskDashboard/>}/>
         <Route path='dataManager' element={<DataManagerDashboard/>}/>
         <Route path='teamLeader' element={<TeamLeader/>}/>
+        <Route path='securite' element={<Security/>}/>
         
         {/* Shared Routes */}
         <Route path="Analytics" element={<BusinessAnalytics/>}/>
         <Route path="notifications" element={<Notifications/>}/>
         <Route path="settings" element={<Settings />}/>
+        <Route path="settings/edit-role/:roleId" element={<EditRole/>}/>
 
       </Route>
     </Routes>

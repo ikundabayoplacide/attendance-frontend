@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { FaPlus, FaStar, FaCar, FaUser, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import ProtocolModal from '../../../components/modals/ProtocolModal';
+import { checkPermissions } from '../../../utils/helper';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface Protocol {
     id: number;
@@ -20,6 +22,7 @@ interface Protocol {
 
 function ProtocalPage() {
     const [showProtocolModal, setShowProtocolModal] = useState(false);
+    const { currentUser } = useAuth();
     const [protocols, setProtocols] = useState<Protocol[]>([
         {
             id: 1,
@@ -133,6 +136,7 @@ function ProtocalPage() {
                         <h1 className="!text-2xl font-bold text-gray-900">VIP Protocol Management</h1>
                         <p className="text-gray-600 text-sm">Manage special protocols for VIP visitors</p>
                     </div>
+                 {currentUser && checkPermissions(currentUser, 'protocol:create') && (
                     <button
                         onClick={() => setShowProtocolModal(true)}
                         className="flex items-center gap-2 bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 transition-colors"
@@ -140,6 +144,7 @@ function ProtocalPage() {
                         <FaPlus size={14} />
                         Create Protocol
                     </button>
+                 )}
                 </div>
             </div>
 

@@ -2,10 +2,12 @@ import { useState } from 'react'
 // import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSearch, FaEdit, FaEye, FaUser, FaEllipsisV } from 'react-icons/fa'
 import ScheduleAppointmentModal from '../../../components/modals/ScheduleAppointmentModal'
+import { checkPermissions } from '../../../utils/helper'
+import { useAuth } from '../../../hooks/useAuth'
 
 function AppointmentPage() {
-  // const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
+  const { currentUser } = useAuth()
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
   const [showScheduleModal, setShowScheduleModal] = useState(false)
@@ -96,8 +98,8 @@ function AppointmentPage() {
 
   const filteredAppointments = appointments.filter(appointment => {
     const matchesSearch = appointment.visitorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         appointment.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         appointment.host.toLowerCase().includes(searchTerm.toLowerCase())
+      appointment.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      appointment.host.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || appointment.status.toLowerCase() === statusFilter.toLowerCase()
     return matchesSearch && matchesStatus
   })
@@ -124,13 +126,13 @@ function AppointmentPage() {
 
       {/* Header - Fixed */}
       <div className="flex-shrink-0 mb-6">
-        <h1 className="!text-3xl font-bold text-gray-900">Appointment Management</h1>
+        <h1 className="!text-2xl font-bold text-gray-900">Appointment Management</h1>
         <p className="text-gray-600">Schedule and manage visitor appointments</p>
       </div>
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto space-y-6 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
@@ -187,13 +189,15 @@ function AppointmentPage() {
                 <option value="week">This Week</option>
                 <option value="month">This Month</option>
               </select>
-              <button 
-                onClick={() => setShowScheduleModal(true)}
-                className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
-              >
-                <FaPlus size={14} />
-                Schedule Appointment
-              </button>
+              {currentUser && checkPermissions(currentUser, 'appointment:create') && (
+                <button
+                  onClick={() => setShowScheduleModal(true)}
+                  className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
+                >
+                  <FaPlus size={14} />
+                  Schedule Appointment
+                </button>
+              )}
             </div>
           </div>
 
@@ -262,27 +266,32 @@ function AppointmentPage() {
                               onClick={() => setOpenDropdown(null)}
                             />
                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
-                              <button
-                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                onClick={() => {
-                                  console.log('View', appointment.id)
-                                  setOpenDropdown(null)
-                                }}
-                              >
-                                <FaEye size={14} className="text-blue-600" />
-                                View Details
-                              </button>
-                              <button
-                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                onClick={() => {
-                                  console.log('Edit', appointment.id)
-                                  setOpenDropdown(null)
-                                }}
-                              >
-                                <FaEdit size={14} className="text-green-600" />
-                                Edit
-                              </button>
-                              {appointment.status === 'Pending' && (
+
+                              {currentUser && checkPermissions(currentUser, 'appointment:view') && (
+                                <button
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                  onClick={() => {
+                                    console.log('View', appointment.id)
+                                    setOpenDropdown(null)
+                                  }}
+                                >
+                                  <FaEye size={14} className="text-blue-600" />
+                                  View Details
+                                </button>
+                              )}
+                              {currentUser && checkPermissions(currentUser, 'appointment:edit') && (
+                                <button
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                  onClick={() => {
+                                    console.log('Edit', appointment.id)
+                                    setOpenDropdown(null)
+                                  }}
+                                >
+                                  <FaEdit size={14} className="text-green-600" />
+                                  Edit
+                                </button>
+                              )}
+                              {currentUser && checkPermissions(currentUser, 'appointment:confirm') && (
                                 <button
                                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                                   onClick={() => {
@@ -294,6 +303,7 @@ function AppointmentPage() {
                                   Confirm
                                 </button>
                               )}
+                            {currentUser && checkPermissions(currentUser, 'appointment:cancel') && (
                               <button
                                 className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                                 onClick={() => {
@@ -304,6 +314,7 @@ function AppointmentPage() {
                                 <FaCalendarTimes size={14} className="text-red-600" />
                                 Cancel
                               </button>
+                              )}
                             </div>
                           </>
                         )}

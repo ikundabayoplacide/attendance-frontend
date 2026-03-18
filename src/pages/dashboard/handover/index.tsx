@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { FaExchangeAlt, FaUser, FaClock, FaCheckCircle, FaTimesCircle, FaPlus, FaSearch, FaEye, FaEllipsisV, FaClipboardList } from 'react-icons/fa'
+import { FaExchangeAlt, FaUser, FaClock, FaCheckCircle, FaTimesCircle, FaPlus, FaSearch, FaEye, FaEllipsisV, FaClipboardList, FaTrash, FaEdit } from 'react-icons/fa'
 import CreateHandoverModal from '../../../components/modals/CreateHandoverModal'
+import { checkPermissions } from '../../../utils/helper'
+import { useAuth } from '../../../hooks/useAuth'
 
 interface HandoverItem {
   category: string
@@ -25,6 +27,7 @@ interface Handover {
 function HandoverManagement() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const { currentUser } = useAuth()
   const [statusFilter, setStatusFilter] = useState('all')
   const [openDropdown, setOpenDropdown] = useState<number | null>(null)
   const [selectedHandover, setSelectedHandover] = useState<Handover | null>(null)
@@ -118,7 +121,7 @@ function HandoverManagement() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="!text-3xl font-bold text-gray-900">Handover Management</h1>
+        <h1 className="!text-2xl font-bold text-gray-900">Handover Management</h1>
         <p className="text-gray-600">Manage shift handovers between security/help desk staff</p>
       </div>
 
@@ -167,13 +170,15 @@ function HandoverManagement() {
                 <option value="in-progress">In Progress</option>
                 <option value="pending">Pending</option>
               </select>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
-              >
-                <FaPlus size={14} />
-                New Handover
+             {currentUser && checkPermissions(currentUser, 'handover:create') && (
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2"
+                >
+                  <FaPlus size={14} />
+                  New Handover
               </button>
+              )}
             </div>
           </div>
 
@@ -218,6 +223,7 @@ function HandoverManagement() {
                             }}
                           />
                           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                          {currentUser && checkPermissions(currentUser, 'handover:edit') && (
                             <button
                               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                               onClick={(e) => {
@@ -227,8 +233,35 @@ function HandoverManagement() {
                               }}
                             >
                               <FaEye size={14} className="text-blue-600" />
-                              View Details
+                              View
                             </button>
+                          )}
+                            {currentUser && checkPermissions(currentUser, 'handover:edit') && (
+                              <button
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  console.log('Edit', handover.id)
+                                  setOpenDropdown(null)
+                                }}
+                              >
+                                <FaEdit size={14} className="text-green-600" />
+                                Edit
+                              </button>
+                            )}
+                             {currentUser && checkPermissions(currentUser, 'handover:delete') && (
+                              <button
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  console.log('Delete', handover.id)
+                                  setOpenDropdown(null)
+                                }}
+                              >
+                                <FaTrash size={14} className="text-red-600" />
+                                Delete 
+                              </button>
+                             )}
                           </div>
                         </>
                       )}

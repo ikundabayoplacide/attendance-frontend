@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { MdOutlineSecurity } from 'react-icons/md'
 import { checkPermissions } from '../../utils/helper';
 import type { User } from '../../api/auth';
+import { GiGate } from 'react-icons/gi';
 
 interface MenuItem {
   path: string
@@ -165,7 +166,7 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: Dashboa
         {path:'/dashboard/users/blacklisted', label: ' BlackListed Users' },
       ]
     }] : []),
-    ...(user && checkPermissions(user, 'visitor:read') ? [{
+    ...(user && checkPermissions(user, 'scanning:list') ? [{
       path: '/dashboard/scanning', 
       icon: FaEye, 
       label: 'Scanning'
@@ -176,7 +177,7 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: Dashboa
       label: 'Attendances',
       children:[
         {path: '/dashboard/attendedUser', label: 'Users' },
-        {path: '/dashboard/visitor', label: 'Visitors' },
+        {path: '/dashboard/attendedVisitor', label: 'Visitors' },
       ]
     }] : []),
     ...(user && checkPermissions(user, 'visitor:list') ? [{
@@ -221,16 +222,16 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: Dashboa
       icon: FaChartBar, 
       label: 'Reports & Analytics'
     }] : []),
-    ...(user && checkPermissions(user, 'announcement:read') ? [{
-      path: '/dashboard/notifications', 
-      icon: FaBell, 
-      label: 'Notifications'
+    ...(user && checkPermissions(user, 'security_gate:list') ? [{
+      path: '/dashboard/securite', 
+      icon: GiGate, 
+      label: 'Gate Guard'
     }] : []),
   ]
 
   const menuItems = userRole === 'owner' ? ownerItems : clientItems
   
- 
+  const notificationItem = { path: '/dashboard/notifications', icon: FaBell, label: 'Notifications' }
   const settingsItem = { path: '/dashboard/settings', icon: FaCog, label: 'Settings' }
 
   const isActive = (path: string, exact?: boolean) => {
@@ -346,12 +347,25 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: Dashboa
           </ul>
         </div>
         
-        {/* Settings at bottom */}
-        {user && checkPermissions(user, 'setting:read') && (
-          <div className="flex-shrink border-t border-white/20 ">
+        {/* Bottom items */}
+        <div className="flex-shrink border-t border-white/20 space-y-2 pt-2">
+          {user && checkPermissions(user, 'announcement:read') && (
+            <Link
+              to={addRoleParam(notificationItem.path)}
+              className={`flex items-center gap-4 px-2 py-1 rounded-lg transition-colors ${
+                isActive(notificationItem.path)
+                  ? 'bg-white text-[#1A3263] font-medium'
+                  : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
+              }`}
+            >
+              <notificationItem.icon size={18} className={isActive(notificationItem.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
+              <span className={`font-bold ${isActive(notificationItem.path) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{notificationItem.label}</span>
+            </Link>
+          )}
+          {user && checkPermissions(user, 'setting:read') && (
             <Link
               to={addRoleParam(settingsItem.path)}
-              className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
+              className={`flex items-center gap-4 px-2 py-1 rounded-lg transition-colors ${
                 isActive(settingsItem.path)
                   ? 'bg-white text-[#1A3263] font-medium'
                   : 'text-[#1A3263] hover:bg-white/10 hover:text-[#1A3263] font-medium'
@@ -360,8 +374,8 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: Dashboa
               <settingsItem.icon size={18} className={isActive(settingsItem.path) ? 'text-[#1A3263]' : 'text-gray-300'} />
               <span className={`font-bold ${isActive(settingsItem.path) ? 'text-[#1A3263]' : 'text-gray-300'}`}>{settingsItem.label}</span>
             </Link>
-          </div>
-        )}
+          )}
+        </div>
       </nav>
     </aside>
     </>

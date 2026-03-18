@@ -1,11 +1,14 @@
 import { useState } from 'react'
 // import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaUserCheck, FaUsers, FaCalendarCheck, FaUserTimes, FaPlus, FaSearch, FaEdit, FaTrash, FaEye, FaBuilding } from 'react-icons/fa'
+import { checkPermissions } from '../../../utils/helper'
+import { useAuth } from '../../../hooks/useAuth'
 
 function Hostmanagement() {
   // const navigate = useNavigate()
   // const [searchParams] = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
+  const { currentUser } = useAuth()
   const [departmentFilter, setDepartmentFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
 
@@ -104,7 +107,7 @@ function Hostmanagement() {
 
       {/* Header - Fixed */}
       <div className="flex-shrink-0 mb-6">
-        <h1 className="!text-3xl font-bold text-gray-900">Host Management</h1>
+        <h1 className="!text-2xl font-bold text-gray-900">Host Management</h1>
         <p className="text-gray-600">Manage employees who can host visitors</p>
       </div>
 
@@ -169,10 +172,12 @@ function Hostmanagement() {
                 <option value="inactive">Inactive</option>
                 <option value="pending">Pending</option>
               </select>
+             {currentUser && checkPermissions(currentUser, 'user:create') && (
               <button className="bg-[#1A3263] text-white px-4 py-2 rounded-lg hover:bg-[#1A3263]/90 flex items-center gap-2">
                 <FaPlus size={14} />
                 Add Host
               </button>
+             )}
             </div>
           </div>
 
@@ -233,12 +238,16 @@ function Hostmanagement() {
                         <button className="p-2 text-gray-400 hover:text-blue-600" title="View Details">
                           <FaEye size={14} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-green-600" title="Edit">
-                          <FaEdit size={14} />
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-red-600" title="Remove">
-                          <FaTrash size={14} />
-                        </button>
+                     {currentUser && checkPermissions(currentUser, 'attendance:edit') && (
+                      <button className="p-2 text-gray-400 hover:text-green-600" title="Edit">
+                        <FaEdit size={14} />
+                      </button>
+                     )}
+                     {currentUser && checkPermissions(currentUser, 'attendance:delete') && (
+                      <button className="p-2 text-red-400 hover:text-red-600" title="Remove">
+                        <FaTrash size={14} />
+                      </button>
+                     )}
                       </div>
                     </td>
                   </tr>
