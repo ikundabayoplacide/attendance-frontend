@@ -1,255 +1,260 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaSearch, FaSync, FaSignature, FaArrowDown, FaArrowUp } from 'react-icons/fa'
 import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
-const avatimage = '/images/avartImage.avif'
 import EquipmentModal from '../../../components/modals/EquipmentModal'
 import AppointmentModal from '../../../components/modals/UserHasAppointmentModal'
 import AppointmentsModal from '../../../components/modals/AppointmentsModal'
 import { checkPermissions } from '../../../utils/helper'
 import { useAuth } from '../../../hooks/useAuth'
+import { CreateUser } from '../../../hooks/useUser'
 
-interface Equipment {
-  type: string
-  id: string
-}
-
-interface VerificationMode {
-  id: string
-  name: string
-  icon: React.ComponentType<{ size?: number; className?: string }>
-}
-
-interface VisitorForm {
-  mobile: string
-  email: string
-  fullName: string
-  passType: string
-  visitorCompany: string
-  purpose: string
-  badgeId: string
-  whenToMeet: string
-  date: string
-  time: string
-  department: string
-  duration: string
-  hostName: string
-  profilePhoto: string
-  idProofType: string
-  idNumber: string
-  category: string
-  docType: string
-  hasEquipment: boolean
-}
-
-interface RecentTap {
-  no: number
-  names: string
-  documentType: string
-  phoneNumber: string
-  entryTime: string
-  exitTime: string
-  department: string
-}
-
-const mockRecentTaps: RecentTap[] = [
+const avatimage = '/images/avartImage.avif'
+const mockRecentTaps = [
   { no: 1, names: 'NSHUTI Ngabo', documentType: 'Personal ID', phoneNumber: '+250782471145', entryTime: '2026-02-20 09:35:00', exitTime: '_', department: 'SAN TECH' },
   { no: 2, names: 'KEZA Shania', documentType: 'Personal ID', phoneNumber: '+250785490284', entryTime: '2026-02-20 09:18:02', exitTime: '_', department: 'SAN TECH' },
 ]
 
 function ScanningPage() {
-  const [selectedMode, setSelectedMode] = useState<string>('')
-  const [isScanning, setIsScanning] = useState(false)
-  const [searchName, setSearchName] = useState('')
   const { currentUser } = useAuth()
-  const [appointments] = useState(4)
-  const [hasAppointment, setHasAppointment] = useState(false)
-  const [searchType, setSearchType] = useState<'name' | 'phone' | 'voice'>('name')
-  const [showSearchOptions, setShowSearchOptions] = useState(false)
-  const [isRecording, setIsRecording] = useState(false)
-  const [showEquipmentModal, setShowEquipmentModal] = useState(false)
-  const [showAppointmentModal, setShowAppointmentModal] = useState(false)
-  const [showAppointmentsModal, setShowAppointmentsModal] = useState(false)
-  const [equipmentList, setEquipmentList] = useState<Equipment[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [state, setState] = useState({
+    selectedMode: '', isScanning: false, searchName: '', hasAppointment: false,
+    searchType: 'name' as 'name' | 'phone' | 'voice', showSearchOptions: false, isRecording: false,
+    showEquipmentModal: false, showAppointmentModal: false, showAppointmentsModal: false,
+    rawScannedId: '', verificationStatus: 'idle' as 'idle' | 'verifying' | 'success' | 'error',
+    selectedDocType: 'national-id' as 'driving-license' | 'national-id' | 'passport' | 'others',
+    showCountryDropdown: false, appointments: 4, checkInCount: 2, checkOutCount: 3
+  })
+  const [equipmentList, setEquipmentList] = useState<any[]>([])
   const [appointmentDetails, setAppointmentDetails] = useState<any>(null)
-  const [scannedId, setScannedId] = useState('')
-  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'verifying' | 'success' | 'error'>('idle')
-  const [selectedDocType, setSelectedDocType] = useState<'driving-license' | 'national-id' | 'passport' | 'others'>('national-id')
   const [selectedCountry, setSelectedCountry] = useState({ code: '+250', flag: '🇷🇼', name: 'Rwanda' })
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false)
-  const [checkInCount] = useState(2)
-  const [checkOutCount] = useState(3)
+
+  // Destructure state for easier access
+  const { selectedMode, isScanning, searchName, hasAppointment, searchType, showSearchOptions, isRecording, showEquipmentModal, showAppointmentModal, showAppointmentsModal, rawScannedId, verificationStatus, selectedDocType, showCountryDropdown, appointments, checkInCount, checkOutCount } = state
+  
+  // Helper functions to update state
+  const setRawScannedId = (value: string) => setState(s => ({ ...s, rawScannedId: value }))
+  const setShowEquipmentModal = (value: boolean) => setState(s => ({ ...s, showEquipmentModal: value }))
+  const setShowAppointmentsModal = (value: boolean) => setState(s => ({ ...s, showAppointmentsModal: value }))
+  const setShowAppointmentModal = (value: boolean) => setState(s => ({ ...s, showAppointmentModal: value }))
+  const setShowCountryDropdown = (value: boolean) => setState(s => ({ ...s, showCountryDropdown: value }))
+  const setSelectedDocType = (value: string) => setState(s => ({ ...s, selectedDocType: value as any }))
+  const setSearchName = (value: string) => setState(s => ({ ...s, searchName: value }))
+  const setSearchType = (value: 'name' | 'phone' | 'voice') => setState(s => ({ ...s, searchType: value }))
+  const setShowSearchOptions = (value: boolean) => setState(s => ({ ...s, showSearchOptions: value }))
+  const setIsRecording = (value: boolean) => setState(s => ({ ...s, isRecording: value }))
 
   const countries = [
-    { code: '+250', flag: '🇷🇼', name: 'Rwanda' },
-    { code: '+256', flag: '🇺🇬', name: 'Uganda' },
-    { code: '+254', flag: '🇰🇪', name: 'Kenya' },
-    { code: '+255', flag: '🇹🇿', name: 'Tanzania' },
-    { code: '+1', flag: '🇺🇸', name: 'United States' },
-    { code: '+44', flag: '🇬🇧', name: 'United Kingdom' },
-    { code: '+33', flag: '🇫🇷', name: 'France' },
-    { code: '+49', flag: '🇩🇪', name: 'Germany' },
-    { code: '+86', flag: '🇨🇳', name: 'China' },
-    { code: '+91', flag: '🇮🇳', name: 'India' }
+    { code: '+250', flag: '🇷🇼', name: 'Rwanda' }, { code: '+256', flag: '🇺🇬', name: 'Uganda' },
+    { code: '+254', flag: '🇰🇪', name: 'Kenya' }, { code: '+255', flag: '🇹🇿', name: 'Tanzania' },
+    { code: '+1', flag: '🇺🇸', name: 'United States' }, { code: '+44', flag: '🇬🇧', name: 'United Kingdom' },
+    { code: '+33', flag: '🇫🇷', name: 'France' }, { code: '+49', flag: '🇩🇪', name: 'Germany' },
+    { code: '+86', flag: '🇨🇳', name: 'China' }, { code: '+91', flag: '🇮🇳', name: 'India' }
   ]
-  const [visitorForm, setVisitorForm] = useState<VisitorForm>({
-    mobile: '',
-    email: '',
+  const [visitorForm, setVisitorForm] = useState({
     fullName: '',
-    passType: 'Visitor',
-    visitorCompany: '',
-    purpose: '',
-    badgeId: '',
-    whenToMeet: '',
-    date: '',
-    time: '',
-    department: 'ICT',
-    duration: '',
-    hostName: '',
-    profilePhoto: '',
-    idProofType: 'National ID',
-    idNumber: '',
+    password: 'defaultPassword123',
+    phoneNumber: '',
+    status: 'active' as 'active' | 'inactive' | 'pending' | 'rejected',
     category: 'Employee',
-    docType: 'Personal ID',
+    department: 'ICT',
+    // Additional fields for internal use (not sent to backend)
+    scannedId: '',
+    badge: '',
+    role: 'visitor',
+    nationalId: '',
+    profilePhoto: '',
     hasEquipment: false
   })
+  
+  const createUserMutation = CreateUser()
 
-  const verificationModes: VerificationMode[] = [
-    { id: 'face', name: 'Face', icon: FaUser },
-    { id: 'fingerprint', name: 'Fingerprint', icon: FaFingerprint },
-    { id: 'igipande', name: 'Igipande', icon: FaIdCard },
-    { id: 'id-passport', name: 'ID/Passport', icon: FaIdCard },
-    { id: 'voice', name: 'Voice', icon: FaMicrophone },
-    { id: 'ocr', name: 'OCR', icon: MdQrCodeScanner },
-    { id: 'gesture', name: 'Gesture', icon: FaHandPaper },
-    { id: 'signature', name: 'signature', icon: FaSignature },
+  const verificationModes = [
+    { id: 'face', name: 'Face', icon: FaUser }, { id: 'fingerprint', name: 'Fingerprint', icon: FaFingerprint },
+    { id: 'igipande', name: 'Igipande', icon: FaIdCard }, { id: 'id-passport', name: 'ID/Passport', icon: FaIdCard },
+    { id: 'voice', name: 'Voice', icon: FaMicrophone }, { id: 'ocr', name: 'OCR', icon: MdQrCodeScanner },
+    { id: 'gesture', name: 'Gesture', icon: FaHandPaper }, { id: 'signature', name: 'signature', icon: FaSignature },
     { id: 'pupil', name: 'Pupil', icon: MdVisibility }
   ]
 
-  const isMethodVerified = (modeId: string) => {
-    if (modeId === 'face' && visitorForm.profilePhoto) return true
-    if ((modeId === 'id-passport' || modeId === 'igipande') && visitorForm.idNumber) return true
-    if (modeId === 'ocr' && visitorForm.fullName && visitorForm.mobile) return true
-    return false
-  }
+  const isMethodVerified = (modeId: string) => 
+    (modeId === 'face' && visitorForm.profilePhoto) ||
+    ((modeId === 'id-passport' || modeId === 'igipande') && visitorForm.nationalId) ||
+    (modeId === 'ocr' && visitorForm.fullName && visitorForm.phoneNumber)
 
   const handleModeSelect = (modeId: string) => {
-    setSelectedMode(modeId)
-    setIsScanning(true)
+    setState(s => ({ ...s, selectedMode: modeId, isScanning: true }))
     setTimeout(() => {
-      setIsScanning(false)
-      setVisitorForm(prev => ({
-        ...prev,
-        fullName: 'John Doe',
-        mobile: '+250788123456',
-        email: 'john.doe@techsolutions.com',
-        visitorCompany: 'Tech Solutions Ltd',
-        idNumber: 'ID123456789'
-      }))
-      // Simulate appointment check
+      setState(s => ({ ...s, isScanning: false }))
+      setVisitorForm(prev => ({ ...prev, fullName: 'John Doe', phoneNumber: '788123456',
+        company: 'Tech Solutions Ltd', nationalId: 'ID123456789' }))
       const hasAppt = Math.random() > 0.5
-      setHasAppointment(hasAppt)
+      setState(s => ({ ...s, hasAppointment: hasAppt }))
       if (hasAppt) {
         const isInCompany = Math.random() > 0.3
-        const isInOffice = isInCompany ? Math.random() > 0.5 : false
         setAppointmentDetails({
-          visitorName: 'John Doe',
-          hostName: 'Jane Smith',
-          hostStatus: isInCompany ? 'in' : 'out',
-          hostAvailability: isInOffice ? 'available' : 'not-available',
-          appointmentTime: '2:00 PM - 3:00 PM',
-          purpose: 'Business meeting to discuss project proposal',
+          visitorName: 'John Doe', hostName: 'Jane Smith', hostStatus: isInCompany ? 'in' : 'out',
+          hostAvailability: isInCompany && Math.random() > 0.5 ? 'available' : 'not-available',
+          appointmentTime: '2:00 PM - 3:00 PM', purpose: 'Business meeting to discuss project proposal',
           department: 'ICT Department'
         })
       }
     }, 2000)
   }
 
-  const handleInputChange = (field: keyof VisitorForm, value: string | boolean) => {
+  const normalizeMobile = (mobile: string) => {
+    const raw = mobile.trim()
+    const country = selectedCountry.code.replace('+', '')
+    if (!raw) return ''
+    if (raw.startsWith(selectedCountry.code)) return raw.slice(selectedCountry.code.length).trim()
+    if (raw.startsWith(country)) return raw.slice(country.length).trim()
+    return raw
+  }
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    if (field === 'phoneNumber' && typeof value === 'string') value = normalizeMobile(value)
     setVisitorForm(prev => ({ ...prev, [field]: value }))
   }
 
   const handleSubmit = () => {
     if (visitorForm.hasEquipment) {
-      setShowEquipmentModal(true)
+      setState(s => ({ ...s, showEquipmentModal: true }))
     } else {
-      console.log('Submitting visitor:', visitorForm)
-      // Add your actual submission logic here
+      // Extract idnumber from rawScannedId if it's a card string
+      let extractedScannedId = 'MANUAL_ENTRY'
+      if (state.rawScannedId) {
+        const parsedData = parseCardString(state.rawScannedId)
+        extractedScannedId = parsedData.idnumber || state.rawScannedId
+      }
+      
+      // Prepare data for backend - only include fields that match UserCreateRequest
+      const userData = {
+        fullName: visitorForm.fullName,
+        email: '',
+        password: visitorForm.password,
+        scannedId: extractedScannedId,
+        phoneNumber: `${selectedCountry.code}${visitorForm.phoneNumber}`,
+        status: visitorForm.status,
+        category: visitorForm.category,
+        department: visitorForm.department
+      }
+      
+      console.log('=== SUBMITTING USER DATA TO BACKEND ===')
+      console.log('Backend payload:', JSON.stringify(userData, null, 2))
+      console.log('Additional form data (not sent to backend):')
+      console.log('- nationalId:', visitorForm.nationalId)
+      console.log('- badge:', visitorForm.badge)
+      console.log('- role:', visitorForm.role)
+      console.log('- profilePhoto:', visitorForm.profilePhoto ? 'Present' : 'Not set')
+      console.log('- rawScannedString:', state.rawScannedId)
+      console.log('============================================')
+      
+      createUserMutation.mutate(userData, {
+        onSuccess: () => {
+          handleReset()
+          console.log('Form reset after successful submission')
+        }
+      })
     }
   }
 
   const handleReset = () => {
     setVisitorForm({
-      mobile: '', email: '', fullName: '', passType: 'Visitor', visitorCompany: '',
-      purpose: '', badgeId: '', whenToMeet: '', date: '', time: '', department: 'ICT',
-      duration: '', hostName: '', profilePhoto: '', idProofType: 'National ID', idNumber: '',
-      category: 'Employee', docType: 'Personal ID', hasEquipment: false
+      fullName: '',
+      password: 'defaultPassword123',
+      phoneNumber: '',
+      status: 'active' as 'active' | 'inactive' | 'pending' | 'rejected',
+      category: 'Employee',
+      department: 'ICT',
+      // Additional fields for internal use
+      scannedId: '',
+      badge: '',
+      role: 'visitor',
+      nationalId: '',
+      profilePhoto: '',
+      hasEquipment: false
     })
-    setSelectedMode('')
-    setIsScanning(false)
+    setState(s => ({ ...s, rawScannedId: '', selectedMode: '', isScanning: false }))
   }
 
   const handleVoiceSearch = () => {
-    setSearchType('voice')
-    setShowSearchOptions(false)
-    setIsRecording(true)
-    setTimeout(() => setIsRecording(false), 3000)
+    setState(s => ({ ...s, searchType: 'voice', showSearchOptions: false, isRecording: true }))
+    setTimeout(() => setState(s => ({ ...s, isRecording: false })), 3000)
   }
 
-  const handleIdVerification = (id: string) => {
-    if (!id.trim()) {
-      setVerificationStatus('idle')
+  const parseCardString = (cardString: string) => {
+    const data: Record<string, string> = {}
+    const trimmed = cardString.trim()
+    const cleanString = trimmed.toLowerCase().startsWith('name:') ? trimmed.substring(5) : trimmed
+    const parts = cleanString.split('/')
+    if (parts[0]) data.name = parts[0].replace('.', '').trim()
+    parts.slice(1).forEach((part: string) => {
+      const colonIndex = part.indexOf(':')
+      if (colonIndex !== -1) {
+        const key = part.substring(0, colonIndex).toLowerCase().trim()
+        const value = part.substring(colonIndex + 1).trim().replace(/'/g, '')
+        data[key] = value
+      }
+    })
+    return data
+  }
+
+  const handleIdVerification = (id:any) => {
+    if (!id.trim()) return setState(s => ({ ...s, verificationStatus: 'idle' }))
+    setState(s => ({ ...s, verificationStatus: 'verifying' }))
+    
+    const isCardString = id.includes('Name:') || id.includes('name:') || /\/idnumber:/i.test(id) || /\/tell:/i.test(id) || /\/department:/i.test(id)
+    
+    if (isCardString) {
+      const parsedData = parseCardString(id)
+      setState(s => ({ ...s, verificationStatus: 'success', rawScannedId: id.trim() }))
+      const rawMobile = parsedData.tell || parsedData.tel || parsedData.phone || ''
+      setVisitorForm(prev => ({ ...prev, fullName: parsedData.name || '', nationalId: parsedData.idnumber || '',
+        phoneNumber: normalizeMobile(rawMobile) }))
+      setTimeout(() => setState(s => ({ ...s, verificationStatus: 'idle' })), 3000)
       return
     }
-
-    setVerificationStatus('verifying')
-
-    // Simulate API call for ID verification
+    
     setTimeout(() => {
       const isValidId = id.length >= 8 && /^[A-Z0-9]+$/i.test(id)
-
       if (isValidId) {
-        // Simulate successful verification with mock data
-        setVerificationStatus('success')
-        setVisitorForm(prev => ({
-          ...prev,
-          fullName: 'UWIMANA Jean Claude',
-          mobile: '+250788123456',
-          email: 'jean.uwimana@example.com',
-          idNumber: id,
-          docType: 'National ID',
-          department: 'ICT',
-          status: 'Employee'
-        }))
-
-        // Check for appointment
+        setState(s => ({ ...s, verificationStatus: 'success' }))
+        setVisitorForm(prev => ({ ...prev, fullName: 'UWIMANA Jean Claude', phoneNumber: '788123456',
+          nationalId: id, department: 'ICT', status: 'active' as 'active' | 'inactive' | 'pending' | 'rejected' }))
         const hasAppt = Math.random() > 0.4
-        setHasAppointment(hasAppt)
+        setState(s => ({ ...s, hasAppointment: hasAppt }))
         if (hasAppt) {
-          setAppointmentDetails({
-            visitorName: 'UWIMANA Jean Claude',
-            hostName: 'MUKAMANA Alice',
-            hostStatus: 'in',
-            hostAvailability: 'available',
-            appointmentTime: '2:00 PM - 3:00 PM',
-            purpose: 'Technical meeting for system upgrade',
-            department: 'ICT Department'
-          })
+          setAppointmentDetails({ visitorName: 'UWIMANA Jean Claude', hostName: 'MUKAMANA Alice',
+            hostStatus: 'in', hostAvailability: 'available', appointmentTime: '2:00 PM - 3:00 PM',
+            purpose: 'Technical meeting for system upgrade', department: 'ICT Department' })
         }
       } else {
-        setVerificationStatus('error')
+        setState(s => ({ ...s, verificationStatus: 'error' }))
       }
-
-      // Clear status after 5 seconds
-      setTimeout(() => {
-        setVerificationStatus('idle')
-      }, 5000)
+      setTimeout(() => setState(s => ({ ...s, verificationStatus: 'idle' })), 5000)
     }, 2000)
   }
 
 
-  const filteredTaps = mockRecentTaps.filter(t =>
-    t.names.toLowerCase().includes(searchName.toLowerCase())
-  )
+  const filteredTaps = mockRecentTaps.filter(t => t.names.toLowerCase().includes(state.searchName.toLowerCase()))
+
+  // Focus input on component mount and when returning to page
+  useEffect(() => {
+    const focusInput = () => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    }
+    // Focus immediately
+    focusInput()
+
+    // Focus when window regains focus (coming back from another tab/page)
+    const handleFocus = () => focusInput()
+    window.addEventListener('focus', handleFocus)
+    return () => {
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
@@ -261,9 +266,43 @@ function ScanningPage() {
           if (equipmentList.length === 0) {
             handleInputChange('hasEquipment', false)
           } else {
+            // Extract idnumber from rawScannedId if it's a card string
+            let extractedScannedId = 'MANUAL_ENTRY'
+            if (state.rawScannedId) {
+              const parsedData = parseCardString(state.rawScannedId)
+              extractedScannedId = parsedData.idnumber || state.rawScannedId
+            }
+            
             // If equipment was added, proceed with submission
-            console.log('Submitting visitor:', visitorForm)
-            // Add your actual submission logic here
+            const userData = {
+              fullName: visitorForm.fullName,
+              email: '',
+              password: visitorForm.password,
+              scannedId: extractedScannedId,
+              phoneNumber: `${selectedCountry.code}${visitorForm.phoneNumber}`,
+              status: visitorForm.status,
+              category: visitorForm.category,
+              department: visitorForm.department
+            }
+            
+            console.log('=== SUBMITTING USER DATA WITH EQUIPMENT TO BACKEND ===')
+            console.log('Backend payload:', JSON.stringify(userData, null, 2))
+            console.log('Equipment list:', JSON.stringify(equipmentList, null, 2))
+            console.log('Additional form data (not sent to backend):')
+            console.log('- nationalId:', visitorForm.nationalId)
+            console.log('- badge:', visitorForm.badge)
+            console.log('- role:', visitorForm.role)
+            console.log('- profilePhoto:', visitorForm.profilePhoto ? 'Present' : 'Not set')
+            console.log('- rawScannedString:', state.rawScannedId)
+            console.log('=======================================================')
+            
+            createUserMutation.mutate(userData, {
+              onSuccess: () => {
+                handleReset()
+                setEquipmentList([])
+                console.log('Form and equipment list reset after successful submission')
+              }
+            })
           }
         }}
         equipmentList={equipmentList}
@@ -287,11 +326,23 @@ function ScanningPage() {
         <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">Scanning Area</span>
         <div className="flex-1 max-w-xl relative">
           <input
-            type="text"
-            value={scannedId}
+            ref={inputRef}
+            type="password"
+            value={rawScannedId}
             onChange={(e) => {
-              setScannedId(e.target.value)
-              handleIdVerification(e.target.value)
+              const inputValue = e.target.value
+              setRawScannedId(inputValue)
+
+              // If it's a card string, process immediately
+              if (inputValue.includes('Name:') || inputValue.includes('name:') || /\/idnumber:/i.test(inputValue) || /\/tell:/i.test(inputValue) || /\/department:/i.test(inputValue)) {
+                handleIdVerification(inputValue)
+                return
+              }
+
+              // For regular input, trigger verification attempt
+              if (!inputValue.match(/^\.*$/)) {
+                handleIdVerification(inputValue)
+              }
             }}
             className="w-full px-3 py-1.5 border-2 border-[#1A3263] rounded text-sm focus:outline-none focus:border-orange-500 text-black"
             placeholder="Scan or enter ID..."
@@ -379,13 +430,13 @@ function ScanningPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">ID Number</label>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">National ID</label>
                     <input
                       type="text"
-                      value={visitorForm.idNumber}
-                      onChange={(e) => handleInputChange('idNumber', e.target.value)}
+                      value={visitorForm.nationalId}
+                      onChange={(e) => handleInputChange('nationalId', e.target.value)}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black bg-white"
-                      placeholder="Enter ID number"
+                      placeholder="Enter national ID number"
                     />
                   </div>
                 </div>
@@ -432,18 +483,6 @@ function ScanningPage() {
                 </div>
               </div>
 
-              {/* Document Type */}
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Document Type</label>
-                <input
-                  type="text"
-                  value={visitorForm.docType}
-                  onChange={(e) => handleInputChange('docType', e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black bg-white"
-                  placeholder="e.g., National ID, Passport"
-                />
-              </div>
-
               {/* Phone Number */}
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Phone Number</label>
@@ -486,14 +525,14 @@ function ScanningPage() {
                       </span>
                       <input
                         type="tel"
-                        value={visitorForm.mobile}
-                        onChange={(e) => handleInputChange('mobile', e.target.value)}
+                        value={visitorForm.phoneNumber}
+                        onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
                         placeholder="7XX XXX XXX"
                         className="w-full pl-16 pr-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black bg-white"
                         style={{ paddingLeft: `${selectedCountry.code.length * 8 + 16}px` }}
                       />
                     </div>
-                    {visitorForm.mobile && (
+                    {visitorForm.phoneNumber && (
                       <span className="text-green-500 text-lg">✓</span>
                     )}
                   </div>
@@ -606,10 +645,10 @@ function ScanningPage() {
                       onClick={() => handleModeSelect(mode.id)}
                       disabled={isScanning}
                       className={`relative flex flex-col items-center justify-center gap-1 py-2 px-1 rounded border text-center transition-all ${selectedMode === mode.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : isVerified
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50'
+                        ? 'border-blue-500 bg-blue-50'
+                        : isVerified
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50'
                         } ${isScanning ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       {isVerified && (
@@ -653,12 +692,12 @@ function ScanningPage() {
                 <FaSync size={12} /> Refresh
               </button>
               <div className='flex gap-5 ml-2'>
-              <p className='text-green-500 flex text-2xl '>
-                <FaArrowDown size={20}  className='mt-1'/> ({checkInCount})
-              </p>
-              <p className='text-red-500 flex text-2xl'>
-                <FaArrowUp size={20} className='mt-1' /> ({checkOutCount})
-              </p>
+                <p className='text-green-500 flex text-2xl '>
+                  <FaArrowDown size={20} className='mt-1' /> ({checkInCount})
+                </p>
+                <p className='text-red-500 flex text-2xl'>
+                  <FaArrowUp size={20} className='mt-1' /> ({checkOutCount})
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -683,8 +722,8 @@ function ScanningPage() {
                             <div
                               key={i}
                               className={`flex-1 rounded-t transition-all ${isRecording
-                                  ? 'bg-red-500 animate-pulse'
-                                  : 'bg-gray-300'
+                                ? 'bg-red-500 animate-pulse'
+                                : 'bg-gray-300'
                                 }`}
                               style={{
                                 height: isRecording ? `${Math.random() * 100}%` : '20%',

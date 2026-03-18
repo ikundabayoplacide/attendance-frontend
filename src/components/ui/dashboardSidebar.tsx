@@ -180,11 +180,11 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: Dashboa
         {path: '/dashboard/attendedVisitor', label: 'Visitors' },
       ]
     }] : []),
-    ...(user && checkPermissions(user, 'visitor:list') ? [{
-      path: '/dashboard/hosts', 
-      icon: FaUserCheck, 
-      label: 'Hosts'
-    }] : []),
+    // ...(user && checkPermissions(user, 'visitor:list') ? [{
+    //   path: '/dashboard/hosts', 
+    //   icon: FaUserCheck, 
+    //   label: 'Hosts'
+    // }] : []),
     ...(user && checkPermissions(user, 'appointment:list') ? [{
       path: '/dashboard/appointments', 
       icon: FaCalendarAlt, 

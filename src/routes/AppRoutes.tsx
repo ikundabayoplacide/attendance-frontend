@@ -14,7 +14,7 @@ import Settings from '../pages/dashboard/settings'
 import Login from '../pages/auth/LoginPage'
 import Register from '../pages/auth/RegisterPage'
 import ResetPassword from '../pages/auth/ResetPasswordPage'
-import Hostmanagement from '../pages/dashboard/hosting'
+// import Hostmanagement from '../pages/dashboard/hosting'
 import Customers from '../pages/dashboard/accounts'
 import ActiveCustomers from '../pages/dashboard/accounts/active'
 import InactiveCustomers from '../pages/dashboard/accounts/inactive'
@@ -93,7 +93,7 @@ function AppRoutes() {
         <Route path="equipments/add" element={<AddEquipmentPage/>}/>
         <Route path="handover" element={<HandoverManagement/>}/>
         <Route path="staff" element={<Staff/>}/>
-        <Route path="hosts" element={<Hostmanagement/>}/>
+        {/* <Route path="hosts" element={<Hostmanagement/>}/> */}
         <Route path="appointments" element={<AppointmentPage/>}/>
         <Route path="appointments/viaCalender" element={<CalendarViewPage/>}/>
         <Route path="reports" element={<ReportPage/>}/>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { FaUsers, FaUserCheck, FaUserTimes, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint, FaUserClock, FaTrash } from 'react-icons/fa'
 import ExportReportModal from '../../../components/modals/ExportReportModal'
 import { useAttendanceList, useCheckout, useDeleteAttendance } from '../../../hooks/useAttendance'
@@ -9,6 +9,11 @@ import { toast } from 'react-toastify'
 function AttendedVisitors() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [filterType, setFilterType] = useState<'day' | 'time'>('day')
+  const [startDateTime, setStartDateTime] = useState('')
+  const [endDateTime, setEndDateTime] = useState('')
+  const [filterDepartment, setFilterDepartment] = useState('')
+  const [shouldFilter, setShouldFilter] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
   const { currentUser } = useAuth()
@@ -17,6 +22,8 @@ function AttendedVisitors() {
   const { data: attendanceData, isLoading, error } = useAttendanceList()
   const checkoutMutation = useCheckout()
   const deleteMutation = useDeleteAttendance()
+
+  const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Operations', 'Finance']
 
   const handleExport = (type: 'pdf' | 'word' | 'print') => {
     setExportFormat(type)
@@ -46,6 +53,14 @@ function AttendedVisitors() {
       }
     }
   }
+
+  useEffect(() => {
+    if (startDateTime && endDateTime) {
+      setShouldFilter(true)
+    } else if (!startDateTime && !endDateTime) {
+      setShouldFilter(false)
+    }
+  }, [startDateTime, endDateTime])
 
   const exportFields = [
     { id: 'name', label: 'Visitor Name' },
@@ -94,9 +109,21 @@ function AttendedVisitors() {
       const status = record.checkOut ? 'checked_out' : 'checked_in'
       const matchesStatus = statusFilter === 'all' || status === statusFilter
       
-      return matchesSearch && matchesStatus
+      const matchesDepartment = !filterDepartment || user.department === filterDepartment
+      
+      let matchesDateTime = true
+      if (shouldFilter && startDateTime && endDateTime) {
+        if (filterType === 'day') {
+          matchesDateTime = record.date >= startDateTime && record.date <= endDateTime
+        } else {
+          const checkInTime = new Date(record.checkIn).toTimeString().slice(0, 5)
+          matchesDateTime = checkInTime >= startDateTime && checkInTime <= endDateTime
+        }
+      }
+      
+      return matchesSearch && matchesStatus && matchesDepartment && matchesDateTime
     })
-  }, [attendedVisitors, searchTerm, statusFilter])
+  }, [attendedVisitors, searchTerm, statusFilter, filterDepartment, shouldFilter, startDateTime, endDateTime, filterType])
 
   const getStatusColor = (hasCheckOut: boolean) => {
     return hasCheckOut ? 'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800'
@@ -129,6 +156,16 @@ function AttendedVisitors() {
 
   return (
     <div className="flex flex-col h-full">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          input[type="date"]::-webkit-calendar-picker-indicator,
+          input[type="time"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 1;
+            filter: brightness(0) saturate(100%);
+          }
+        `
+      }} />
       <div className="flex-shrink-0 mb-6">
         <h1 className="!text-3xl font-bold text-gray-900">Attended Visitors</h1>
         <p className="text-gray-600">Track visitor attendance in real-time</p>
@@ -175,6 +212,38 @@ function AttendedVisitors() {
                 <option value="all">All Status</option>
                 <option value="checked_in">Checked In</option>
                 <option value="checked_out">Checked Out</option>
+              </select>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="day">Day</option>
+                <option value="time">Time</option>
+              </select>
+              <input
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="Start"
+                value={startDateTime}
+                onChange={(e) => setStartDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              />
+              <input
+                type={filterType === 'day' ? 'date' : 'time'}
+                placeholder="End"
+                value={endDateTime}
+                onChange={(e) => setEndDateTime(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              />
+              <select
+                value={filterDepartment}
+                onChange={(e) => setFilterDepartment(e.target.value)}
+                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+              >
+                <option value="">All Departments</option>
+                {departments.map(dept => (
+                  <option key={dept} value={dept}>{dept}</option>
+                ))}
               </select>
               <div className="flex items-center gap-2">
                 <button

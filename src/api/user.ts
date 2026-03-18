@@ -15,14 +15,18 @@ export type UsersListParams = {
   search?: string
 };
 export type UserCreateRequest= {
-  email: string;
   fullName: string;
+  email?: string;
+  password?: string;
+  scannedId: string;
   phoneNumber?: string;
-  category?:string;
-  department?:string;
-  company?:string;
   status?: 'active' | 'inactive' | 'pending' | 'rejected';
-  password?:string;
+  category?: string;
+  badge?: string;
+  role?: string;
+  company?: string;
+  department?: string;
+  nationalId?: string;
 }
 
 export type UserUpdateRequest = Partial<UserCreateRequest>;
