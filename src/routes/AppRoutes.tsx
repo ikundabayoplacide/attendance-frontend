@@ -47,6 +47,7 @@ import Staff from '../pages/dashboard/Roles/staff'
 import ProtocalPage from '../pages/dashboard/protocals'
 import ApprovalPending from '../pages/auth/approval_required'
 import EditRole from '../pages/dashboard/settings/edit_role'
+import Cards from '../pages/dashboard/cards'
 
 
 function AppRoutes() {
@@ -91,6 +92,7 @@ function AppRoutes() {
         <Route path='protocals' element={<ProtocalPage/>}/>
         <Route path='equipments' element={<Equipment/>}/>
         <Route path="equipments/add" element={<AddEquipmentPage/>}/>
+        <Route path='cards' element={<Cards/>}/>
         <Route path="handover" element={<HandoverManagement/>}/>
         <Route path="staff" element={<Staff/>}/>
         {/* <Route path="hosts" element={<Hostmanagement/>}/> */}

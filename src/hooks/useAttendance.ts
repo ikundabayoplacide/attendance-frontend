@@ -14,7 +14,6 @@ type AttendanceListResponse = {
 };
 
 //Query keys for Attendance
-
 export const attendanceKeys = {
     all: ['attendance'] as const,
     lists: () => [...attendanceKeys.all, 'list'] as const,

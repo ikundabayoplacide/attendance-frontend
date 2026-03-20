@@ -212,6 +212,13 @@ function DashboardSidebar({ isOpen, onClose, userRole = 'owner', user }: Dashboa
         { path: '/dashboard/equipments/add', label: 'Add New Equipment' },
       ]
     }] : []),
+    
+    ...(user && checkPermissions(user,'card:list') ? [{
+      path: '/dashboard/cards',
+      icon: FaCreditCard,
+      label: 'Access Cards'
+    }] : []),
+
     ...(user && checkPermissions(user, 'handover:list') ? [{
       path:'/dashboard/handover', 
       icon: FaUserCheck, 

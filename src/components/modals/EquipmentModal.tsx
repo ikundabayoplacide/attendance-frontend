@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useGetCards } from '../../hooks/useCard'
 
 interface Equipment {
   type: string
@@ -7,7 +8,7 @@ interface Equipment {
 
 interface Card {
   id: string
-  number: string
+  cardNumber: string
   isAssigned: boolean
   assignedTo?: string
 }
@@ -21,7 +22,7 @@ interface EquipmentModalProps {
   setCardList?: (list: Card[]) => void
 }
 
-function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, cardList, setCardList }: EquipmentModalProps) {
+function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, cardList }: EquipmentModalProps) {
   const [selectedType, setSelectedType] = useState('')
   const [equipmentId, setEquipmentId] = useState('')
   const [customType, setCustomType] = useState('')
@@ -32,18 +33,17 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
   const [selectedAssigned, setSelectedAssigned] = useState<string | null>(null)
   const [searchUnassigned, setSearchUnassigned] = useState('')
   const [searchAssigned, setSearchAssigned] = useState('')
+  const { data: cardsData, isLoading, isError } = useGetCards();
 
-  // Dummy card data
-  const dummyCards: Card[] = [
-    { id: '1', number: '001', isAssigned: false },
-    { id: '2', number: '002', isAssigned: false },
-    { id: '3', number: '003', isAssigned: true, assignedTo: 'John Doe' },
-    { id: '4', number: '004', isAssigned: false },
-    { id: '5', number: '005', isAssigned: true, assignedTo: 'Jane Smith' },
-    { id: '6', number: '006', isAssigned: false },
-  ]
+  // Convert CardEntry to Card format for compatibility
+  const convertedCards: Card[] = cardsData?.result?.map(cardEntry => ({
+    id: cardEntry.id,
+    cardNumber: cardEntry.cardNumber,
+    isAssigned: cardEntry.status === 'assigned',
+    assignedTo: cardEntry.assignedAt ? 'Assigned' : undefined
+  })) || []
 
-  const currentCardList = cardList || dummyCards
+  const currentCardList = cardList || convertedCards
 
   const availableEquipment = ['Laptop', 'Phone', 'Tablet', 'Camera', 'Car', 'Bike', 'Badge', 'Keys']
 
@@ -102,41 +102,18 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
     }
   }
 
-  const handleActivate = () => {
-    if (selectedUnassigned && currentCardList && setCardList) {
-      const updated = currentCardList.map(card =>
-        card.id === selectedUnassigned
-          ? { ...card, isAssigned: true, assignedTo: 'Current Visitor' }
-          : card
-      )
-      setCardList(updated)
-      setSelectedUnassigned(null)
-    }
-  }
 
-  const handleDeactivate = () => {
-    if (selectedAssigned && currentCardList && setCardList) {
-      const updated = currentCardList.map(card =>
-        card.id === selectedAssigned
-          ? { ...card, isAssigned: false, assignedTo: undefined }
-          : card
-      )
-      setCardList(updated)
-      setSelectedAssigned(null)
-    }
-  }
-
-  const unassignedCards = currentCardList.filter(card => !card.isAssigned)
-  const assignedCards = currentCardList.filter(card => card.isAssigned)
+  const unassignedCards = currentCardList.filter((card: Card) => !card.isAssigned)
+  const assignedCards = currentCardList.filter((card: Card) => card.isAssigned)
   const filteredUnassigned = unassignedCards.filter(
-    c =>
-      c.number.includes(searchUnassigned) ||
-      (`BNR${c.number}`).includes(searchUnassigned)
+    (c: Card) =>
+      c.cardNumber.includes(searchUnassigned) ||
+      (`BNR${c.cardNumber}`).includes(searchUnassigned)
   )
   const filteredAssigned = assignedCards.filter(
-    c =>
-      c.number.includes(searchAssigned) ||
-      (`BNR${c.number}`).includes(searchAssigned)
+    (c: Card) =>
+      c.cardNumber.includes(searchAssigned) ||
+      (`BNR${c.cardNumber}`).includes(searchAssigned)
   )
 
   return (
@@ -252,91 +229,85 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
           <div className="flex-1 border-l border-gray-200 pl-6">
             <h4 className="text-lg font-medium text-gray-800 mb-4">Card Management</h4>
 
-            <div className="flex gap-4">
-              {/* Activated / assigned cards */}
-              <div className="flex-1">
-                <h5 className="text-sm font-medium text-gray-700 mb-2">Activated Cards</h5>
-                <input
-                  type="text"
-                  value={searchAssigned}
-                  onChange={e => setSearchAssigned(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full mb-2 px-2 py-1 text-sm border border-gray-300 rounded"
-                />
-                <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
-                  {filteredAssigned.length === 0 ? (
-                    <p className="p-2 text-sm text-gray-500 italic">No cards</p>
-                  ) : (
-                    filteredAssigned.map(card => (
-                      <div
-                        key={card.id}
-                        className="flex items-center px-3 py-2 border-b last:border-b-0 hover:bg-gray-50"
-                      >
-                        <input
-                          type="radio"
-                          name="assigned"
-                          value={card.id}
-                          checked={selectedAssigned === card.id}
-                          onChange={() => setSelectedAssigned(card.id)}
-                          className="mr-2 text-blue-600"
-                        />
-                        <span className="font-medium text-gray-800">BNR{card.number}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-                {selectedAssigned && (
-                  <button
-                    onClick={handleDeactivate}
-                    className="mt-2 w-full px-3 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
-                  >
-                    Deactivate
-                  </button>
-                )}
+            {isLoading ? (
+              <div className="flex items-center justify-center h-48">
+                <div className="text-gray-500">Loading cards...</div>
               </div>
+            ) : isError ? (
+              <div className="flex items-center justify-center h-48">
+                <div className="text-red-500">Error loading cards</div>
+              </div>
+            ) : (
+              <div className="flex gap-4">
+                {/* Activated / assigned cards */}
+                <div className="flex-1">
+                  <h5 className="text-sm font-medium text-gray-700 mb-2">Assigned Cards</h5>
+                  <input
+                    type="text"
+                    value={searchAssigned}
+                    onChange={e => setSearchAssigned(e.target.value)}
+                    placeholder="Search..."
+                    className="w-full mb-2 px-2 py-1 text-sm border border-gray-300 rounded"
+                  />
+                  <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
+                    {filteredAssigned.length === 0 ? (
+                      <p className="p-2 text-sm text-gray-500 italic">No cards</p>
+                    ) : (
+                      filteredAssigned.map((card: Card) => (
+                        <div
+                          key={card.id}
+                          className="flex items-center px-3 py-2 border-b last:border-b-0 hover:bg-gray-50"
+                        >
+                          <input
+                            type="radio"
+                            name="assigned"
+                            value={card.id}
+                            checked={selectedAssigned === card.id}
+                            onChange={() => setSelectedAssigned(card.id)}
+                            className="mr-2 text-blue-600"
+                          />
+                          <span className="font-medium text-gray-800">{card.cardNumber}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
 
-              {/* Unactivated / unassigned cards */}
-              <div className="flex-1">
-                <h5 className="text-sm font-medium text-gray-700 mb-2">Unactivated Cards</h5>
-                <input
-                  type="text"
-                  value={searchUnassigned}
-                  onChange={e => setSearchUnassigned(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full mb-2 px-2 py-1 text-sm border border-gray-300 rounded"
-                />
-                <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
-                  {filteredUnassigned.length === 0 ? (
-                    <p className="p-2 text-sm text-gray-500 italic">No cards</p>
-                  ) : (
-                    filteredUnassigned.map(card => (
-                      <div
-                        key={card.id}
-                        className="flex items-center px-3 py-2 border-b last:border-b-0 hover:bg-gray-50"
-                      >
-                        <input
-                          type="radio"
-                          name="unassigned"
-                          value={card.id}
-                          checked={selectedUnassigned === card.id}
-                          onChange={() => setSelectedUnassigned(card.id)}
-                          className="mr-2 text-blue-600"
-                        />
-                        <span className="font-medium text-gray-800">BNR{card.number}</span>
-                      </div>
-                    ))
-                  )}
+                {/* Unactivated / unassigned cards */}
+                <div className="flex-1">
+                  <h5 className="text-sm font-medium text-gray-700 mb-2">Active Cards</h5>
+                  <input
+                    type="text"
+                    value={searchUnassigned}
+                    onChange={e => setSearchUnassigned(e.target.value)}
+                    placeholder="Search..."
+                    className="w-full mb-2 px-2 py-1 text-sm border border-gray-300 rounded"
+                  />
+                  <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
+                    {filteredUnassigned.length === 0 ? (
+                      <p className="p-2 text-sm text-gray-500 italic">No cards</p>
+                    ) : (
+                      filteredUnassigned.map((card: Card) => (
+                        <div
+                          key={card.id}
+                          className="flex items-center px-3 py-2 border-b last:border-b-0 hover:bg-gray-50"
+                        >
+                          <input
+                            type="radio"
+                            name="unassigned"
+                            value={card.id}
+                            checked={selectedUnassigned === card.id}
+                            onChange={() => setSelectedUnassigned(card.id)}
+                            className="mr-2 text-blue-600"
+                          />
+                          <span className="font-medium text-gray-800">{card.cardNumber}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
-                {selectedUnassigned && (
-                  <button
-                    onClick={handleActivate}
-                    className="mt-2 w-full px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                  >
-                    Activate
-                  </button>
-                )}
               </div>
-            </div>
+            )}
           </div>
         </div>
 

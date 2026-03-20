@@ -191,8 +191,8 @@ function AttendedUsers() {
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex-1 min-w-[200px] relative">
+            <div className="flex items-center gap-2 overflow-x-auto">
+              <div className="min-w-[200px] max-w-[250px] relative flex-shrink-0">
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
@@ -205,7 +205,7 @@ function AttendedUsers() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                className="px-3 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent flex-shrink-0 min-w-[120px]"
               >
                 <option value="all">All Status</option>
                 <option value="checked_in">Checked In</option>
@@ -214,7 +214,7 @@ function AttendedUsers() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as 'day' | 'time')}
-                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                className="px-3 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent flex-shrink-0 min-w-[80px]"
               >
                 <option value="day">Day</option>
                 <option value="time">Time</option>
@@ -224,49 +224,49 @@ function AttendedUsers() {
                 placeholder="Start"
                 value={startDateTime}
                 onChange={(e) => setStartDateTime(e.target.value)}
-                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                className="px-3 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent flex-shrink-0 min-w-[140px]"
               />
               <input
                 type={filterType === 'day' ? 'date' : 'time'}
                 placeholder="End"
                 value={endDateTime}
                 onChange={(e) => setEndDateTime(e.target.value)}
-                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                className="px-3 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent flex-shrink-0 min-w-[140px]"
               />
               <select
                 value={filterDepartment}
                 onChange={(e) => setFilterDepartment(e.target.value)}
-                className="px-4 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent"
+                className="px-3 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A3263] focus:border-transparent flex-shrink-0 min-w-[140px]"
               >
                 <option value="">All Departments</option>
                 {departments.map(dept => (
                   <option key={dept} value={dept}>{dept}</option>
                 ))}
               </select>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 flex-shrink-0">
                 <button
                   onClick={() => handleExport('pdf')}
-                  className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                  className="flex items-center gap-1 px-5 py-3 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
                   title="Export as PDF"
                 >
-                  <FaFilePdf size={16} />
-                  <span className="hidden sm:inline">PDF</span>
+                  <FaFilePdf size={14} />
+                  <span className="hidden lg:inline text-xs">PDF</span>
                 </button>
                 <button
                   onClick={() => handleExport('word')}
-                  className="flex items-center gap-2 px-3 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                  className="flex items-center gap-1 px-5 py-3 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
                   title="Export as Word"
                 >
-                  <FaFileWord size={16} />
-                  <span className="hidden sm:inline">Word</span>
+                  <FaFileWord size={14} />
+                  <span className="hidden lg:inline text-xs">Word</span>
                 </button>
                 <button
                   onClick={() => handleExport('print')}
-                  className="flex items-center gap-2 px-3 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
+                  className="flex items-center gap-1 px-5 py-3 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors"
                   title="Print"
                 >
-                  <FaPrint size={16} />
-                  <span className="hidden sm:inline">Print</span>
+                  <FaPrint size={14} />
+                  <span className="hidden lg:inline text-xs">Print</span>
                 </button>
               </div>
             </div>
@@ -276,6 +276,7 @@ function AttendedUsers() {
             <table className="w-full">
               <thead className='bg-[#1A3263]'>
                 <tr>
+                  <th className="text-left py-3 px-4 font-medium text-white">No</th>
                   <th className="text-left py-3 px-4 font-medium text-white">User</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Department</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Check In</th>
@@ -286,7 +287,7 @@ function AttendedUsers() {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((record) => {
+                {filteredUsers.map((record, index) => {
                   const user = record.user
                   if (!user) return null
                   
@@ -295,13 +296,14 @@ function AttendedUsers() {
                   
                   return (
                     <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-4 px-4 text-gray-700">{index + 1}</td>
                       <td className="py-4 px-4">
                         <div>
                           <p className="font-medium text-gray-900">{user.fullName}</p>
                           <p className="text-sm text-gray-500">{user.email}</p>
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-gray-700">{user.department || 'N/A'}</td>
+                      <td className="py-4 px-4 text-gray-700">{user.department || '-'}</td>
                       <td className="py-4 px-4 text-gray-700">{formatTime(record.checkIn)}</td>
                       <td className="py-4 px-4 text-gray-700">{record.checkOut ? formatTime(record.checkOut) : '-'}</td>
                       <td className="py-4 px-4">
@@ -311,7 +313,7 @@ function AttendedUsers() {
                       </td>
                       <td className="py-4 px-4">
                         <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
-                          {record.badge || user.nationalId || 'N/A'}
+                          {user.badge || '-'}
                         </span>
                       </td>
                       <td className="py-4 px-4">

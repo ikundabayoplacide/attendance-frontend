@@ -166,7 +166,7 @@ function RecentAttendee({ taps, onRefresh, checkInCount, checkOutCount, isLoadin
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                {['No', 'Names', 'Scanned ID', 'Entry Time', 'Exit Time'].map(h => (
+                {['No', 'Names','Phone Number', 'Scanned ID', 'Entry Time', 'Exit Time','Department'].map(h => (
                   <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-600">{h}</th>
                 ))}
               </tr>
@@ -175,10 +175,12 @@ function RecentAttendee({ taps, onRefresh, checkInCount, checkOutCount, isLoadin
               {currentTaps.map((tap, idx) => (
                 <tr key={tap.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                   <td className="px-4 py-2 text-gray-700">{startIndex + idx + 1}</td>
-                  <td className="px-4 py-2 text-gray-800 font-medium">{tap.user?.fullName || 'N/A'}</td>
-                  <td className="px-4 py-2 text-gray-600">{tap.user?.scannedId || 'N/A'}</td>
+                  <td className="px-4 py-2 text-gray-800 font-medium">{tap.user?.fullName || '-'}</td>
+                  <td className="px-4 py-2 text-gray-600">{tap.user?.phoneNumber || '-'}</td>
+                  <td className="px-4 py-2 text-gray-600">{tap.user?.scannedId || '-'}</td>
                   <td className="px-4 py-2 text-gray-600">{formatDate(tap.checkIn)}</td>
                   <td className="px-4 py-2 text-gray-600">{formatDate(tap.checkOut)}</td>
+                  <td className="px-4 py-2 text-gray-600">{tap.user?.department||'-'}</td>
                 </tr>
               ))}
               {currentTaps.length === 0 && !isLoading && (

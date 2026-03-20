@@ -70,7 +70,7 @@ export type User = {
     category?:string;
     department?:string;
     blacklistedAt?:string
-    campany?:string;
+    company?:string;
     roleType?: string;
     isActive: boolean;
     isVerified: boolean;

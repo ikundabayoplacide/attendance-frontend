@@ -4,6 +4,30 @@ import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSea
 import ScheduleAppointmentModal from '../../../components/modals/ScheduleAppointmentModal'
 import { checkPermissions } from '../../../utils/helper'
 import { useAuth } from '../../../hooks/useAuth'
+import { useGetAppointments } from '../../../hooks/useAppointment'
+
+// Define appointment type based on backend response
+interface Appointment {
+  id: string | number;
+  userId: string;
+  purpose: string;
+  host: string;
+  status: 'pending' | 'confirmed' | 'canceled' | 'onhold' | 'completed';
+  department: string;
+  company: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  timeDuration: string;
+  user: {
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+  };
+  appointmentLocation: string;
+  note: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 function AppointmentPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -11,105 +35,42 @@ function AppointmentPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
   const [showScheduleModal, setShowScheduleModal] = useState(false)
-  const [openDropdown, setOpenDropdown] = useState<number | null>(null)
+  const [openDropdown, setOpenDropdown] = useState<string | number | null>(null)
+  const getAllAppointmments=useGetAppointments();
 
-  const handleScheduleAppointment = (appointmentData: any) => {
-    console.log('Scheduling appointment:', appointmentData)
-    // Add appointment scheduling logic here
+  const handleScheduleAppointment = () => {
     setShowScheduleModal(false)
   }
 
-  // Get current role parameter
-  // const currentRole = searchParams.get('role') || 'customer'
-
+  const { data: appointmentsData, isLoading, isError, error } = getAllAppointmments;
+  
+  // Extract appointments array from response and ensure proper typing
+  const appointments: Appointment[] = (appointmentsData?.result || []).map((apt: any) => ({...apt,id: apt.id || apt._id || Math.random().toString(),}));
+  
   const stats = [
-    { title: 'Total Appointments', value: '32', icon: FaCalendarAlt, color: 'bg-blue-500' },
-    { title: 'Confirmed', value: '24', icon: FaCalendarCheck, color: 'bg-green-500' },
-    { title: 'Pending', value: '6', icon: FaClock, color: 'bg-yellow-500' },
-    { title: 'Cancelled', value: '2', icon: FaCalendarTimes, color: 'bg-red-500' }
+    { title: 'Total Appointments', value: appointments.length.toString(), icon: FaCalendarAlt, color: 'bg-blue-500' },
+    { title: 'Confirmed', value: appointments.filter(apt => apt.status === 'confirmed').length.toString(), icon: FaCalendarCheck, color: 'bg-green-500' },
+    { title: 'Pending', value: appointments.filter(apt => apt.status === 'pending').length.toString(), icon: FaClock, color: 'bg-yellow-500' },
+    { title: 'Cancelled', value: appointments.filter(apt => apt.status === 'canceled').length.toString(), icon: FaCalendarTimes, color: 'bg-red-500' }
   ]
 
-  const appointments = [
-    {
-      id: 1,
-      visitorName: 'John Smith',
-      visitorEmail: 'john.smith@techcorp.com',
-      visitorPhone: '+1 (555) 123-4567',
-      company: 'TechCorp Inc.',
-      purpose: 'Business Meeting',
-      host: 'Sarah Johnson',
-      department: 'Sales',
-      date: '2024-01-15',
-      time: '10:00',
-      duration: '2 hours',
-      status: 'Confirmed',
-      location: 'Conference Room A',
-      notes: 'Quarterly review meeting'
-    },
-    {
-      id: 2,
-      visitorName: 'Alice Brown',
-      visitorEmail: 'alice@designstudio.com',
-      visitorPhone: '+1 (555) 987-6543',
-      company: 'Design Studio',
-      purpose: 'Interview',
-      host: 'Mike Davis',
-      department: 'HR',
-      date: '2024-01-15',
-      time: '14:30',
-      duration: '1 hour',
-      status: 'Confirmed',
-      location: 'HR Office',
-      notes: 'Senior Designer position interview'
-    },
-    {
-      id: 3,
-      visitorName: 'Robert Wilson',
-      visitorEmail: 'robert@consulting.com',
-      visitorPhone: '+1 (555) 456-7890',
-      company: 'Consulting Group',
-      purpose: 'Consultation',
-      host: 'Emily Chen',
-      department: 'Operations',
-      date: '2024-01-16',
-      time: '09:00',
-      duration: '3 hours',
-      status: 'Pending',
-      location: 'Meeting Room B',
-      notes: 'Process optimization consultation'
-    },
-    {
-      id: 4,
-      visitorName: 'Maria Garcia',
-      visitorEmail: 'maria@marketingpro.com',
-      visitorPhone: '+1 (555) 321-0987',
-      company: 'Marketing Pro',
-      purpose: 'Presentation',
-      host: 'Tom Anderson',
-      department: 'Marketing',
-      date: '2024-01-17',
-      time: '11:00',
-      duration: '1.5 hours',
-      status: 'Cancelled',
-      location: 'Presentation Hall',
-      notes: 'Marketing strategy presentation - Cancelled due to scheduling conflict'
-    }
-  ]
 
-  const filteredAppointments = appointments.filter(appointment => {
-    const matchesSearch = appointment.visitorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredAppointments = appointments.filter((appointment: Appointment) => {
+    const matchesSearch = 
+      appointment.host.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.host.toLowerCase().includes(searchTerm.toLowerCase())
+      appointment.purpose.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || appointment.status.toLowerCase() === statusFilter.toLowerCase()
     return matchesSearch && matchesStatus
   })
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Confirmed': return 'bg-green-100 text-green-800'
-      case 'Pending': return 'bg-yellow-100 text-yellow-800'
-      case 'Cancelled': return 'bg-red-100 text-red-800'
-      case 'Completed': return 'bg-blue-100 text-blue-800'
+    switch (status.toLowerCase()) {
+      case 'confirmed': return 'bg-green-100 text-green-800'
+      case 'pending': return 'bg-yellow-100 text-yellow-800'
+      case 'canceled': return 'bg-red-100 text-red-800'
+      case 'completed': return 'bg-blue-100 text-blue-800'
+      case 'onhold': return 'bg-orange-100 text-orange-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -206,11 +167,12 @@ function AppointmentPage() {
             <table className="w-full">
               <thead className='bg-[#1A3263]'>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-white">Visitor</th>
+                   <th className="text-left py-3 px-4 font-medium text-white">No</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Appointee</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Company</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Purpose</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Host</th>
-                  <th className="text-left py-3 px-4 font-medium text-white">Date_and_Time</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">Date & Time</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Duration</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Location</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Status</th>
@@ -218,116 +180,135 @@ function AppointmentPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredAppointments.map((appointment) => (
-                  <tr key={appointment.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="font-medium text-gray-900">{appointment.visitorName}</p>
-                        <p className="text-sm text-gray-500">{appointment.visitorEmail}</p>
-                        <p className="text-sm text-gray-500">{appointment.visitorPhone}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-700">{appointment.company}</td>
-                    <td className="py-4 px-4 text-gray-700">{appointment.purpose}</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <FaUser className="text-gray-400" size={14} />
-                        <div>
-                          <p className="font-medium text-gray-900">{appointment.host}</p>
-                          <p className="text-sm text-gray-500">{appointment.department}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="font-medium text-gray-900">{appointment.date}</p>
-                        <p className="text-sm text-gray-500">{appointment.time}</p>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-gray-700">{appointment.duration}</td>
-                    <td className="py-4 px-4 text-gray-700">{appointment.location}</td>
-                    <td className="py-4 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
-                        {appointment.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="relative">
-                        <button
-                          onClick={() => setOpenDropdown(openDropdown === appointment.id ? null : appointment.id)}
-                          className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
-                        >
-                          <FaEllipsisV size={14} />
-                        </button>
-                        {openDropdown === appointment.id && (
-                          <>
-                            <div
-                              className="fixed inset-0 z-10"
-                              onClick={() => setOpenDropdown(null)}
-                            />
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
-
-                              {currentUser && checkPermissions(currentUser, 'appointment:view') && (
-                                <button
-                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                  onClick={() => {
-                                    console.log('View', appointment.id)
-                                    setOpenDropdown(null)
-                                  }}
-                                >
-                                  <FaEye size={14} className="text-blue-600" />
-                                  View Details
-                                </button>
-                              )}
-                              {currentUser && checkPermissions(currentUser, 'appointment:edit') && (
-                                <button
-                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                  onClick={() => {
-                                    console.log('Edit', appointment.id)
-                                    setOpenDropdown(null)
-                                  }}
-                                >
-                                  <FaEdit size={14} className="text-green-600" />
-                                  Edit
-                                </button>
-                              )}
-                              {currentUser && checkPermissions(currentUser, 'appointment:confirm') && (
-                                <button
-                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                  onClick={() => {
-                                    console.log('Confirm', appointment.id)
-                                    setOpenDropdown(null)
-                                  }}
-                                >
-                                  <FaCalendarCheck size={14} className="text-green-600" />
-                                  Confirm
-                                </button>
-                              )}
-                            {currentUser && checkPermissions(currentUser, 'appointment:cancel') && (
-                              <button
-                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                onClick={() => {
-                                  console.log('Cancel', appointment.id)
-                                  setOpenDropdown(null)
-                                }}
-                              >
-                                <FaCalendarTimes size={14} className="text-red-600" />
-                                Cancel
-                              </button>
-                              )}
-                            </div>
-                          </>
-                        )}
-                      </div>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={9} className="py-8 text-center text-gray-500">
+                      Loading appointments...
                     </td>
                   </tr>
-                ))}
+                ) : isError ? (
+                  <tr>
+                    <td colSpan={9} className="py-8 text-center text-red-500">
+                      Error loading appointments: {error?.message || 'Unknown error'}
+                    </td>
+                  </tr>
+                ) : filteredAppointments.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="py-8 text-center text-gray-500">
+                      No appointments found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredAppointments.map((appointment: Appointment,index) => (
+                    <tr key={appointment.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className='py-4 px-4 text-gray-700'>{index+1}</td>
+                      <td className="py-4 px-4">
+                        <div>
+                          <p className="font-medium text-gray-900">{appointment?.user?.fullName}</p>
+                          <p className="text-sm text-gray-500">{appointment?.user?.email}</p>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-700">{appointment.company||'-'}</td>
+                      <td className="py-4 px-4 text-gray-700">{appointment.purpose}</td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <FaUser className="text-gray-400" size={14} />
+                          <div>
+                            <p className="font-medium text-gray-900">{appointment.host}</p>
+                            <p className="text-sm text-gray-500">{appointment.department}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div>
+                          <p className="font-medium text-gray-900">{appointment.appointmentDate}</p>
+                          <p className="text-sm text-gray-500">{appointment.appointmentTime}</p>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-gray-700">{appointment.timeDuration}</td>
+                      <td className="py-4 px-4 text-gray-700">{appointment.appointmentLocation}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
+                          {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpenDropdown(openDropdown === appointment.id ? null : appointment.id)}
+                            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                          >
+                            <FaEllipsisV size={14} />
+                          </button>
+                          {openDropdown === appointment.id && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setOpenDropdown(null)}
+                              />
+                              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                                {currentUser && checkPermissions(currentUser, 'appointment:view') && (
+                                  <button
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                    onClick={() => {
+                                      console.log('View', appointment.id)
+                                      setOpenDropdown(null)
+                                    }}
+                                  >
+                                    <FaEye size={14} className="text-blue-600" />
+                                    View Details
+                                  </button>
+                                )}
+                                {currentUser && checkPermissions(currentUser, 'appointment:edit') && (
+                                  <button
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                    onClick={() => {
+                                      console.log('Edit', appointment.id)
+                                      setOpenDropdown(null)
+                                    }}
+                                  >
+                                    <FaEdit size={14} className="text-green-600" />
+                                    Edit
+                                  </button>
+                                )}
+                                {currentUser && checkPermissions(currentUser, 'appointment:confirm') && (
+                                  <button
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                    onClick={() => {
+                                      console.log('Confirm', appointment.id)
+                                      setOpenDropdown(null)
+                                    }}
+                                  >
+                                    <FaCalendarCheck size={14} className="text-green-600" />
+                                    Confirm
+                                  </button>
+                                )}
+                                {currentUser && checkPermissions(currentUser, 'appointment:cancel') && (
+                                  <button
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                    onClick={() => {
+                                      console.log('Cancel', appointment.id)
+                                      setOpenDropdown(null)
+                                    }}
+                                  >
+                                    <FaCalendarTimes size={14} className="text-red-600" />
+                                    Cancel
+                                  </button>
+                                )}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
-          {/* Empty State */}
-          {filteredAppointments.length === 0 && (
+          {/* Empty State - Only show when not loading and no data */}
+          {!isLoading && !isError && filteredAppointments.length === 0 && (
             <div className="p-8 text-center">
               <FaCalendarAlt className="mx-auto text-gray-400 mb-4" size={48} />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments found</h3>
