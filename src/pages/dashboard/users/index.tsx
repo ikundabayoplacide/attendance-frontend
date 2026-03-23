@@ -10,7 +10,7 @@ import ExportReportModal from '../../../components/modals/ExportReportModal'
 import { checkPermissions } from '../../../utils/helper'
 import { useAuth } from '../../../hooks/useAuth'
 import { UserCreateRequest, UserUpdateRequest } from '../../../api/user'
-import { activate, CreateUser, GetAllUser, UpdateUser } from '../../../hooks/useUser'
+import { useActivateUser, useCreateUser, useGetUsers, useUpdateUser } from '../../../hooks/useUser'
 
 function Users() {
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ function Users() {
   const activateUser = activate();
 
   // Fetching user data
-  const { data: users, isLoading } = GetAllUser();
+  const { data: users, isLoading } = useGetUsers();
   const usersResults = users?.result
 
   // Get current role parameter

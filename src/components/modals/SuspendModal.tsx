@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FaExclamationTriangle, FaTimes } from 'react-icons/fa'
-import { suspendUser } from '../../hooks/useUser'
+import { useSuspendUser } from '../../hooks/useUser'
 
 interface SuspendModalProps {
   isOpen: boolean
@@ -16,7 +16,7 @@ export default function SuspendModal({ isOpen, onClose, onConfirm, fullName, use
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState('')
   
-  const suspendUserMutation = suspendUser()
+  const suspendUserMutation = useSuspendUser()
 
   const suspendReasons = [
     'Violation of terms of service',

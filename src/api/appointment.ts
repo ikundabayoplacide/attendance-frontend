@@ -14,10 +14,16 @@ export type AppointmentCreateRequest = {
     userId: string;
     purpose: string;
     host: string;
-    status?: 'pending' | 'confirmed' | 'canceled' | 'onhold' | 'completed';
+    user?:{
+        fullName: string;
+        email: string;
+        phoneNumber: string;
+    };
+    status: 'pending' | 'confirmed' | 'canceled' | 'onhold' | 'completed';
     department: string;
     company: string;
     appointmentDate: string;
+    cancelReason?:string|null;
     appointmentTime: string;
     timeDuration: string;
     appointmentLocation: string;
@@ -32,12 +38,19 @@ export type AppointmentUpdateRequest = {
     department?: string;
     company?: string;
     appointmentDate?: string;
+    cancelReason?:string;
     appointmentTime?: string;
     timeDuration?: string;
     appointmentLocation?: string;
     note?:string;
 }
-
+export type AppointmentReschedule={
+    reasonToReschedule?:string;
+    appointmentDate?:string;
+    appointmentTime?:string;
+    appointmentLocation?:string;
+    timeDuration?:string;
+}
 export type AppointmentListResponse=ServiceResponse<AppointmentCreateRequest[]>
 export type AppointmentResponse=ServiceResponse<AppointmentCreateRequest>
 
@@ -100,8 +113,8 @@ export const appointmentsApi={
     },
 
     //cancel appointment
-    cancel:async(id:string):Promise<AppointmentResponse>=>{
-        const response=await client.put(`/appointments/cancel/${id}`);
+    cancel:async(id:string, cancelReason: string):Promise<AppointmentResponse>=>{
+        const response=await client.put(`/appointments/cancel/${id}`, { cancelReason });
         return response.data;
     },
 
@@ -116,6 +129,12 @@ export const appointmentsApi={
         const response=await client.put(`/appointments/complete/${id}`);
         return response.data;
     }, 
+
+    //Reschedule appointment
+    reschedule:async(id:string, payload:AppointmentReschedule):Promise<AppointmentResponse>=>{
+        const response=await client.put(`/appointments/reschedule/${id}`, payload);
+        return response.data;
+    },
 
     update:async(id:string,payload:AppointmentUpdateRequest):Promise<AppointmentResponse>=>{
         const response=await client.put(`/appointments/${id}`,payload);

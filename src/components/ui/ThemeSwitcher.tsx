@@ -32,7 +32,7 @@ function ThemeSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-600 hover:text-[#1A3263] hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2 text-white hover:text-[#1A3263] hover:bg-gray-100 rounded-lg transition-colors"
         title={`Current theme: ${currentThemeOption?.label}`}
       >
         <CurrentIcon size={18} />

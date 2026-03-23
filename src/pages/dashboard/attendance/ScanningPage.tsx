@@ -7,29 +7,33 @@ import AppointmentsModal from '../../../components/modals/AppointmentsModal'
 import RecentAttendee from '../../../components/ui/recentAttendee'
 import { checkPermissions } from '../../../utils/helper'
 import { useAuth } from '../../../hooks/useAuth'
-import { CreateUser } from '../../../hooks/useUser'
 import { useAttendanceList } from '../../../hooks/useAttendance'
-
+import { useGetAppointments } from '../../../hooks/useAppointment'
+import { useCreateUser } from '../../../hooks/useUser'
 const avatimage = '/images/avartImage.avif'
 
 function ScanningPage() {
   const { currentUser } = useAuth()
   const { data: attendees, isLoading, isError, refetch } = useAttendanceList()
   const inputRef = useRef<HTMLInputElement>(null)
+  // fetch and count all appointments
+  const { data: appointmentsData } = useGetAppointments()
+  const countAppointment = appointmentsData?.result?.length || 0;
+
   const [state, setState] = useState({
     selectedMode: '', isScanning: false, hasAppointment: false,
     showEquipmentModal: false, showAppointmentModal: false, showAppointmentsModal: false,
     rawScannedId: '', verificationStatus: 'idle' as 'idle' | 'verifying' | 'success' | 'error',
     selectedDocType: 'national-id' as 'driving-license' | 'national-id' | 'passport' | 'others',
-    showCountryDropdown: false, appointments: 4, checkInCount: 2, checkOutCount: 3
+    showCountryDropdown: false, appointments: 0
   })
   const [equipmentList, setEquipmentList] = useState<any[]>([])
   const [appointmentDetails, setAppointmentDetails] = useState<any>(null)
   const [selectedCountry, setSelectedCountry] = useState({ code: '+250', flag: '🇷🇼', name: 'Rwanda' })
 
   // Destructure state for easier access
-  const { selectedMode, isScanning, hasAppointment, showEquipmentModal, showAppointmentModal, showAppointmentsModal, rawScannedId, verificationStatus, selectedDocType, showCountryDropdown, appointments } = state
-  
+  const { selectedMode, isScanning, hasAppointment, showEquipmentModal, showAppointmentModal, showAppointmentsModal, rawScannedId, verificationStatus, selectedDocType, showCountryDropdown } = state
+ 
   // Helper functions to update state
   const setRawScannedId = (value: string) => setState(s => ({ ...s, rawScannedId: value }))
   const setShowEquipmentModal = (value: boolean) => setState(s => ({ ...s, showEquipmentModal: value }))
@@ -61,7 +65,7 @@ function ScanningPage() {
     hasEquipment: false
   })
   
-  const createUserMutation = CreateUser()
+  const createUserMutation = useCreateUser();
 
   const verificationModes = [
     { id: 'face', name: 'Face', icon: FaUser }, { id: 'fingerprint', name: 'Fingerprint', icon: FaFingerprint },
@@ -106,19 +110,47 @@ function ScanningPage() {
   }
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    if (field === 'phoneNumber' && typeof value === 'string') value = normalizeMobile(value)
+    console.log(`=== FORM INPUT CHANGE ===`)
+    console.log(`Field: ${field}, Value: ${value}`)
+    
+    if (field === 'phoneNumber' && typeof value === 'string') {
+      const normalizedValue = normalizeMobile(value)
+      console.log(`Phone normalization: '${value}' -> '${normalizedValue}'`)
+      value = normalizedValue
+    }
+    
+    if (field === 'hasEquipment') {
+      console.log(`🔧 Equipment checkbox changed to: ${value}`)
+      if (!value) {
+        console.log('🚫 Equipment unchecked - clearing equipment list')
+        setEquipmentList([])
+      }
+    }
+    
     setVisitorForm(prev => ({ ...prev, [field]: value }))
+    console.log('========================')
   }
 
   const handleSubmit = () => {
+    console.log('=== SUBMIT BUTTON CLICKED ===')
+    console.log('visitorForm.hasEquipment:', visitorForm.hasEquipment)
+    console.log('equipmentList.length:', equipmentList.length)
+    console.log('Current equipmentList:', JSON.stringify(equipmentList, null, 2))
+    
     if (visitorForm.hasEquipment) {
+      console.log('🔧 EQUIPMENT FLOW: Opening equipment modal')
       setState(s => ({ ...s, showEquipmentModal: true }))
     } else {
+      console.log('👤 REGULAR FLOW: No equipment, proceeding with user creation')
       // Extract idnumber from rawScannedId if it's a card string
       let extractedScannedId = 'MANUAL_ENTRY'
       if (state.rawScannedId) {
         const parsedData = parseCardString(state.rawScannedId)
         extractedScannedId = parsedData.idnumber || state.rawScannedId
+        console.log('📄 CARD PARSING:')
+        console.log('- rawScannedId:', state.rawScannedId)
+        console.log('- parsedData:', JSON.stringify(parsedData, null, 2))
+        console.log('- extractedScannedId:', extractedScannedId)
       }
       
       // Prepare data for backend - only include fields that match UserCreateRequest
@@ -133,7 +165,7 @@ function ScanningPage() {
         department: visitorForm.department
       }
       
-      console.log('=== SUBMITTING USER DATA TO BACKEND ===')
+      console.log('=== SUBMITTING USER DATA TO BACKEND (NO EQUIPMENT) ===')
       console.log('Backend payload:', JSON.stringify(userData, null, 2))
       console.log('Additional form data (not sent to backend):')
       console.log('- nationalId:', visitorForm.nationalId)
@@ -145,8 +177,12 @@ function ScanningPage() {
       
       createUserMutation.mutate(userData, {
         onSuccess: () => {
+          console.log('✅ USER CREATION SUCCESS (NO EQUIPMENT)')
           handleReset()
           console.log('Form reset after successful submission')
+        },
+        onError: (error) => {
+          console.log('❌ USER CREATION FAILED (NO EQUIPMENT):', error)
         }
       })
     }
@@ -173,19 +209,35 @@ function ScanningPage() {
   }
 
   const parseCardString = (cardString: string) => {
+    console.log('=== PARSING CARD STRING ===')
+    console.log('Input cardString:', cardString)
+    
     const data: Record<string, string> = {}
     const trimmed = cardString.trim()
     const cleanString = trimmed.toLowerCase().startsWith('name:') ? trimmed.substring(5) : trimmed
     const parts = cleanString.split('/')
-    if (parts[0]) data.name = parts[0].replace('.', '').trim()
-    parts.slice(1).forEach((part: string) => {
+    
+    console.log('Trimmed:', trimmed)
+    console.log('CleanString:', cleanString)
+    console.log('Parts:', parts)
+    
+    if (parts[0]) {
+      data.name = parts[0].replace('.', '').trim()
+      console.log('Extracted name:', data.name)
+    }
+    
+    parts.slice(1).forEach((part: string, index: number) => {
       const colonIndex = part.indexOf(':')
       if (colonIndex !== -1) {
         const key = part.substring(0, colonIndex).toLowerCase().trim()
         const value = part.substring(colonIndex + 1).trim().replace(/'/g, '')
         data[key] = value
+        console.log(`Part ${index + 1} - Key: '${key}', Value: '${value}'`)
       }
     })
+    
+    console.log('Final parsed data:', JSON.stringify(data, null, 2))
+    console.log('==========================')
     return data
   }
 
@@ -251,47 +303,45 @@ function ScanningPage() {
         isOpen={showEquipmentModal}
         onClose={() => {
           setShowEquipmentModal(false)
-          if (equipmentList.length === 0) {
-            handleInputChange('hasEquipment', false)
-          } else {
-            // Extract idnumber from rawScannedId if it's a card string
-            let extractedScannedId = 'MANUAL_ENTRY'
-            if (state.rawScannedId) {
-              const parsedData = parseCardString(state.rawScannedId)
-              extractedScannedId = parsedData.idnumber || state.rawScannedId
-            }
-            
-            // If equipment was added, proceed with submission
-            const userData = {
-              fullName: visitorForm.fullName,
-              email: '',
-              password: visitorForm.password,
-              scannedId: extractedScannedId,
-              phoneNumber: `${selectedCountry.code}${visitorForm.phoneNumber}`,
-              status: visitorForm.status,
-              category: visitorForm.category,
-              department: visitorForm.department
-            }
-            
-            console.log('=== SUBMITTING USER DATA WITH EQUIPMENT TO BACKEND ===')
-            console.log('Backend payload:', JSON.stringify(userData, null, 2))
-            console.log('Equipment list:', JSON.stringify(equipmentList, null, 2))
-            console.log('Additional form data (not sent to backend):')
-            console.log('- nationalId:', visitorForm.nationalId)
-            console.log('- badge:', visitorForm.badge)
-            console.log('- role:', visitorForm.role)
-            console.log('- profilePhoto:', visitorForm.profilePhoto ? 'Present' : 'Not set')
-            console.log('- rawScannedString:', state.rawScannedId)
-            console.log('=======================================================')
-            
-            createUserMutation.mutate(userData, {
-              onSuccess: () => {
-                handleReset()
-                setEquipmentList([])
-                console.log('Form and equipment list reset after successful submission')
-              }
-            })
+          handleInputChange('hasEquipment', false)
+          setEquipmentList([])
+        }}
+        onSubmit={({ equipments, card }) => {
+          setShowEquipmentModal(false)
+
+          let extractedScannedId = 'MANUAL_ENTRY'
+          if (state.rawScannedId) {
+            const parsedData = parseCardString(state.rawScannedId)
+            extractedScannedId = parsedData.idnumber || state.rawScannedId
           }
+
+          const userData = {
+            fullName: visitorForm.fullName,
+            email: '',
+            password: visitorForm.password,
+            scannedId: extractedScannedId,
+            phoneNumber: `${selectedCountry.code}${visitorForm.phoneNumber}`,
+            status: visitorForm.status,
+            category: visitorForm.category,
+            department: visitorForm.department,
+            equipments: equipments.length > 0 ? equipments : undefined,
+            cardId: card?.id || undefined
+          }
+
+          console.log('=== SUBMITTING USER DATA WITH EQUIPMENT TO BACKEND ===')
+          console.log('Backend payload:', JSON.stringify(userData, null, 2))
+          console.log('=======================================================')
+
+          createUserMutation.mutate(userData, {
+            onSuccess: () => {
+              console.log('✅ USER CREATION SUCCESS (WITH EQUIPMENT)')
+              handleReset()
+              setEquipmentList([])
+            },
+            onError: (error) => {
+              console.log('❌ USER CREATION FAILED (WITH EQUIPMENT):', error)
+            }
+          })
         }}
         equipmentList={equipmentList}
         setEquipmentList={setEquipmentList}
@@ -354,7 +404,7 @@ function ScanningPage() {
             className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 text-sm text-gray-700 rounded hover:bg-gray-50 transition-colors"
           >
             Appointments
-            <span className="bg-[#1A3263] text-white text-xs rounded-full px-1.5 py-0.5 font-bold">({appointments})</span>
+            <span className="bg-[#1A3263] text-white text-xs rounded-full px-1.5 py-0.5 font-bold">({countAppointment})</span>
           </button>)}
 
         {/* Equipment and Appointment Section */}

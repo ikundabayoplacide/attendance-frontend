@@ -1,101 +1,128 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { UserCreateRequest, usersApi } from "../api/user";
-import { toast } from "react-toastify";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import { userApi, UserCreateRequest } from '../api/user';
 
-//Get all users
-export function GetAllUser(){
-    return useQuery ({
-        queryKey: ['users'],
-        queryFn: () =>usersApi.getAll()
-    })
+export const userKeys = {
+    all: ['users'] as const,
+    lists: () => [...userKeys.all, 'list'] as const,
+    details: (id: string) => [...userKeys.all, 'details', id] as const,
+};
+
+// Get all users
+export function useGetUsers() {
+    return useQuery({
+        queryKey: userKeys.lists(),
+        queryFn: () => userApi.getAllUsers()
+    });
 }
 
-//Get single user
-export function GetUserById(userId: string){
-    return useQuery ({
-        queryKey: ['users', userId],
-        queryFn: () => usersApi.getById(userId)
-    })
+// Get single user
+export function useGetUser(id: string) {
+    return useQuery({
+        queryKey: userKeys.details(id),
+        queryFn: () => userApi.getUserById(id),
+        enabled: !!id
+    });
 }
 
-//create user
-export function CreateUser(){
-    const queryClient = useQueryClient();
-    
-   return useMutation({
-        mutationFn: (newUser: Omit<UserCreateRequest, 'id'>) => usersApi.create(newUser),
-        onSuccess:async () => {
-            await queryClient.invalidateQueries({ queryKey: ['users'] });
-            toast.success('New User created successfully',{autoClose:2000});
-        },
-        onError:(error: any) => {
-            const errorMessage = error?.response?.data?.message || error?.message || 'Failed to create new user';
-            toast.error(errorMessage);
-        }
-
-   })
-}
-//update user
-export function UpdateUser(){
+// Create user
+export function useCreateUser() {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: ({id, ...rest}: Partial<UserCreateRequest> & {id:string}) => usersApi.update(id, rest),
-        onSuccess:async () => {
-            await queryClient.invalidateQueries({ queryKey: ['users'] });
-            toast.success('user updated successfully', {autoClose:2000});
+        mutationFn: (userData: UserCreateRequest) => userApi.createUser(userData),
+        onSuccess: async (data) => {
+            const message = data.result?.isNewUser 
+                ? 'User registered and attendance recorded successfully' 
+                : 'Attendance recorded successfully';
+            toast.success(message, { autoClose: 2000 });
+            await queryClient.invalidateQueries({ queryKey: userKeys.all });
         },
-        onError:(error: any) => {
+        onError: (error: any) => {
+            const errorMessage = error?.response?.data?.message || error?.message || 'Failed to create user';
+            toast.error(errorMessage);
+            console.error('User creation error:', error);
+        }
+    });
+}
+
+// Update user
+export function useUpdateUser() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: ({ id, userData }: { id: string; userData: any }) => 
+            userApi.updateUser(id, userData),
+        onSuccess: async (data, { id }) => {
+            toast.success('User updated successfully', { autoClose: 1000 });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: userKeys.all }),
+                queryClient.invalidateQueries({ queryKey: userKeys.details(id) })
+            ]);
+        },
+        onError: (error: any) => {
             const errorMessage = error?.response?.data?.message || error?.message || 'Failed to update user';
             toast.error(errorMessage);
-        }   
-    })
-}
-// to activate user
-export function activate(){
-    const queryClient = useQueryClient();
-    
-    return useMutation({
-        mutationFn:(userId:string)=>usersApi.activate(userId),
-        onSuccess:async()=>{
-            await queryClient.invalidateQueries({ queryKey: ['users'] });
-            toast.success('User activated successfully',{autoClose:2000});
-        },
-        onError:(error:any)=>{
-            const ErrorMessage=error?.response?.data?.message||error?.message||'Failed to activate user';
-            toast.error(ErrorMessage);
         }
-        
-    })
-}
-// Suspend user
-export function suspendUser(){
-    const queryClient=useQueryClient();
-    return useMutation({
-        mutationFn:(userId:string)=>usersApi.suspend(userId),
-        onSuccess:async()=>{
-            await queryClient.invalidateQueries({queryKey:['users']});
-            toast.success('User suspended successfully', {autoClose:2000});
-        },
-        onError:(error:any)=>{
-            const ErrorMessage=error?.response?.data?.message||error?.message||'Failed to suspend user';
-            toast.error(ErrorMessage);
-        }
-    })
+    });
 }
 
-//delete user
-export function DeleteUser(){
+// Delete user
+export function useDeleteUser() {
     const queryClient = useQueryClient();
     
     return useMutation({
-        mutationFn: (userId: string) => usersApi.remove(userId),
-        onSuccess:async () => {
-            await queryClient.invalidateQueries({ queryKey: ['users'] });
-            toast.success('user deleted successfully', {autoClose:2000});
+        mutationFn: (id: string) => userApi.deleteUser(id),
+        onSuccess: async (data, id) => {
+            toast.success('User deleted successfully', { autoClose: 1000 });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: userKeys.all }),
+                queryClient.invalidateQueries({ queryKey: userKeys.details(id) })
+            ]);
         },
-        onError:(error: any) => {
+        onError: (error: any) => {
             const errorMessage = error?.response?.data?.message || error?.message || 'Failed to delete user';
             toast.error(errorMessage);
-    }})
+        }
+    });
+}
+
+// Suspend user
+export function useSuspendUser() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: (id: string) => userApi.suspendUser(id),
+        onSuccess: async (data, id) => {
+            toast.success('User suspended successfully', { autoClose: 1000 });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: userKeys.all }),
+                queryClient.invalidateQueries({ queryKey: userKeys.details(id) })
+            ]);
+        },
+        onError: (error: any) => {
+            const errorMessage = error?.response?.data?.message || error?.message || 'Failed to suspend user';
+            toast.error(errorMessage);
+        }
+    });
+}
+
+// Activate user
+export function useActivateUser() {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: (id: string) => userApi.activateUser(id),
+        onSuccess: async (data, id) => {
+            toast.success('User activated successfully', { autoClose: 1000 });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: userKeys.all }),
+                queryClient.invalidateQueries({ queryKey: userKeys.details(id) })
+            ]);
+        },
+        onError: (error: any) => {
+            const errorMessage = error?.response?.data?.message || error?.message || 'Failed to activate user';
+            toast.error(errorMessage);
+        }
+    });
 }

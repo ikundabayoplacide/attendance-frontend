@@ -9,7 +9,7 @@ import ExportReportModal from '../../../../components/modals/ExportReportModal'
 import { useAuth } from '../../../../hooks/useAuth'
 import { checkPermissions } from '../../../../utils/helper'
 import { UserUpdateRequest } from '../../../../api/user'
-import { activate, GetAllUser, UpdateUser } from '../../../../hooks/useUser'
+import { useActivateUser, useGetUsers, useUpdateUser } from '../../../../hooks/useUser'
 import { CgSpinner } from 'react-icons/cg'
 
 function BlacklistedUsers() {
@@ -87,7 +87,7 @@ function BlacklistedUsers() {
   ]
 
   const currentRole = searchParams.get('role') || 'owner'
-  const { data: blacklistedUser, isLoading } = GetAllUser();
+  const { data: blacklistedUser, isLoading } = useGetUsers();
   const usersResults = blacklistedUser?.result
 
   const blacklistedUsers = usersResults?.filter((user: any) => user.status === 'suspended') || [];

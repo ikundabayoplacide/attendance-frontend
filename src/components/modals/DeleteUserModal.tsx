@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FaExclamationTriangle, FaTimes } from 'react-icons/fa'
-import { DeleteUser } from '../../hooks/useUser'
+import { useDeleteUser } from '../../hooks/useUser'
 
 interface DeleteUserModalProps {
   isOpen: boolean
@@ -13,7 +13,7 @@ interface DeleteUserModalProps {
 export default function DeleteUserModal({ isOpen, onClose, onConfirm, fullName,userId }: DeleteUserModalProps) {
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState('')
-  const deleteUser=DeleteUser();
+  const deleteUser = useDeleteUser();
 
   const handleConfirm = async() => {
     if (inputValue !== fullName) {

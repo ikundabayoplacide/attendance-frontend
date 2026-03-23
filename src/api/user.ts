@@ -1,69 +1,83 @@
-import { User } from "./auth";
 import { client } from "./clients";
 
 interface ServiceResponse<T> {
     success: boolean;
     message: string;
     result: T;
-    page?: number;
-    pageSize?: number;
-    total?: number;
-}
-export type UsersListParams = {
-  page?: number;
-  limit?: number;
-  search?: string
-};
-export type UserCreateRequest= {
-  fullName: string;
-  email?: string;
-  password?: string;
-  scannedId: string;
-  phoneNumber?: string;
-  status?: 'active' | 'inactive' | 'pending' | 'rejected';
-  category?: string;
-  badge?: string;
-  role?: string;
-  company?: string;
-  department?: string;
-  nationalId?: string;
+    statusCode: number;
 }
 
-export type UserUpdateRequest = Partial<UserCreateRequest>;
-export type UserResponse = ServiceResponse<User>;
+export interface EquipmentAssignment {
+    name: string;
+    serialNumber: string;
+}
 
-export const usersApi = {
-    getAll: async (params: UsersListParams = {}): Promise<ServiceResponse<User[]>> => {
-        const { data } = await client.get('/users', { params });
-        return data;
+export interface UserCreateRequest {
+    fullName: string;
+    email?: string;
+    password?: string;
+    scannedId: string;
+    phoneNumber?: string;
+    status?: string;
+    category?: string;
+    badge?: string;
+    role?: string;
+    company?: string;
+    department?: string;
+    nationalId?: string;
+    equipments?: EquipmentAssignment[];
+    cardId?: string;
+}
+
+export interface AttendanceInfo {
+    id: string;
+    userId: string;
+    checkIn: Date;
+    date: string;
+    status: string;
+}
+
+export interface UserWithAttendanceResponse {
+    user: any;
+    attendance: AttendanceInfo;
+    isNewUser: boolean;
+}
+
+export type UserCreateResponse = ServiceResponse<UserWithAttendanceResponse>;
+
+export const userApi = {
+    createUser: async (userData: UserCreateRequest): Promise<UserCreateResponse> => {
+        const response = await client.post('/users', userData);
+        return response.data;
     },
 
-    getById: async (userId: string): Promise<ServiceResponse<User>> => {
-        const { data } = await client.get(`/users/${userId}`);
-        return data;
+    getAllUsers: async (params?: { search?: string; limit?: number }): Promise<ServiceResponse<any[]>> => {
+        const response = await client.get('/users', { params });
+        return response.data;
     },
 
-    create: async (payload: UserCreateRequest): Promise<ServiceResponse<User>> => {
-        const { data } = await client.post('/users', payload);
-        return data;
+    getUserById: async (id: string): Promise<ServiceResponse<any>> => {
+        const response = await client.get(`/users/${id}`);
+        return response.data;
     },
 
-    update: async (userId: string, payload: Partial<UserCreateRequest>): Promise<ServiceResponse<User>> => {
-        const { data } = await client.put(`/users/${userId}`, payload);
-        return data;
+    updateUser: async (id: string, userData: any): Promise<ServiceResponse<any>> => {
+        const response = await client.put(`/users/${id}`, userData);
+        return response.data;
     },
-    activate: async (userId: string): Promise<ServiceResponse<User>> => {
-        const { data } = await client.put(`/users/${userId}/activate`);
-        return data;
+
+    deleteUser: async (id: string): Promise<ServiceResponse<any>> => {
+        const response = await client.delete(`/users/${id}/delete`);
+        return response.data;
     },
-    suspend:async(userId:string):Promise<ServiceResponse<User>>=>{
-        const {data}=await client.put(`/users/${userId}/suspend`);
-        return data;
+
+    suspendUser: async (id: string): Promise<ServiceResponse<any>> => {
+        const response = await client.put(`/users/${id}/suspend`);
+        return response.data;
     },
-    remove: async (userId: string): Promise<ServiceResponse<User>> => {
-        console.log("Deleting user with ID:", userId);
-        console.log('Full URL:',`/users/${userId}/delete`)
-        const { data } = await client.delete(`/users/${userId}/delete`);
-        return data;
-    },
+
+    activateUser: async (id: string): Promise<ServiceResponse<any>> => {
+        const response = await client.put(`/users/${id}/activate`);
+        return response.data;
+    }
 };

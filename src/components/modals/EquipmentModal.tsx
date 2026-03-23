@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useGetCards } from '../../hooks/useCard'
 
 interface Equipment {
-  type: string
-  id: string
+  name: string
+  serialNumber: string
 }
 
 interface Card {
@@ -20,9 +20,10 @@ interface EquipmentModalProps {
   setEquipmentList: (list: Equipment[]) => void
   cardList?: Card[]
   setCardList?: (list: Card[]) => void
+  onSubmit?: (data: { equipments: Equipment[], card: Card | null }) => void
 }
 
-function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, cardList }: EquipmentModalProps) {
+function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, cardList, onSubmit }: EquipmentModalProps) {
   const [selectedType, setSelectedType] = useState('')
   const [equipmentId, setEquipmentId] = useState('')
   const [customType, setCustomType] = useState('')
@@ -65,11 +66,11 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
     if (type.trim() && equipmentId.trim()) {
       if (editingIndex !== null) {
         const updated = [...equipmentList]
-        updated[editingIndex] = { type: type.trim(), id: equipmentId.trim() }
+        updated[editingIndex] = { name: type.trim(), serialNumber: equipmentId.trim() }
         setEquipmentList(updated)
         setEditingIndex(null)
       } else {
-        setEquipmentList([...equipmentList, { type: type.trim(), id: equipmentId.trim() }])
+        setEquipmentList([...equipmentList, { name: type.trim(), serialNumber: equipmentId.trim() }])
       }
       setSelectedType('')
       setCustomType('')
@@ -80,14 +81,14 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
 
   const handleEdit = (index: number) => {
     const equipment = equipmentList[index]
-    if (availableEquipment.includes(equipment.type)) {
-      setSelectedType(equipment.type)
+    if (availableEquipment.includes(equipment.name)) {
+      setSelectedType(equipment.name)
       setShowCustomInput(false)
     } else {
-      setCustomType(equipment.type)
+      setCustomType(equipment.name)
       setShowCustomInput(true)
     }
-    setEquipmentId(equipment.id)
+    setEquipmentId(equipment.serialNumber)
     setEditingIndex(index)
   }
 
@@ -101,7 +102,32 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
       setShowCustomInput(false)
     }
   }
-
+// function that will allow me to add information to user who is going to attend
+const handleAddedInformationToAttendance=()=>{
+  console.log("Equipment List:", equipmentList);
+  console.log("Selected Assigned Card:", selectedAssigned);
+  console.log("Selected Unassigned Card:", selectedUnassigned);
+  
+  // Get the selected card (either assigned or unassigned)
+  const selectedCardId = selectedAssigned || selectedUnassigned;
+  const selectedCardData = selectedCardId 
+    ? currentCardList.find(card => card.id === selectedCardId)
+    : null;
+  
+  console.log("Final selected card:", selectedCardData);
+  console.log("Final equipment list:", equipmentList);
+  
+  const submissionData = {
+    equipments: equipmentList,
+    card: selectedCardData || null
+  };
+  
+  if (onSubmit) {
+    onSubmit(submissionData);
+  }
+  
+  onClose();
+}
 
   const unassignedCards = currentCardList.filter((card: Card) => !card.isAssigned)
   const assignedCards = currentCardList.filter((card: Card) => card.isAssigned)
@@ -201,8 +227,8 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
               {equipmentList.map((item, index) => (
                 <li key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-800">{item.type}</div>
-                    <div className="text-xs text-gray-600">ID: {item.id}</div>
+                    <div className="text-sm font-medium text-gray-800">{item.name}</div>
+                    <div className="text-xs text-gray-600">ID: {item.serialNumber}</div>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -314,15 +340,15 @@ function EquipmentModal({ isOpen, onClose, equipmentList, setEquipmentList, card
         <div className="flex gap-2 justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-200 text-gray-800 text-sm rounded hover:bg-gray-300 transition-colors"
+            className="px-14 py-2 bg-gray-200 text-gray-800 border  text-sm rounded hover:bg-gray-300 transition-colors"
           >
             Cancel
           </button>
           <button
-            onClick={onClose}
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+            onClick={handleAddedInformationToAttendance}
+            className="px-14 py-2 bg-[#1A3263] text-white text-sm  rounded hover:bg-transparent hover:text-[#1A3263] hover:border transition-colors"
           >
-            Done
+            Submit
           </button>
         </div>
       </div>

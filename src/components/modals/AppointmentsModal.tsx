@@ -1,85 +1,33 @@
 import { useState } from 'react'
 import { FaTimes, FaSearch, FaCalendarAlt, FaClock, FaUser, FaBuilding } from 'react-icons/fa'
+import { useGetAppointments } from '../../hooks/useAppointment'
+import { AppointmentCreateRequest } from '../../api/appointment'
 
-interface Appointment {
-  id: string
-  visitorName: string
-  hostName: string
-  department: string
-  appointmentTime: string
-  date: string
-  purpose: string
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled'
-  visitorPhone: string
-  visitorCompany: string
-}
+
 
 interface AppointmentsModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const mockAppointments: Appointment[] = [
-  {
-    id: '1',
-    visitorName: 'UWIMANA Jean Claude',
-    hostName: 'MUKAMANA Alice',
-    department: 'ICT',
-    appointmentTime: '2:00 PM - 3:00 PM',
-    date: '2024-02-20',
-    purpose: 'Technical meeting for system upgrade',
-    status: 'confirmed',
-    visitorPhone: '+250788123456',
-    visitorCompany: 'Tech Solutions Ltd'
-  },
-  {
-    id: '2',
-    visitorName: 'NSHUTI Ngabo',
-    hostName: 'KEZA Shania',
-    department: 'HR',
-    appointmentTime: '10:00 AM - 11:00 AM',
-    date: '2024-02-20',
-    purpose: 'Job interview discussion',
-    status: 'pending',
-    visitorPhone: '+250782471145',
-    visitorCompany: 'SAN TECH'
-  },
-  {
-    id: '3',
-    visitorName: 'MUTESI Grace',
-    hostName: 'BIZIMANA Paul',
-    department: 'Finance',
-    appointmentTime: '3:30 PM - 4:30 PM',
-    date: '2024-02-20',
-    purpose: 'Budget review meeting',
-    status: 'completed',
-    visitorPhone: '+250785490284',
-    visitorCompany: 'Finance Corp'
-  },
-  {
-    id: '4',
-    visitorName: 'HABIMANA Eric',
-    hostName: 'UWASE Marie',
-    department: 'Operations',
-    appointmentTime: '9:00 AM - 10:00 AM',
-    date: '2024-02-21',
-    purpose: 'Project planning session',
-    status: 'confirmed',
-    visitorPhone: '+250788567890',
-    visitorCompany: 'Operations Plus'
-  }
-]
-
-function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
+function AppointmentsModal({ isOpen, onClose, }: AppointmentsModalProps) {
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed' | 'canceled' | 'onhold'>('all')
+  
+  // Fetch real appointment data
+  const { data: appointmentData, isLoading, error } = useGetAppointments();
 
   if (!isOpen) return null
 
-  const filteredAppointments = mockAppointments.filter(appointment => {
-    const matchesSearch = appointment.visitorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         appointment.hostName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         appointment.department.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredAppointments = (appointmentData?.result || []).filter((appointment: AppointmentCreateRequest) => {
+    // Map API fields to display fields for filtering
+    const visitorName = appointment.userId || '' // You might need to fetch user details
+    const hostName = appointment.host || ''
+    const department = appointment.department || ''
+    
+    const matchesSearch = visitorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         hostName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         department.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesStatus = statusFilter === 'all' || appointment.status === statusFilter
     
@@ -91,7 +39,8 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
       case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'confirmed': return 'bg-green-100 text-green-800 border-green-200'
       case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200'
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200'
+      case 'canceled': return 'bg-red-100 text-red-800 border-red-200'
+      case 'onhold': return 'bg-orange-100 text-orange-800 border-orange-200'
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }
@@ -142,7 +91,8 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="canceled">Canceled</option>
+                <option value="onhold">On Hold</option>
               </select>
             </div>
           </div>
@@ -150,7 +100,18 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
 
         {/* Appointments List */}
         <div className="overflow-y-auto max-h-[60vh]">
-          {filteredAppointments.length === 0 ? (
+          {isLoading ? (
+            <div className="p-8 text-center text-gray-500">
+              <div className="animate-spin inline-block w-8 h-8 border-4 border-gray-300 border-t-[#1A3263] rounded-full mb-4"></div>
+              <p className="text-lg">Loading appointments...</p>
+            </div>
+          ) : error ? (
+            <div className="p-8 text-center text-red-500">
+              <FaCalendarAlt className="mx-auto text-4xl mb-4 text-red-300" />
+              <p className="text-lg">Error loading appointments</p>
+              <p className="text-sm">Please try again later</p>
+            </div>
+          ) : filteredAppointments.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               <FaCalendarAlt className="mx-auto text-4xl mb-4 text-gray-300" />
               <p className="text-lg">No appointments found</p>
@@ -158,24 +119,30 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {filteredAppointments.map((appointment) => (
-                <div key={appointment.id} className="p-6 hover:bg-gray-50 transition-colors">
+              {filteredAppointments.map((appointment, index) => (
+                <div key={appointment.userId + index} className="p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                      
+                      <div className=" flex items-between gap-3 mb-2">
                         <h3 className="text-lg font-semibold text-gray-800">
-                          {appointment.visitorName}
-                        </h3>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(appointment.status)}`}>
-                          {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-                        </span>
-                      </div>
+                          {appointment.user?.fullName} {/* You might want to fetch actual user name */}
+                        </h3> <span className={`px-2 py-1 rounded-full text-xs font-medium rounded border ${getStatusColor(appointment.status || 'pending')}`}>
+                          {(appointment.status).charAt(0).toUpperCase() + (appointment.status).slice(1)}
+                        </span> 
+                        </div>
+                        <h3 className="text-lg mb-1 font-semibold text-gray-800">
+                          {appointment.user?.phoneNumber} {/* You might want to fetch actual user name */}
+                        </h3> 
+                       
+                      
+                    
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <FaUser className="text-gray-400" />
-                            <span>Host: <strong>{appointment.hostName}</strong></span>
+                            <span>Host: <strong>{appointment.host}</strong></span>
                           </div>
                           <div className="flex items-center gap-2">
                             <FaBuilding className="text-gray-400" />
@@ -190,15 +157,15 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <FaCalendarAlt className="text-gray-400" />
-                            <span>Date: <strong>{appointment.date}</strong></span>
+                            <span>Date: <strong>{appointment.appointmentDate}</strong></span>
                           </div>
                           <div>
-                            <span className="text-gray-500">Phone: </span>
-                            <strong>{appointment.visitorPhone}</strong>
+                            <span className="text-gray-500">Duration: </span>
+                            <strong>{appointment.timeDuration}</strong>
                           </div>
                           <div>
                             <span className="text-gray-500">Company: </span>
-                            <strong>{appointment.visitorCompany}</strong>
+                            <strong>{appointment.company}</strong>
                           </div>
                         </div>
                       </div>
@@ -207,6 +174,13 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
                         <span className="text-gray-500 text-sm">Purpose: </span>
                         <span className="text-gray-700">{appointment.purpose}</span>
                       </div>
+                      
+                      {appointment.note && (
+                        <div className="mt-2">
+                          <span className="text-gray-500 text-sm">Note: </span>
+                          <span className="text-gray-700">{appointment.note}</span>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Action Buttons for confirmed/pending appointments */}
@@ -215,8 +189,8 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
                         <button
                           onClick={() => {
                             // Handle check-in
-                            console.log('Checking in appointment:', appointment.id)
-                            alert(`Appointment for ${appointment.visitorName} checked in successfully!`)
+                            console.log('Checking in appointment:', appointment.userId)
+                            alert(`Appointment for ${appointment.userId} checked in successfully!`)
                           }}
                           className="px-3 py-1.5 bg-green-800 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors whitespace-nowrap"
                         >
@@ -225,8 +199,8 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
                         <button
                           onClick={() => {
                             // Handle cancel
-                            console.log('Cancelling appointment:', appointment.id)
-                            alert(`Appointment for ${appointment.visitorName} cancelled.`)
+                            console.log('Cancelling appointment:', appointment.userId)
+                            alert(`Appointment for ${appointment.userId} cancelled.`)
                           }}
                           className="px-3 py-1.5 bg-red-700 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors whitespace-nowrap"
                         >
@@ -245,7 +219,7 @@ function AppointmentsModal({ isOpen, onClose }: AppointmentsModalProps) {
         <div className="p-6 border-t border-gray-200 bg-gray-50">
           <div className="flex justify-between items-center">
             <div className="text-sm text-gray-600">
-              Showing {filteredAppointments.length} of {mockAppointments.length} appointments
+              Showing {filteredAppointments.length} of {appointmentData?.result?.length || 0} appointments
             </div>
           </div>
         </div>

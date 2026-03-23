@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FaTimes } from 'react-icons/fa'
-import { usersApi } from '../../api/user'
+import { userApi } from '../../api/user'
 import type { User } from '../../api/auth'
 import { useCreateAppointment } from '../../hooks/useAppointment'
 
@@ -57,7 +57,7 @@ function ScheduleAppointmentModal({ isOpen, onClose, onSubmit }: ScheduleAppoint
     try {
       setIsSearching(true)
       setSearchError('')
-      const response = await usersApi.getAll({ search: query, limit: 50 })
+      const response = await userApi.getAllUsers({ search: query, limit: 50 })
       if (response.success) {
         const filtered = (response.result || []).filter((user) => {
           const lowered = query.toLowerCase()

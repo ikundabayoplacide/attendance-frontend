@@ -1,10 +1,13 @@
 import { useState } from 'react'
-// import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FaCalendarAlt, FaCalendarCheck, FaClock, FaCalendarTimes, FaPlus, FaSearch, FaEdit, FaEye, FaUser, FaEllipsisV } from 'react-icons/fa'
 import ScheduleAppointmentModal from '../../../components/modals/ScheduleAppointmentModal'
+import CancelAppointmentModal from '../../../components/modals/CancelAppointmentModal'
+import RescheduleAppointmentModal from '../../../components/modals/RescheduleAppointmentModal'
 import { checkPermissions } from '../../../utils/helper'
 import { useAuth } from '../../../hooks/useAuth'
-import { useGetAppointments } from '../../../hooks/useAppointment'
+import { useConfirmAppointment, useGetAppointments, useCancelAppointment, useUpdateAppointment } from '../../../hooks/useAppointment'
+import { ImSpinner3 } from 'react-icons/im'
+import { AppointmentUpdateRequest } from '../../../api/appointment'
 
 // Define appointment type based on backend response
 interface Appointment {
@@ -35,18 +38,82 @@ function AppointmentPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [dateFilter, setDateFilter] = useState('today')
   const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false)
+  const [selectedAppointment, setSelectedAppointment] = useState<{ id: string, title: string } | null>(null)
+  const [selectedRescheduleAppointment, setSelectedRescheduleAppointment] = useState<Appointment | null>(null)
   const [openDropdown, setOpenDropdown] = useState<string | number | null>(null)
-  const getAllAppointmments=useGetAppointments();
+  const getAllAppointmments = useGetAppointments();
+
 
   const handleScheduleAppointment = () => {
     setShowScheduleModal(false)
   }
 
+  const confirmAppointment = useConfirmAppointment();
+  const cancelAppointment = useCancelAppointment();
+  const RescheduleAppointment=useUpdateAppointment();
+
+  // function to handle confirm appointment
+  const handleConfirmAppointment = async (id: string) => {
+    try {
+      const response = await confirmAppointment.mutateAsync(id);
+      console.log("Appointment confirmed:", response);
+    } catch (error) {
+      console.error("Error confirming appointment:", error);
+    }
+  }
+
+  // function to handle cancel appointment
+  const handleCancelAppointment = (id: string, title: string) => {
+    setSelectedAppointment({ id, title })
+    setShowCancelModal(true)
+  }
+
+  const handleConfirmCancel = async (cancelReason: string) => {
+    if (!selectedAppointment) return
+
+    try {
+      await cancelAppointment.mutateAsync({ id: selectedAppointment.id, cancelReason })
+      setShowCancelModal(false)
+      setSelectedAppointment(null)
+    } catch (error) {
+      console.error('Error canceling appointment:', error)
+    }
+  }
+
+  const handleCloseCancelModal = () => {
+    setShowCancelModal(false)
+    setSelectedAppointment(null)
+  }
+
+  const handleReschedule = (appointment: Appointment) => {
+    setSelectedRescheduleAppointment(appointment)
+    setShowRescheduleModal(true)
+  }
+
+  const handleConfirmReschedule = async (payload: AppointmentUpdateRequest) => {
+    if (!selectedRescheduleAppointment) return
+
+    try {
+      await RescheduleAppointment.mutateAsync({ id: selectedRescheduleAppointment.id.toString(), payload })
+      setShowRescheduleModal(false)
+      setSelectedRescheduleAppointment(null)
+    } catch (error) {
+      console.error("Failed to reschedule appointment", error)
+    }
+  }
+
+  const handleCloseRescheduleModal = () => {
+    setShowRescheduleModal(false)
+    setSelectedRescheduleAppointment(null)
+  }
+
   const { data: appointmentsData, isLoading, isError, error } = getAllAppointmments;
-  
+
   // Extract appointments array from response and ensure proper typing
-  const appointments: Appointment[] = (appointmentsData?.result || []).map((apt: any) => ({...apt,id: apt.id || apt._id || Math.random().toString(),}));
-  
+  const appointments: Appointment[] = (appointmentsData?.result || []).map((apt: any) => ({ ...apt, id: apt.id || apt._id || Math.random().toString(), }));
+
   const stats = [
     { title: 'Total Appointments', value: appointments.length.toString(), icon: FaCalendarAlt, color: 'bg-blue-500' },
     { title: 'Confirmed', value: appointments.filter(apt => apt.status === 'confirmed').length.toString(), icon: FaCalendarCheck, color: 'bg-green-500' },
@@ -56,7 +123,7 @@ function AppointmentPage() {
 
 
   const filteredAppointments = appointments.filter((appointment: Appointment) => {
-    const matchesSearch = 
+    const matchesSearch =
       appointment.host.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.purpose.toLowerCase().includes(searchTerm.toLowerCase())
@@ -167,7 +234,7 @@ function AppointmentPage() {
             <table className="w-full">
               <thead className='bg-[#1A3263]'>
                 <tr className="border-b border-gray-200">
-                   <th className="text-left py-3 px-4 font-medium text-white">No</th>
+                  <th className="text-left py-3 px-4 font-medium text-white">No</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Appointee</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Company</th>
                   <th className="text-left py-3 px-4 font-medium text-white">Purpose</th>
@@ -183,7 +250,7 @@ function AppointmentPage() {
                 {isLoading ? (
                   <tr>
                     <td colSpan={9} className="py-8 text-center text-gray-500">
-                      Loading appointments...
+                      <div className='flex justify-center items-center'><ImSpinner3 size={40} /></div>
                     </td>
                   </tr>
                 ) : isError ? (
@@ -199,16 +266,16 @@ function AppointmentPage() {
                     </td>
                   </tr>
                 ) : (
-                  filteredAppointments.map((appointment: Appointment,index) => (
+                  filteredAppointments.map((appointment: Appointment, index) => (
                     <tr key={appointment.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className='py-4 px-4 text-gray-700'>{index+1}</td>
+                      <td className='py-4 px-4 text-gray-700'>{index + 1}</td>
                       <td className="py-4 px-4">
                         <div>
                           <p className="font-medium text-gray-900">{appointment?.user?.fullName}</p>
                           <p className="text-sm text-gray-500">{appointment?.user?.email}</p>
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-gray-700">{appointment.company||'-'}</td>
+                      <td className="py-4 px-4 text-gray-700">{appointment.company || '-'}</td>
                       <td className="py-4 px-4 text-gray-700">{appointment.purpose}</td>
                       <td className="py-4 px-4">
                         <div className="flex items-center gap-2">
@@ -246,8 +313,8 @@ function AppointmentPage() {
                                 className="fixed inset-0 z-10"
                                 onClick={() => setOpenDropdown(null)}
                               />
-                              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
-                                {currentUser && checkPermissions(currentUser, 'appointment:view') && (
+                              <div className="fixed right-10 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                                {currentUser && checkPermissions(currentUser, 'appointment:read') && (
                                   <button
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                                     onClick={() => {
@@ -259,23 +326,23 @@ function AppointmentPage() {
                                     View Details
                                   </button>
                                 )}
-                                {currentUser && checkPermissions(currentUser, 'appointment:edit') && (
+                                {currentUser && checkPermissions(currentUser, 'appointment:update') && (
                                   <button
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                                     onClick={() => {
-                                      console.log('Edit', appointment.id)
+                                      handleReschedule(appointment)
                                       setOpenDropdown(null)
                                     }}
                                   >
                                     <FaEdit size={14} className="text-green-600" />
-                                    Edit
+                                    Reschedule
                                   </button>
                                 )}
                                 {currentUser && checkPermissions(currentUser, 'appointment:confirm') && (
                                   <button
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                                     onClick={() => {
-                                      console.log('Confirm', appointment.id)
+                                      handleConfirmAppointment(appointment.id.toString())
                                       setOpenDropdown(null)
                                     }}
                                   >
@@ -287,7 +354,7 @@ function AppointmentPage() {
                                   <button
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                                     onClick={() => {
-                                      console.log('Cancel', appointment.id)
+                                      handleCancelAppointment(appointment.id.toString(), `${appointment.purpose} - ${appointment?.user?.fullName}`)
                                       setOpenDropdown(null)
                                     }}
                                   >
@@ -323,6 +390,31 @@ function AppointmentPage() {
         isOpen={showScheduleModal}
         onClose={() => setShowScheduleModal(false)}
         onSubmit={handleScheduleAppointment}
+      />
+
+      {/* Cancel Appointment Modal */}
+      <CancelAppointmentModal
+        isOpen={showCancelModal}
+        onClose={handleCloseCancelModal}
+        onConfirm={handleConfirmCancel}
+        appointmentTitle={selectedAppointment?.title || ''}
+        isLoading={cancelAppointment.isPending}
+      />
+
+      {/* Reschedule Appointment Modal */}
+      <RescheduleAppointmentModal
+        isOpen={showRescheduleModal}
+        onClose={handleCloseRescheduleModal}
+        onConfirm={handleConfirmReschedule}
+        appointmentData={selectedRescheduleAppointment ? {
+          id: selectedRescheduleAppointment.id.toString(),
+          appointmentDate: selectedRescheduleAppointment.appointmentDate,
+          appointmentTime: selectedRescheduleAppointment.appointmentTime,
+          timeDuration: selectedRescheduleAppointment.timeDuration,
+          reasonToReschedule: '',
+          appointmentLocation: selectedRescheduleAppointment.appointmentLocation
+        } : null}
+        isLoading={RescheduleAppointment.isPending}
       />
     </div>
   )

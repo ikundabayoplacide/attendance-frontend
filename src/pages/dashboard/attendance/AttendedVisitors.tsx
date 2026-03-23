@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { FaUsers, FaUserCheck, FaUserTimes, FaSearch, FaEye, FaEdit, FaFilePdf, FaFileWord, FaPrint, FaUserClock, FaTrash } from 'react-icons/fa'
 import ExportReportModal from '../../../components/modals/ExportReportModal'
+import DeleteAttendanceModal from '../../../components/modals/DeleteAttendanceModal'
 import { useAttendanceList, useCheckout, useDeleteAttendance } from '../../../hooks/useAttendance'
 import { checkPermissions } from '../../../utils/helper'
 import { useAuth } from '../../../hooks/useAuth'
@@ -16,6 +17,8 @@ function AttendedVisitors() {
   const [shouldFilter, setShouldFilter] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportFormat, setExportFormat] = useState<'pdf' | 'word' | 'print'>('pdf')
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [selectedAttendance, setSelectedAttendance] = useState<{id: string, userName: string} | null>(null)
   const { currentUser } = useAuth()
 
   // Fetch attendance data
@@ -43,15 +46,28 @@ function AttendedVisitors() {
     }
   }
 
-  const handleDelete = async (attendanceId: string, visitorName: string) => {
-    if (window.confirm(`Are you sure you want to delete ${visitorName}'s attendance record?`)) {
-      try {
-        await deleteMutation.mutateAsync(attendanceId)
-        toast.success('Attendance record deleted successfully')
-      } catch (error) {
-        toast.error('Failed to delete attendance record')
-      }
+  const handleDelete = (attendanceId: string, userName: string) => {
+    setSelectedAttendance({ id: attendanceId, userName })
+    setShowDeleteModal(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!selectedAttendance) {
+      return
+    }    
+    try {
+      await deleteMutation.mutateAsync(selectedAttendance.id)
+      setShowDeleteModal(false)
+      setSelectedAttendance(null)
+    } catch (error) {
+      console.error('Deletion failed:', error)
+      toast.error('Failed to delete attendance record')
     }
+  }
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false)
+    setSelectedAttendance(null)
   }
 
   useEffect(() => {
@@ -61,6 +77,15 @@ function AttendedVisitors() {
       setShouldFilter(false)
     }
   }, [startDateTime, endDateTime])
+
+  // Monitor deletion mutation success to ensure modal closes
+  useEffect(() => {
+    if (deleteMutation.isSuccess && showDeleteModal) {
+      console.log('Deletion mutation successful, ensuring modal is closed')
+      setShowDeleteModal(false)
+      setSelectedAttendance(null)
+    }
+  }, [deleteMutation.isSuccess, showDeleteModal])
 
   const exportFields = [
     { id: 'name', label: 'Visitor Name' },
@@ -377,6 +402,14 @@ function AttendedVisitors() {
         fields={exportFields}
         exportFormat={exportFormat}
         title="Export Attended Visitors Report"
+      />
+
+      <DeleteAttendanceModal
+        isOpen={showDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        userName={selectedAttendance?.userName || ''}
+        isDeleting={deleteMutation.isPending}
       />
     </div>
   )

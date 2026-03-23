@@ -9,7 +9,7 @@ import ExportReportModal from '../../../../components/modals/ExportReportModal'
 import { checkPermissions } from '../../../../utils/helper'
 import { useAuth } from '../../../../hooks/useAuth'
 import {UserUpdateRequest } from '../../../../api/user'
-import { activate, GetAllUser, UpdateUser } from '../../../../hooks/useUser'
+import { useActivateUser, useGetUsers, useUpdateUser } from '../../../../hooks/useUser'
 import { CgSpinner } from 'react-icons/cg'
 
 function InactiveUsers() {
@@ -87,7 +87,7 @@ function InactiveUsers() {
 
   const currentRole = searchParams.get('role') || 'owner'
 
-  const { data: users, isLoading } = GetAllUser();
+  const { data: users, isLoading } = useGetUsers();
   const usersResults = users?.result
   const inactiveUsers = usersResults?.filter((user: any) => user.status === 'inactive') || [];
 

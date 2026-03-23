@@ -60,7 +60,37 @@ export function useUpdateCard(){
         }
     })
 }
+//assign Card ToUser
+export function useAssignCardToUser(){
+    const queryClient=useQueryClient();
+    return useMutation({
+        mutationFn:({cardId, userId}: {cardId: string, userId: string})=>cardApi.assignCardToUser(cardId,userId),
+        onSuccess:async()=>{
+            toast.success('Card assigned successfully', {autoClose:1000});
+            await queryClient.invalidateQueries({queryKey:cardKeys.all})
+        },
+        onError:(error:any)=>{
+             const errorMessage=error?.response?.data?.message|| error?.message|| 'Failed to assign card to user';
+            toast.error(errorMessage);
+        }
+    })
+}
 
+//Return Card From User
+export function useReturnCardFromUser(){
+    const queryClient=useQueryClient();
+    return useMutation({
+        mutationFn:({cardId, userId}: {cardId: string, userId: string})=>cardApi.returnCardFromUser(cardId,userId),
+        onSuccess:async()=>{
+            toast.success('Card returned successfully', {autoClose:1000});
+            await queryClient.invalidateQueries({queryKey:cardKeys.all})
+        },
+        onError:(error:any)=>{
+             const errorMessage=error?.response?.data?.message|| error?.message|| 'Failed to return card from user';
+            toast.error(errorMessage);
+        }
+    })
+}
 //delete card
 export function useDeleteCard(){
     const queryClient=useQueryClient();

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from "react-toastify";
-import { AppointmentCreateRequest, AppointmentUpdateRequest, appointmentsApi } from '../api/appointment';
+import { AppointmentCreateRequest, AppointmentReschedule, AppointmentUpdateRequest, appointmentsApi } from '../api/appointment';
 
 
 
@@ -111,7 +111,7 @@ export function useConfirmAppointment() {
 export function useCancelAppointment() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (id: string) => appointmentsApi.cancel(id),
+        mutationFn: ({ id, cancelReason }: { id: string; cancelReason: string }) => appointmentsApi.cancel(id, cancelReason),
         onSuccess: async () => {
             toast.success('Appointment cancelled successfully');
             await queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
@@ -169,6 +169,21 @@ export function useCreateAppointment() {
             toast.error('Failed to create the appointment');
         }
     });
+}
+//Reschudule appointment
+export function useRescheduleAppointment(){
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn:({id,payload}:{id:string; payload:AppointmentReschedule})=>appointmentsApi.reschedule(id,payload),
+        onSuccess:async()=> {
+            toast.success('Appointment rescheduled successfully');
+            await queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+        },
+        onError: () => {
+            toast.error('Failed to reschedule the appointment');
+        }
+    })
 }
 
 //update appointment

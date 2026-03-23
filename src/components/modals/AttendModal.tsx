@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { FaUser, FaFingerprint, FaIdCard, FaMicrophone, FaHandPaper, FaRunning, FaCamera, FaRedo, FaSave, FaTimes, FaSearch } from 'react-icons/fa'
 import { MdQrCodeScanner, MdVisibility } from 'react-icons/md'
+import EquipmentModal from './EquipmentModal'
+import { useCreateUser } from '../../hooks/useUser'
 
 interface AttendModalProps {
   isOpen: boolean
@@ -12,6 +14,18 @@ interface VerificationMode {
   name: string
   icon: React.ComponentType<{ size?: number; className?: string }>
   hasData?: boolean
+}
+
+interface Equipment {
+  name: string
+  serialNumber: string
+}
+
+interface Card {
+  id: string
+  cardNumber: string
+  isAssigned: boolean
+  assignedTo?: string
 }
 
 interface VisitorForm {
@@ -31,6 +45,7 @@ interface VisitorForm {
   profilePhoto: string
   idProofType: string
   idNumber: string
+  hasEquipment?: boolean
 }
 
 function AttendModal({ isOpen, onClose }: AttendModalProps) {
@@ -38,6 +53,10 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
   const [isScanning, setIsScanning] = useState(false)
   const [isFirstTime] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showEquipmentModal, setShowEquipmentModal] = useState(false)
+  const [selectedEquipments, setSelectedEquipments] = useState<Equipment[]>([])
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null)
+  const createUserMutation = useCreateUser()
   const [visitorForm, setVisitorForm] = useState<VisitorForm>({
     mobile: '',
     email: '',
@@ -86,11 +105,11 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
     }, 2000)
   }
 
-  const handleInputChange = (field: keyof VisitorForm, value: string) => {
+  const handleInputChange = (field: keyof VisitorForm, value: string | boolean) => {
     setVisitorForm(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleCancel = () => {
+  const handleReset = () => {
     setVisitorForm({
       mobile: '',
       email: '',
@@ -109,14 +128,96 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
       idProofType: 'National ID',
       idNumber: ''
     })
+    setSelectedEquipments([])
+    setSelectedCard(null)
     setSelectedMode('')
     setIsScanning(false)
+  }
+
+  const handleCancel = () => {
+    handleReset()
     onClose()
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log('Saving visitor:', visitorForm)
-    onClose()
+    
+    // Check if equipment is needed
+    if (visitorForm.hasEquipment) {
+      // Show equipment modal first
+      setShowEquipmentModal(true)
+      return
+    }
+    
+    // Process without equipment
+    await processVisitorSubmission()
+  }
+
+  const handleEquipmentSubmit = (data: { equipments: Equipment[], card: Card | null }) => {
+    console.log('Received equipment data:', data)
+    setSelectedEquipments(data.equipments)
+    setSelectedCard(data.card)
+    setShowEquipmentModal(false)
+    
+    // Now process the complete submission
+    processVisitorSubmission()
+  }
+
+  const processVisitorSubmission = async () => {
+    // Validate required fields
+    if (!visitorForm.fullName.trim()) {
+      alert('Full name is required')
+      return
+    }
+    
+    if (!visitorForm.email.trim()) {
+      alert('Email is required')
+      return
+    }
+    
+    if (!visitorForm.mobile.trim()) {
+      alert('Mobile number is required')
+      return
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(visitorForm.email)) {
+      alert('Please enter a valid email address')
+      return
+    }
+    
+    
+    try {
+      // Step 1: Create user
+      const userData = {
+        fullName: visitorForm.fullName,
+        email: visitorForm.email,
+        phoneNumber: visitorForm.mobile,
+        password: 'defaultPassword123', // You might want to generate this or ask user
+        scannedId: visitorForm.idNumber || 'MANUAL_ENTRY',
+        status: 'active',
+        category: visitorForm.passType,
+        department: visitorForm.department || 'General',
+        equipments:selectedEquipments,
+        cardId:selectedCard?.id
+      }
+      
+      console.log('User data to be created:', userData)
+      console.log('Selected equipments:', selectedEquipments)
+      console.log('Selected card:', selectedCard)
+      
+      // Create user with equipment and card assignment
+      const userResult = await createUserMutation.mutateAsync(userData)
+      console.log('User created successfully:', userResult)
+      
+      handleReset()
+      onClose()
+      
+    } catch (error) {
+      console.error('Error creating visitor:', error)
+      // Handle error
+    }
   }
 
   if (!isOpen) return null
@@ -226,33 +327,42 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal Details</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       value={visitorForm.fullName}
                       onChange={(e) => handleInputChange('fullName', e.target.value)}
                       className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Enter full name"
+                      required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Mobile</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Mobile <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="tel"
                       value={visitorForm.mobile}
                       onChange={(e) => handleInputChange('mobile', e.target.value)}
                       className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="+250 xxx xxx xxx"
+                      required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="email"
                       value={visitorForm.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       className="w-full text-black px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="email@example.com"
+                      required
                     />
                   </div>
                   <div>
@@ -287,6 +397,18 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
                       placeholder="Reason for visiting"
                       rows={3}
                     />
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="hasEquipment"
+                      checked={visitorForm.hasEquipment || false}
+                      onChange={(e) => handleInputChange('hasEquipment', e.target.checked)}
+                      className="mr-2"
+                    />
+                    <label htmlFor="hasEquipment" className="text-sm font-medium text-gray-700">
+                      Needs Equipment/Card Assignment
+                    </label>
                   </div>
                 </div>
               </div>
@@ -436,6 +558,15 @@ function AttendModal({ isOpen, onClose }: AttendModalProps) {
             </div>
           </div>
         </div>
+        
+        {/* Equipment Modal */}
+        <EquipmentModal
+          isOpen={showEquipmentModal}
+          onClose={() => setShowEquipmentModal(false)}
+          equipmentList={selectedEquipments}
+          setEquipmentList={setSelectedEquipments}
+          onSubmit={handleEquipmentSubmit}
+        />
       </div>
   )
 }

@@ -30,7 +30,7 @@ function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     logout()
   }
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+    <header className="bg-[#1A3263] shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center">
       {/* Left side */}
       <div className="flex items-center gap-3">
         <button 
@@ -40,13 +40,13 @@ function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           <HiOutlineMenu size={20} />
         </button>
         <img src={evsLogo} alt="EVS Logo" className="w-8 h-8" />
-        <span className="text-2xl font-bold text-[#1A3263] hidden sm:block">E-Visitors Dashboard</span>
+        <span className="text-2xl font-bold text-white hidden sm:block">E-Visitors Dashboard</span>
       </div>
 
       {/* Right side */}
       <div className="flex items-center gap-4">
         <ThemeSwitcher />
-        <button className="p-2 text-gray-600 hover:text-[#1A3263] hover:bg-gray-100 rounded-lg transition-colors">
+        <button className="p-2 text-white hover:text-[#1A3263] hover:bg-gray-100 rounded-lg transition-colors">
           <FaBell size={18} />
         </button>
         
@@ -58,7 +58,7 @@ function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             <div className="w-8 h-8 bg-[#1A3263] rounded-full flex items-center justify-center">
               <FaUser className="text-white" size={14} />
             </div>
-            <span className="text-sm font-medium text-gray-700">User</span>
+            {/* <span className="text-sm font-medium text-white">User</span> */}
           </div>
 
           {isDropdownOpen && (

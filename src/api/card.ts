@@ -47,5 +47,15 @@ export const cardApi = {
     deleteCard: async (id: string): Promise<ServiceResponse<void>> => {
         const response = await client.delete(`/cards/${id}`);
         return response.data;
+    },
+
+    assignCardToUser: async (cardId: string, userId: string): Promise<ServiceResponse<CardEntry>> => {
+        const response = await client.put(`/cards/${cardId}/assign`, { userId });
+        return response.data;
+    },
+
+    returnCardFromUser: async (cardId: string, userId: string): Promise<ServiceResponse<CardEntry>> => {
+        const response = await client.put(`/cards/${cardId}/return`, { userId });
+        return response.data;
     }
 };
